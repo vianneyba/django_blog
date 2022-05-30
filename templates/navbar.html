@@ -14,6 +14,7 @@
 				<li class="navbar-toggler navbar-toggler-right">
 					<a href="{% url 'blog:by-category' "programmation" %}">Programmation</a>
 				</li>
+				{% if WITH_REGISTRATION == True %}
 				{% if user.username %}
 					<li class="navbar-toggler navbar-toggler-right">
 						<a href="{% url 'authenticate:logout' %}">Deconnection</a>
@@ -22,6 +23,7 @@
 					<li class="navbar-toggler navbar-toggler-right">
 						<a href="{% url 'authenticate:login' %}">Connection</a>
 					</li>
+				{% endif %}
 				{% endif %}
 			</ul>
 		</div>

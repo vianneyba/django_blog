@@ -35,8 +35,10 @@
 			{% endfor %}
 		</div>
 
-		<hr class="separator">
-		{% include 'comment/comment.html' %}
+		{% if WITH_COMMENT == True %}
+			<hr class="separator">
+			{% include 'comment/comment.html' %}
+		{% endif %}
 
 	</article>
 {% endblock %}
