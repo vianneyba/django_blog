@@ -10,7 +10,7 @@ def add(request, article_id):
 	if request.method == 'POST':
 		form = CommentForm(request.POST)
 		if form.is_valid():
-			comment = markdown(form.cleaned_data['comment'])
+			comment = form.cleaned_data['comment']
 			user = request.user
 			article = Article.objects.get(pk=article_id)
 			newcomment = Comment(user= user, content= comment, article_id= article.id)

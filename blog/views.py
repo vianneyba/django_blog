@@ -1,7 +1,14 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from blog.models import Article
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAdminUser
+from blog.models import Article, Category
+from blog.permissions import ArticlePermissions
 from comment.models import Comment
+from blog import serializers
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -42,3 +49,25 @@ def by_author(request, author):
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
+
+class ArticleViewset(ModelViewSet):
+    permission_classes = (ArticlePermissions,)
+    serializer_class = serializers.ArticleSerializer
+
+    def get_queryset(self):
+        return Article.objects.all().filter(published=True)
+
+    # @permission_classes(IsAdminUser)
+    def create(self, request, *args, **kwargs):
+        tempdict = request.data.copy()
+        tempdict['author'] = self.request.user.id
+
+        category = Category.objects.get(slug=tempdict['category'])
+        tempdict['category'] = category.id
+
+        serializer = serializers.ArticleSaveSerializer(data=tempdict)
+        if serializer.is_valid():
+            article = serializer.save()
+            return Response(self.serializer_class(article).data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
