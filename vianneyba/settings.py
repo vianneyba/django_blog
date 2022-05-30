@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
-    'authenticate.apps.AuthenticateConfig'
+    'authenticate.apps.AuthenticateConfig',
+    'comment.apps.CommentConfig'
 
 ]
 

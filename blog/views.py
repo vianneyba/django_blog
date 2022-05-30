@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from blog.models import Article
+from comment.models import Comment
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -28,10 +29,13 @@ def by_tag(request, tag):
     return render(request, 'blog/index.html', context)
 
 def by_slug(request, slug):
-	article = Article.objects.get(slug=slug)
+    article = Article.objects.get(slug=slug)
+    Comments = Comment.objects.filter(article__slug=slug)
 
-	context= {'article': article}
-	return render(request, 'blog/view-article.html', context)
+    context= {
+        'article': article,
+        'comments': return_paginator(request, Comments)}
+    return render(request, 'blog/view-article.html', context)
 
 def by_author(request, author):
     articles = Article.objects.filter(author__username=author)

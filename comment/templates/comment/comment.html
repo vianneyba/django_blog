@@ -1,0 +1,21 @@
+<div class="row comment">
+	
+		<div class="col-lg-12 text-center">
+			<a href="{% url "comment:add" article.id %}">Ajouter un commentaire</a>
+		</div>
+	
+
+	{% for comment in comments %}
+		<div class="col-lg-12">
+			<p>le {{ comment.created_at }} par {{ comment.user.username }}
+		</div>
+		<div class="col-lg-12 comment">
+			{{ comment.content | safe }}
+		</div>
+
+		{% if not forloop.last %}
+				<hr class="separator">
+		{% endif %}
+
+	{% endfor %}
+</div>

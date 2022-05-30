@@ -8,13 +8,19 @@ def myLogout(request):
 	return redirect('blog:index')
 
 def myLogin(request):
+	if request.method == 'GET' and 'HTTP_REFERER' in request.META:
+		request.session['last_page'] = request.META["HTTP_REFERER"]
+
 	if request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
-			return redirect('blog:index')
+			if 'last_page' in request.session:
+				return redirect(request.session['last_page'])
+			else:
+				return redirect('blog:index')
 		else:
 			errors = "il y a quelque chose qui ne va pas avec ce que vous avez entré!"
 			return render(request, 'authenticate/login.html', {'form': loginForm, 'errors': errors})

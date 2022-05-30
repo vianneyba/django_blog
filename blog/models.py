@@ -22,7 +22,7 @@ class Article(models.Model):
 	slug = models.SlugField()
 	created_at = models.DateTimeField(default=timezone.now)
 	published = models.BooleanField(default=False)
-	update_date = models.DateTimeField(blank=True)
+	update_date = models.DateTimeField(default=None, blank=True)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	like_count = models.IntegerField(default=0)
@@ -33,5 +33,6 @@ class Article(models.Model):
 		return self.title
 
 	class Meta:
+		ordering = ['-created_at']
 		verbose_name = 'Gestion de l\'article'
 		verbose_name_plural = 'Gestion des articles'
