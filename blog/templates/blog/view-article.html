@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+
+{% block author %}
+	{{ article.author }}
+{% endblock %}
+
+{% block content %}
+	<article>
+		<div class="row">
+			<header class="col-lg-8">
+				<h1 class="text-capitalize">{{ article.title }}</h1>
+				<span class="meta">
+					Posté par 
+					<a href="{% url 'blog:by-author' article.author.username %}">{{ article.author }}</a>
+					il y à {{ article.created_at | timesince }}
+				</span>
+			</header>
+
+			<div class="col-lg-2">
+			<!-- { include 'blog/like_dislike.html' } -->
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12 article-contenu">
+				{{ article.content | markdown | safe }}
+			</div>
+		</div>
+
+		<div class="row">
+			<h3>Tags</h3>
+			{% for tag in article.tags.all %}
+				<a href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
+			{% endfor %}
+		</div>
+
+		<!-- <hr class="separator"> -->
+		<!-- { include 'comment/comment.html' } -->
+
+	</article>
+{% endblock %}

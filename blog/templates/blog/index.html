@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+
+{% block content %}
+	
+	{% if page_obj %}
+	
+		{% for article in page_obj %}
+			<article>
+				<div class="col-lg-12">
+					<strong>{{ article.created_at | date:"d M Y"}}</strong>
+				</div>
+
+				<div class="col-lg-12 article-title">
+					<a href="{% url 'blog:by-slug' article.slug %}" rel="bookmark" title="Permalink to {{ article.title | striptags }}">
+						<h2 class="text-capitalize">{{ article.title | capfirst }}</h2>
+					</a>
+				</div>
+
+				<div class="col-lg-12 article-content">
+					{{ article.content | markdown | safe | truncatewords_html:80 }}<br>
+					<span class="read-more">
+						<a class="read_more" href="{% url 'blog:by-slug' article.slug %}">
+						Lire la suite <i class="fa fa-angle-double-right"></i>
+						</a>
+					</span>
+				</div>
+
+				<div class="col-lg-12 article-footer">
+					<span class="article-category">
+						Category:
+						<a href="{% url 'blog:by-category' article.category.slug %}">{{ article.category }}</a>
+					</span>
+					<span class="meta">
+						Posté par <a href="{% url 'blog:by-author' article.author.username %}">{{ article.author }}</a>
+					</span>
+				</div>
+			</article>
+
+			{% if not forloop.last %}
+				<hr class="separator">
+			{% endif %}
+
+		{% endfor  %}
+
+	{% else %}
+		<article>
+			<p> aucun article a afficher</p>
+		</article>
+	{% endif %}
+
+{% endblock %}

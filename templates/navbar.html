@@ -1,0 +1,29 @@
+<nav class="navbar navbar-toggleable-lg">
+	<div class="row">
+<!-- 		<div class="col-lg-12">
+			<ul>
+				<li>{{ user.username }}</li>
+			</ul>
+		</div> -->
+		<div class="col-lg-12">	
+					<!-- <a class="navbar-brand" href="{% url 'blog:index' %}">Vmyers The Blog</a> -->
+			<ul class="">
+				<li class="navbar-toggler navbar-toggler-right">
+					<a href="{% url 'blog:by-category' "jeux vidéo" %}">Jeux Vidéo</a>
+				</li>
+				<li class="navbar-toggler navbar-toggler-right">
+					<a href="{% url 'blog:by-category' "programmation" %}">Programmation</a>
+				</li>
+				{% if user.username %}
+					<li class="navbar-toggler navbar-toggler-right">
+						<a href="{% url 'authenticate:logout' %}">Deconnection</a>
+					</li>
+				{% else %}
+					<li class="navbar-toggler navbar-toggler-right">
+						<a href="{% url 'authenticate:login' %}">Connection</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+</nav>
