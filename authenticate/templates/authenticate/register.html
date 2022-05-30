@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Login dans registration</title>
+</head>
+<body>
+	<h1>Page de connextion</h1>
+	<form method="post" action="{% url 'authenticate:register' %}">
+		{% csrf_token %}
+
+		{% if form.errors %}
+			<p>Il y a des errors dans le formulaire</p>
+		{% endif %}
+		
+		{{ form }}
+
+
+		<input type="submit" value="login">
+	</form>
+</body>
+</html>
