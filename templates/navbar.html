@@ -1,12 +1,73 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+	<a class="navbar-brand" href="{% url 'blog:index' %}">{{ TITLE_SITE }}</a>
+		
+	<div class="collapse navbar-collapse">
+		<ul class="navbar-nav mr-auto">
+			{% if user.username %}
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Mon Compte
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+						<!-- { if user.is_staff %} -->
+							<a class="dropdown-item" href="{ path_for('articleAdd') }">Rédiger</a>
+						<!-- { endif %} -->
+						<!-- { if session.auth.id == 1 %} -->
+						<!-- <a class="dropdown-item" href="{ path_for('musicHome') }">Musique</a> -->
+						<!-- { endif %} -->
+						<!-- <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> -->
+						<!-- <a class="dropdown-item" href="{ path_for('userArticle') }">Mes Articles</a> -->
+						<!-- <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> -->
+					</div>
+				</li>
+			{% endif %}
+			<!-- { endif %} -->
+			
+			<!-- { if session.auth.id == 1 or session.auth.id == 3 %} -->
+				<!-- <li class="nav-item"><a class="nav-link" href="{ path_for('quizz') }">Quizz</a></li> -->
+      		<!-- { endif %} -->
+      
+      <!-- { if session.auth.isAdmin %} -->
+        <!-- <li class="nav-item"><a class="nav-link" href="{ path_for('adminChmod') }">Admin</a></li> -->
+      <!-- { endif %} -->
+		</ul>  
+
+		<ul class="navbar-nav mr-auto">
+			
+			{% for category in CATEGORIES %}
+				<li class="nav-item"><a class="nav-link" href="{% url 'blog:by-category' category.0 %}">{{ category.1 | upper }}</a></li>
+			{% endfor %}
+		</ul> 	      
+		
+		<!-- <form class="form-inline my-2 my-lg-0" method="get" action=" path_for('articleSearch') }">
+			<div class="input-group">
+				<input class="form-control mr-sm-2" type="text" class="form-control" placeholder="Recherche" name="search">
+				<div class="input-group-btn">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Recherche</button>
+				</div>
+			</div>
+		</form>  	       -->
+
+		<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">
+			{% if user.username %}
+				<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a></li>
+			{% else %}
+				<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a></li>
+			{% endif %}
+		</button>
+	</div>
+</nav>
+<!-- 
 <nav class="navbar navbar-toggleable-lg">
 	<div class="row">
-<!-- 		<div class="col-lg-12">
+		<div class="col-lg-12">
 			<ul>
 				<li>{{ user.username }}</li>
 			</ul>
-		</div> -->
+		</div>
 		<div class="col-lg-12">	
-					<!-- <a class="navbar-brand" href="{% url 'blog:index' %}">Vmyers The Blog</a> -->
+					<a class="navbar-brand" href="{% url 'blog:index' %}">Vmyers The Blog</a>
 			<ul class="">
 				<li class="navbar-toggler navbar-toggler-right">
 					<a href="{% url 'blog:by-category' "jeux-video" %}">Jeux Vidéo</a>
@@ -28,4 +89,4 @@
 			</ul>
 		</div>
 	</div>
-</nav>
+</nav> -->
