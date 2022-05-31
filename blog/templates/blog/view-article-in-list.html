@@ -11,9 +11,9 @@
 			{% if article.author.id == user.id %}
 				<a href="{% url 'blog:update-article' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
 				{% if article.published is not True %}
-					<a href=""><i class="fa fa-eye" aria-hidden="true"></i></a>
+					<a href="{% url 'blog:publish-article' article.id True %}"><i class="fa fa-eye" aria-hidden="true"></i></a>
 				{% else %}
-					<a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+					<a href="{% url 'blog:publish-article' article.id False %}"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
 				{% endif %}
 			{% endif %}
 		</div>

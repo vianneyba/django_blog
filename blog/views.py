@@ -61,7 +61,10 @@ def by_slug(request, slug):
     return render(request, 'blog/view-article.html', context)
 
 def by_author(request, author):
-    articles = Article.objects.filter(author__username=author)
+    if request.GET.get('view') == 'all' and author == request.user.username:
+        articles = Article.objects.filter(author__username=author)
+    else:
+        articles = Article.objects.filter(author__username=author, published=True)
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
@@ -95,6 +98,19 @@ def update_article(request, pk):
         'form_add_article': form_add_article,
         'type': 'update'}
     return render(request, 'blog/add-article.html', context)
+
+def publish_article(request, pk, value):
+    if value == 'True':
+        published = True
+    else:
+        published = False
+    article = Article.objects.get(pk=pk)
+    if article.author == request.user:
+        article.published = published
+        article.save()
+
+    return redirect('blog:index')
+    
 
 class ArticleViewset(ModelViewSet):
     permission_classes = (ArticlePermissions,)

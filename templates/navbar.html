@@ -9,15 +9,14 @@
 						Mon Compte
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-						<!-- { if user.is_staff %} -->
-							<a class="dropdown-item" href="{ path_for('articleAdd') }">Rédiger</a>
-						<!-- { endif %} -->
+						{% if user.is_staff %}
+							<a class="dropdown-item" href="{% url 'blog:add-article' %}">Rédiger</a>
+						{% endif %}
 						<!-- { if session.auth.id == 1 %} -->
 						<!-- <a class="dropdown-item" href="{ path_for('musicHome') }">Musique</a> -->
 						<!-- { endif %} -->
 						<!-- <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> -->
-						<!-- <a class="dropdown-item" href="{ path_for('userArticle') }">Mes Articles</a> -->
+						<a class="dropdown-item" href="{% url 'blog:by-author' user.username %}?view=all">Mes Articles</a>
 						<!-- <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> -->
 					</div>
 				</li>
@@ -60,35 +59,3 @@
 		{% endif %}
 	</div>
 </nav>
-<!-- 
-<nav class="navbar navbar-toggleable-lg">
-	<div class="row">
-		<div class="col-lg-12">
-			<ul>
-				<li>{{ user.username }}</li>
-			</ul>
-		</div>
-		<div class="col-lg-12">	
-					<a class="navbar-brand" href="{% url 'blog:index' %}">Vmyers The Blog</a>
-			<ul class="">
-				<li class="navbar-toggler navbar-toggler-right">
-					<a href="{% url 'blog:by-category' "jeux-video" %}">Jeux Vidéo</a>
-				</li>
-				<li class="navbar-toggler navbar-toggler-right">
-					<a href="{% url 'blog:by-category' "programmation" %}">Programmation</a>
-				</li>
-				{% if WITH_REGISTRATION == True %}
-				{% if user.username %}
-					<li class="navbar-toggler navbar-toggler-right">
-						<a href="{% url 'authenticate:logout' %}">Deconnection</a>
-					</li>
-				{% else %}
-					<li class="navbar-toggler navbar-toggler-right">
-						<a href="{% url 'authenticate:login' %}">Connection</a>
-					</li>
-				{% endif %}
-				{% endif %}
-			</ul>
-		</div>
-	</div>
-</nav> -->
