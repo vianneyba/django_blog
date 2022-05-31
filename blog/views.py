@@ -1,15 +1,18 @@
-from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
-from blog.models import Article, Category
+from slugify import slugify
+from blog.models import Article, Category, Tag
 from blog.permissions import ArticlePermissions
+from blog import serializers
+from blog.forms import ArticleForm
 from comment.models import Comment
 from comment.forms import CommentForm
-from blog import serializers
 
 
 def return_paginator(request, queryset):
@@ -63,6 +66,36 @@ def by_author(request, author):
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
 
+def add_article(request):
+    form_add_article = ArticleForm()
+    if request.method == 'POST':
+        form_add_article = ArticleForm(request.POST)
+        if form_add_article.is_valid():
+            article = form_add_article.save(commit=False)
+            article.author = request.user
+            article.save()
+            return redirect('blog:by-slug', slug=article.slug)
+
+    context = {'form_add_article': form_add_article}
+    return render(request, 'blog/add-article.html', context)
+
+def update_article(request, pk):
+    article = Article.objects.get(pk=pk)
+    form_add_article = ArticleForm(instance=article)
+
+    if request.method == 'POST':
+        form_add_article = ArticleForm(request.POST, instance=article)
+        if form_add_article.is_valid():
+            form_add_article.save()
+            return redirect('blog:by-slug', slug=article.slug)
+        
+     
+    context = {
+        'article': article,
+        'form_add_article': form_add_article,
+        'type': 'update'}
+    return render(request, 'blog/add-article.html', context)
+
 class ArticleViewset(ModelViewSet):
     permission_classes = (ArticlePermissions,)
     serializer_class = serializers.ArticleSerializer
@@ -70,7 +103,6 @@ class ArticleViewset(ModelViewSet):
     def get_queryset(self):
         return Article.objects.all().filter(published=True)
 
-    # @permission_classes(IsAdminUser)
     def create(self, request, *args, **kwargs):
         tempdict = request.data.copy()
         tempdict['author'] = self.request.user.id

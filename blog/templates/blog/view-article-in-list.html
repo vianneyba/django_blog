@@ -7,14 +7,19 @@
 
     <div class="col-sm-12 col-md-9">
     	<div class="entry-category">
-        	<a class="badge badge-secondary" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
+			<a class="badge badge-secondary" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
+			{% if article.author.id == user.id %}
+				<a href="{% url 'blog:update-article' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+				{% if article.published is not True %}
+					<a href=""><i class="fa fa-eye" aria-hidden="true"></i></a>
+				{% else %}
+					<a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+				{% endif %}
+			{% endif %}
 		</div>
 
 		<h1>
 			<a class="img-fluid" href="{% url 'blog:by-slug' article.slug %}">{{ article.title }}</a>
-			<!-- { if article.user.id == session.auth.id  %}
-			<a href="{ path_for('articleUpdate', { 'id': article.id }) }}"><i class="fa fa-edit"></i></a>
-			{ endif%} -->
       	</h1>
 
 		<div class="entry-meta">
@@ -23,7 +28,7 @@
 				<span>{{ article.created_at }}</span>
 				<i class="fa fa-user" aria-hidden="true"></i>
 				<a href="{% url 'blog:by-author' article.author.username %}">
-					<span>{{ article.user.name }}</span>
+					<span>{{ article.author.username }}</span>
 				</a>
 			</h5>
 		</div>
