@@ -68,7 +68,7 @@ article .entry-next {
 }
 
 .vote {
-  display: inline-block;
+  margin-left: 20px;
 }
 .vote i {
   color: #F2504B;

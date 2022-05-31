@@ -7,13 +7,16 @@
 <div class="content-article">
     <header class="header-article">
         <div class="read-more">
-            Article du {{ article.created_at | date:'d/m/Y' }}
-            {% include 'like_dislike/view-like.html' %}
+            Posté par
+            <a href="{% url 'blog:by-author' article.author.username %}">{{ article.author.username }}</a>
+            il y à {{ article.created_at | timesince }}
         </div>
 
+        {% include 'like_dislike/view-like.html' %}
     </header>
     
     <section class='article'>
+        <h1 class="entry-title">{{ article.title }}</h1>
         <div class="entry-content">
             {{ article.content | markdown | safe }}
         </div>
