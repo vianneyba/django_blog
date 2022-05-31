@@ -3,7 +3,9 @@
 *.pyc
 __pycache__
 migrations
-static
+static/*
+!static/css/style.scss
+!static/css/style.css
 db.sqlite3
 media
 vianneyba/.env

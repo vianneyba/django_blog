@@ -6,7 +6,7 @@
 {% block content %}
 <div class="content-article">
     <header class="header-article">
-        <div class="read-more">Article du {{ article.created_at }}</div>
+        <div class="read-more">Article du {{ article.created_at | date:'d/m/Y' }}</div>
     </header>
     
     <section class='article'>

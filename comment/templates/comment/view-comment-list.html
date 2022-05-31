@@ -11,12 +11,12 @@
 	{% include 'comment/add-comment.html' %}
 
 	{% for comment in comments %}
-		<div class="comments-inner">
+		<div class="comment">
 			<div class="comment-author">
 				{{ comment.user.username}}
 			</div>
 			<div class="comment-metadata">
-				{{ comment.created_at }}
+				{{ comment.created_at | date:'d/m/Y'}}
 			</div>
 			<div class="comment-content">
 				{{ comment.content | markdown | safe }}

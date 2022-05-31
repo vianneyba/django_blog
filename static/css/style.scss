@@ -8,6 +8,16 @@ $color_F5: #030407;
 $rouge: #F2504B;
 $vert: #63B96B;
 
+$transparent_color: rgba(0, 0, 0, 0.5);
+$border-radius: 15px;
+
+@mixin border-r($top, $bottom) {
+    padding: 10px 15px 10px 15px;
+    background-color: $transparent_color;
+    border: 2px $color_F2 solid;
+    border-radius: $top $top $bottom $bottom;
+}
+
 html {
     height: 100%;
 }
@@ -159,3 +169,20 @@ form {
       text-decoration: none;
     }
   }
+
+.comments {
+    .comment-reply-title {
+        margin-top: 10px;
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    .comment {
+        @include border-r($border-radius, $border-radius);
+        .comment-content {
+            margin: 10px 20px;
+        }
+        .comment-author {
+            text-transform: capitalize;
+        }
+    }
+}

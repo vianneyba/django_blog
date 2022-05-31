@@ -1,11 +1,11 @@
 {% load markdown_extras %}
 
 <article class="row">
-	<div class="col-sm-12 col-md-3">
+	<!-- <div class="col-sm-12 col-md-3">
 		<img class="img-fluid entry-image" src="{{ article.image }}">
-	</div>
+	</div> -->
 
-    <div class="col-sm-12 col-md-9">
+    <div class="col-sm-12 col-md-12">
     	<div class="entry-category">
 			<a class="badge badge-secondary" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
 			{% if article.author.id == user.id %}
@@ -18,7 +18,7 @@
 			{% endif %}
 		</div>
 
-		<h1>
+		<h1 class="entry-title">
 			<a class="img-fluid" href="{% url 'blog:by-slug' article.slug %}">{{ article.title }}</a>
       	</h1>
 
@@ -34,9 +34,8 @@
 		</div>
 
 		<div class="entry-article">
-			{{ article.content | markdown | safe | truncatewords_html:80 }}...
-			<br />
-			<button class="btn btn-secondary">
+			{{ article.content | markdown | safe | truncatewords_html:80 }}
+			<button class="btn btn-secondary entry-next">
 				<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
 			</button>
 		</div>
