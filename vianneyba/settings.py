@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'blog.apps.BlogConfig',
     'authenticate.apps.AuthenticateConfig',
-    'comment.apps.CommentConfig'
+    'comment.apps.CommentConfig',
+    'like_dislike.apps.LikeDislikeConfig'
 ]
 
 MIDDLEWARE = [

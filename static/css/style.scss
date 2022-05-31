@@ -5,7 +5,7 @@ $color_F2: #5A6477;
 $color_F3: #30343C;
 $color_F4: #0F1218;
 $color_F5: #030407;
-$rouge: #F2504B;
+$color_red: #F2504B;
 $vert: #63B96B;
 
 $transparent_color: rgba(0, 0, 0, 0.5);
@@ -84,26 +84,38 @@ article {
     }
 }
 
-
+// Partie VOTE
 .vote {
-    width: 150px;
-    margin: 50px 0;
-    text-align: right;
-    form {
+    display: inline-block;
+    i {
+        color: $color_red;
+        padding: 4px;
+    }
+    .vote_bar {
         display: inline-block;
+        border: 1px solid rgb(230, 201, 201);
+        border-radius: 10px;
+        width: 90px;
+        padding: 3px;
+        margin-left: 3px;
+        text-align: center;
+        .vote_red {
+            height: 5px;
+            background: $color_red;
+            .vote_progress {
+                width: 0%;
+                height: 5px;
+                background: $vert;
+            }
+        }
     }
 }
 
-.vote_bar {
-    width: 100%;
-    height: 4px;
-    background: $rouge;
-}
-
-.vote_progress {
-    width: 0%;
-    height: 4px;
-    background: $vert;
+.disabled-link {
+    pointer-events: none;
+    i {
+        color: $color_F1;
+    }
 }
 
 .vote_btns {
@@ -126,7 +138,7 @@ article {
 }
 
 .vote_dislike:hover, .is-disliked  .vote_dislike{
-    color: $rouge;
+    color: $color_red;
 }
 
 form {

@@ -32,6 +32,13 @@ class Article(models.Model):
 	def __str__(self):
 		return self.title
 
+	def search_like(self, user):
+		likes = self.likearticle_set.all()
+		for like in likes:
+			if like.user == user:
+				return like
+		return None
+
 	class Meta:
 		ordering = ['-created_at']
 		verbose_name = 'Gestion de l\'article'

@@ -16,7 +16,7 @@
 				{{ comment.user.username}}
 			</div>
 			<div class="comment-metadata">
-				{{ comment.created_at | date:'d/m/Y'}}
+				{{ comment.created_at | date:'d/m/Y' }}
 			</div>
 			<div class="comment-content">
 				{{ comment.content | markdown | safe }}

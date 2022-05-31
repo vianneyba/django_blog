@@ -14,7 +14,6 @@ from blog.forms import ArticleForm
 from comment.models import Comment
 from comment.forms import CommentForm
 
-
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
     page_number = request.GET.get('page')
@@ -23,16 +22,30 @@ def return_paginator(request, queryset):
     return page_obj
 
 def return_article(request, slug=None, pk=None):
-    if slug is not None:
-        article = Article.objects.get(slug=slug)
-    elif id is not None:
-        article = Article.objects.get(pk=pk)
+    try:
+        if slug is not None:
+            article = Article.objects.get(slug=slug)
+        elif pk is not None:
+            article = Article.objects.get(pk=pk)
 
-    Comments = Comment.objects.filter(article__id=article.id)
+        Comments = Comment.objects.filter(article__id=article.id)
+    except ObjectDoesNotExist:
+        return None
+
+    if article.published is False and article.author != request.user:
+        return None
+
+
+    if (article.like_count+article.dislike_count) == 0:
+        progress_bar = 50
+    else:
+        progress_bar= round(100 * (int(article.like_count)/(article.like_count+article.dislike_count)))
 
     return {
         'article': article,
-        'comments': return_paginator(request, Comments)}
+        'comments': return_paginator(request, Comments),
+        'progress_bar': progress_bar,
+        'like': article.search_like(request.user)}
 
 def index(request):
     articles = Article.objects.all().filter(published=True)
@@ -54,6 +67,9 @@ def by_tag(request, tag):
 
 def by_slug(request, slug):
     context = return_article(request, slug=slug)
+    if context is None:
+        return redirect('blog:index')
+
     form_comment = CommentForm()
     form_comment.fields["article_id"].initial = context['article'].id
 
