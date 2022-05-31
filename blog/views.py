@@ -8,7 +8,9 @@ from rest_framework.permissions import IsAdminUser
 from blog.models import Article, Category
 from blog.permissions import ArticlePermissions
 from comment.models import Comment
+from comment.forms import CommentForm
 from blog import serializers
+
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -16,6 +18,18 @@ def return_paginator(request, queryset):
     page_obj = paginator.get_page(page_number)
 
     return page_obj
+
+def return_article(request, slug=None, pk=None):
+    if slug is not None:
+        article = Article.objects.get(slug=slug)
+    elif id is not None:
+        article = Article.objects.get(pk=pk)
+
+    Comments = Comment.objects.filter(article__id=article.id)
+
+    return {
+        'article': article,
+        'comments': return_paginator(request, Comments)}
 
 def index(request):
     articles = Article.objects.all().filter(published=True)
@@ -36,12 +50,11 @@ def by_tag(request, tag):
     return render(request, 'blog/index.html', context)
 
 def by_slug(request, slug):
-    article = Article.objects.get(slug=slug)
-    Comments = Comment.objects.filter(article__slug=slug)
+    context = return_article(request, slug=slug)
+    form_comment = CommentForm()
+    form_comment.fields["article_id"].initial = context['article'].id
 
-    context= {
-        'article': article,
-        'comments': return_paginator(request, Comments)}
+    context['form_comment'] = form_comment
     return render(request, 'blog/view-article.html', context)
 
 def by_author(request, author):

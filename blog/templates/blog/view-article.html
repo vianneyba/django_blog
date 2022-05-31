@@ -1,45 +1,35 @@
 {% extends "base.html" %}
 {% load markdown_extras %}
 
-{% block author %}
-	{{ article.author }}
-{% endblock %}
+{% block title %}{{ article.title }}{% endblock title %}
 
 {% block content %}
-	<article>
-		<div class="row">
-			<header class="col-md-8">
-				<h1 class="text-capitalize">{{ article.title }}</h1>
-				<span class="meta">
-					Posté par 
-					<a href="{% url 'blog:by-author' article.author.username %}">{{ article.author }}</a>
-					il y à {{ article.created_at | timesince }}
-				</span>
-			</header>
+<div class="content-article">
+    <header class="header-article">
+        <div class="read-more">Article du {{ article.created_at }}</div>
+    </header>
+    
+    <section class='article'>
+        <div class="entry-content">
+            {{ article.content | markdown | safe }}
+        </div>
+    </section>
+    
+    <footer class="footer-article">
+        <div class="tags-and-categories">
+            Catégorie: 
+            <a href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
+            | Dans: 
+            {% if article.tags %}
+                {% for tag in article.tags.all %}
+                    <a href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
+                {% endfor %}
+            {% endif %}
+            | <a href="{% url 'blog:by-slug' article.slug %}" rel="bookmark" title="Permalink to {{ article.title | striptags }}">Permalink</a>            
+        </div>
+    </footer>
 
-			<div class="col-md-2">
-			<!-- { include 'blog/like_dislike.html' } -->
-			</div>
-		</div>
+    {% include 'comment/view-comment-list.html' %}
 
-		<div class="row">
-			<div class="col-md-12 article-contenu">
-				{{ article.content | markdown | safe }}
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-md-8 offset-md-2">
-				{% for tag in article.tags.all %}
-				<a class="badge badge-secondary" href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
-				{% endfor %}
-			</div>
-		</div>
-
-		{% if WITH_COMMENT == True %}
-			<hr class="separator">
-			{% include 'comment/comment.html' %}
-		{% endif %}
-
-	</article>
+</div>
 {% endblock %}

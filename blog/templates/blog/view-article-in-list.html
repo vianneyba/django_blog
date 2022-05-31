@@ -1,0 +1,46 @@
+{% load markdown_extras %}
+
+<article class="row">
+	<div class="col-sm-12 col-md-3">
+		<img class="img-fluid entry-image" src="{{ article.image }}">
+	</div>
+
+    <div class="col-sm-12 col-md-9">
+    	<div class="entry-category">
+        	<a class="badge badge-secondary" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
+		</div>
+
+		<h1>
+			<a class="img-fluid" href="{% url 'blog:by-slug' article.slug %}">{{ article.title }}</a>
+			<!-- { if article.user.id == session.auth.id  %}
+			<a href="{ path_for('articleUpdate', { 'id': article.id }) }}"><i class="fa fa-edit"></i></a>
+			{ endif%} -->
+      	</h1>
+
+		<div class="entry-meta">
+			<h5>
+            	<i class="fa fa-calendar-o" aria-hidden="true"></i>
+				<span>{{ article.created_at }}</span>
+				<i class="fa fa-user" aria-hidden="true"></i>
+				<a href="{% url 'blog:by-author' article.author.username %}">
+					<span>{{ article.user.name }}</span>
+				</a>
+			</h5>
+		</div>
+
+		<div class="entry-article">
+			{{ article.content | markdown | safe | truncatewords_html:80 }}...
+			<br />
+			<button class="btn btn-secondary">
+				<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
+			</button>
+		</div>
+      
+		<div class="entry-tags">
+			<i class="fa fa-tag" aria-hidden="true"></i>
+			{% for tag in article.tags.all %}
+				<a class="badge badge-secondary" href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name | title }}</a>
+			{% endfor %}
+		</div>
+	</div>
+</article>

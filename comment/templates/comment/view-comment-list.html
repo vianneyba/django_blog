@@ -1,0 +1,25 @@
+{% load markdown_extras %}
+
+<div class="comments">
+	<div class="comments-header">
+		<h2 class="comment-reply-title">
+			{{ article.numberComments }} commentaire{% if article.numberComments > 1 %}s{% endif%} sur {{ article.title }}
+		</h2>
+	</div>
+
+	{% include 'comment/add-comment.html' %}
+
+	{% for comment in comments %}
+		<div class="comments-inner">
+			<div class="comment-author">
+				{{ comment.user.username}}
+			</div>
+			<div class="comment-metadata">
+				{{ comment.created_at }}
+			</div>
+			<div class="comment-content">
+				{{ comment.content | markdown | safe }}
+			</div>
+		</div>
+	{% endfor %}
+</div>
