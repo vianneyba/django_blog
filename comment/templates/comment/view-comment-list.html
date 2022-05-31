@@ -1,5 +1,6 @@
 {% load markdown_extras %}
 
+{% if WITH_COMMENT %}
 <div class="comments">
 	<div class="comments-header">
 		<h2 class="comment-reply-title">
@@ -23,3 +24,4 @@
 		</div>
 	{% endfor %}
 </div>
+{% endif %}
