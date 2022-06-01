@@ -143,10 +143,6 @@ form .btn-primary {
   background-color: white;
 }
 
-.comment {
-  padding: 0 10%;
-}
-
 .paginator {
   margin: auto;
   width: 25%;
@@ -165,12 +161,12 @@ form .btn-primary {
 }
 
 .comments .comment-reply-title {
-  margin-top: 10px;
   font-size: 1.5rem;
   text-align: center;
 }
 .comments .comment {
   padding: 10px 15px 10px 15px;
+  margin-top: 20px;
   background-color: rgba(0, 0, 0, 0.5);
   border: 2px #5A6477 solid;
   border-radius: 15px 15px 15px 15px;

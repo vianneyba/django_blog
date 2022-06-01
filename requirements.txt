@@ -5,3 +5,4 @@ django-environ==0.8.1
 drf-nested-routers==0.93.4
 djangorestframework-simplejwt==5.1.0
 pytz==2021.3
+python-slugify==6.1.2

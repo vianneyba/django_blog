@@ -39,6 +39,9 @@ class Article(models.Model):
 				return like
 		return None
 
+	def count_comments(self):
+		return len(self.comment_set.all())
+
 	class Meta:
 		ordering = ['-created_at']
 		verbose_name = 'Gestion de l\'article'
