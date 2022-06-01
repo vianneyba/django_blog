@@ -14,8 +14,11 @@
 	{% for comment in comments %}
 		<div class="comment">
 			<div>
-				<span class="comment-author">{{ comment.user.username}}</span>, il y à {{ comment.created_at | timesince }}
+				<span class="comment-author">{{ comment.author.username }}</span>, il y à {{ comment.created_at | timesince }}
 			</div>
+
+			{% include 'like_dislike/view-like.html' with type='comment' id_likable=comment.id comment=comment %}
+
 			<div class="comment-content">
 				{{ comment.content | markdown | safe }}
 			</div>

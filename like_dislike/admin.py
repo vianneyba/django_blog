@@ -1,7 +1,11 @@
 from django.contrib import admin
-from .models import LikeArticle
+from .models import LikeArticle, LikeComment
 
-class LikeAdmin(admin.ModelAdmin):
+class LikeArticleAdmin(admin.ModelAdmin):
     list_display = ('article', 'user', 'is_like')
 
-admin.site.register(LikeArticle, LikeAdmin)
+class LikeCommentAdmin(admin.ModelAdmin):
+    list_display = ('comment', 'user', 'is_like')
+
+admin.site.register(LikeArticle, LikeArticleAdmin)
+admin.site.register(LikeComment, LikeCommentAdmin)

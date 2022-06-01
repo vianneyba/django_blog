@@ -12,7 +12,7 @@
             il y à {{ article.created_at | timesince }}
         </div>
 
-        {% include 'like_dislike/view-like.html' %}
+        {% include 'like_dislike/view-like.html' with type='article' id_likable=article.id %}
     </header>
     
     <section class='article'>

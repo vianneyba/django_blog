@@ -35,7 +35,6 @@ def return_article(request, slug=None, pk=None):
     if article.published is False and article.author != request.user:
         return None
 
-
     if (article.like_count+article.dislike_count) == 0:
         progress_bar = 50
     else:
