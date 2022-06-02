@@ -10,3 +10,6 @@ urlpatterns = [
     path('comments/', include('comment.urls')),
     path('i-like/', include('like_dislike.urls')),
 ]
+
+handler404 = "vianneyba.views.handler404"
+handler500 = "vianneyba.views.handler500"

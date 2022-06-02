@@ -14,6 +14,7 @@ from blog import serializers
 from blog.forms import ArticleForm
 from comment.models import Comment
 from comment.forms import CommentForm
+from django.http import Http404
 
 def search_category(category):
     slug = slugify(category)
@@ -84,7 +85,7 @@ def by_tag(request, tag):
 def by_slug(request, slug):
     context = return_article(request, slug=slug)
     if context is None:
-        return redirect('blog:index')
+        raise Http404
 
     form_comment = CommentForm()
 
