@@ -7,7 +7,7 @@
 		</h2>
 	</div>
 	
-	{% if WITH_COMMENT %}
+	{% if WITH_COMMENT or perms.comment.add %}
 		{% include 'comment/add-comment.html' %}
 	{% endif %}
 
