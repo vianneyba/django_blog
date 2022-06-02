@@ -83,6 +83,12 @@ article {
         font-size: 0.9rem;
         float: right
     }
+    .avis {
+        @include border-r($border-radius, $border-radius);
+        background-color: $color_F3;
+        padding: 10px;
+
+    }
 }
 
 // Partie VOTE

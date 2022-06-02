@@ -1,12 +1,14 @@
+{% load like_extras %}
+
 {% if user.id %}
 <div class="vote">
 
-    <a class="{% if like.is_like is True and type == 'article' %}disabled-link{% endif %}"
+    <a class="{% disabled_link id_likable user type True %}"
         href="{% url 'like_dislike:add-like' %}?type={{ type }}&pk={{ id_likable }}&choice=true">
         <i class="fa fa-heart" aria-hidden="true"></i>
     </a>
 
-    <a class= "{% if like.is_like is False and type == 'article' %}disabled-link{% endif %}"
+    <a class="{% disabled_link id_likable user type False %}"
         href="{% url 'like_dislike:add-like' %}?type={{ type }}&pk={{ id_likable }}&choice=false">
         <i class="fa fa-heartbeat" aria-hidden="true"></i>
     </a>
