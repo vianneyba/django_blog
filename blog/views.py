@@ -1,3 +1,4 @@
+import re
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
@@ -13,6 +14,22 @@ from blog import serializers
 from blog.forms import ArticleForm
 from comment.models import Comment
 from comment.forms import CommentForm
+
+def search_category(category):
+    slug = slugify(category)
+    category = Category.objects.get(slug=slug)
+    return category.id
+
+def search_tag(tags, article):
+    t = tags.split(';')
+    for name in t:
+        slug = slugify(name)
+        try:
+            tag = Tag.objects.get(slug=slug)
+        except ObjectDoesNotExist:
+            tag = Tag(name=name, slug=slug)
+            tag.save()
+        article.tags.add(tag)
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -70,7 +87,6 @@ def by_slug(request, slug):
         return redirect('blog:index')
 
     form_comment = CommentForm()
-    form_comment.fields["article_id"].initial = context['article'].id
 
     context['form_comment'] = form_comment
     return render(request, 'blog/view-article.html', context)
@@ -138,12 +154,14 @@ class ArticleViewset(ModelViewSet):
         tempdict = request.data.copy()
         tempdict['author'] = self.request.user.id
 
-        category = Category.objects.get(slug=tempdict['category'])
-        tempdict['category'] = category.id
+        tempdict['category'] = search_category(tempdict['category'])
+        tempdict.pop('tags')
 
         serializer = serializers.ArticleSaveSerializer(data=tempdict)
         if serializer.is_valid():
             article = serializer.save()
+            search_tag(request.data['tags'], article)
+            article.save()
             return Response(self.serializer_class(article).data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
