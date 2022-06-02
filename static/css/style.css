@@ -140,7 +140,6 @@ form input {
   margin: 6px 0px;
 }
 form .btn-primary {
-  display: block;
   margin: 10px auto;
 }
 
@@ -170,6 +169,9 @@ form .btn-primary {
   text-decoration: none;
 }
 
+.comments {
+  margin-top: 25px;
+}
 .comments .comment-reply-title {
   font-size: 1.5rem;
   text-align: center;
@@ -194,6 +196,11 @@ form .btn-primary {
 }
 .block-login input {
   margin-left: 10px;
+}
+
+.article-form {
+  width: 70%;
+  margin: auto;
 }
 
 /*# sourceMappingURL=style.css.map */

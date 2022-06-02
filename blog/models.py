@@ -17,17 +17,18 @@ class Tag(models.Model):
         return self.name
 
 class Article(models.Model):
-	title = models.CharField(max_length=100)
-	content = models.TextField(default='')
+	title = models.CharField('Titre:', max_length=100)
+	content = models.TextField('Contenu:', default='')
 	slug = models.SlugField(unique=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	published = models.BooleanField(default=False)
 	update_date = models.DateTimeField(default=timezone.now, blank=True)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
-	category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='categories')
+	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	like_count = models.IntegerField(default=0)
 	dislike_count = models.IntegerField(default=0)
 	tags = models.ManyToManyField(Tag, blank=True)
+	banner = models.URLField(blank=True)
 
 	def __str__(self):
 		return self.title
@@ -41,6 +42,13 @@ class Article(models.Model):
 
 	def count_comments(self):
 		return len(self.comment_set.all())
+
+	def add_tag(self, tag):
+		if isinstance(tag, list):
+			for t in tag:
+				self.tags.append(t)
+			else:
+				self.tags.append(tag)
 
 	class Meta:
 		ordering = ['-created_at']

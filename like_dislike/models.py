@@ -4,7 +4,7 @@ from blog.models import Article
 from comment.models import Comment
 
 class Like(models.Model):
-    user = models.ForeignKey(User, verbose_name="Utilisateur", on_delete=models.CASCADE, null=True, default=1)
+    user = models.ForeignKey(User, verbose_name="Utilisateur", on_delete=models.CASCADE)
     is_like = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -15,7 +15,9 @@
 	<div class="container content">
 		<div class="row">
 			<header id="banner" class="container-fluid">
+				{% block banner %}
 				<img class="img-fluid" src="{% static '/img/banniere.png' %}" alt="ma bannière">
+				{% endblock %}
 			</header>
 		</div>
 		{% block content %}{% endblock %}	

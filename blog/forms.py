@@ -1,19 +1,28 @@
 from django import forms
-from vianneyba.context_processors import CATEGORIES
 from blog.models import Article
 
 class ArticleForm(forms.ModelForm):
     class Meta:
-      model = Article
-      exclude = ('created_at', 'published', 'update_date',
-        'author', 'like_count', 'dislike_count') 
-    # title = forms.CharField(label='Titre: ', max_length=100)
-    # content = forms.CharField(widget=forms.Textarea)
-    # slug = forms.CharField(label='Slug: ', max_length=100, required=False)
-    # category = forms.ChoiceField(
-    #     widget=forms.Select,
-    #     choices=CATEGORIES,
-    # )
-    # tags = forms.CharField(label='Tags: ', max_length=200)
+        model = Article
+        exclude = ('created_at', 'published', 'update_date',
+            'author', 'like_count', 'dislike_count')
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control'}),
+            'slug': forms.TextInput(attrs={
+                'class': 'form-control'}),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'cols': 80,
+                'rows': 10,
+                'placeholder': 'Description'}),
+            'category': forms.Select(attrs={
+                'class': 'form-control'}),
+            'tags': forms.SelectMultiple(attrs={
+                'class': 'form-control'}),
+            'banner': forms.TextInput(attrs={
+                'class': 'form-control'}), 
+        }
+
 
 

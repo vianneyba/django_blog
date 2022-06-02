@@ -1,7 +1,21 @@
 from django import forms
+from comment.models import Comment
 
-class CommentForm(forms.Form):
-	comment_content = forms.CharField(
-		label='Votre commentaire',
-		widget=forms.Textarea(attrs={'class': 'form-control'}))
-	article_id = forms.CharField(widget=forms.HiddenInput())
+class CommentForm(forms.ModelForm):
+	comment_id = forms.IntegerField(widget=forms.HiddenInput())
+
+	class Meta:
+		model = Comment
+		exclude = ('created_at', 'article',
+			'author', 'like_count', 'dislike_count') 
+
+		widgets = {
+			'content': forms.Textarea(attrs={
+				'class': 'form-control',
+				'cols': 80,
+				'rows': 5})
+		}
+
+		labels = {
+           'content' : '',
+        }

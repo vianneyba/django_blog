@@ -1,7 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 {% load markdown_extras %}
 
 {% block title %}{{ article.title }}{% endblock title %}
+
+{% block banner %}
+{% if  article.banner != "" %}
+<img class="img-fluid" src="{{ article.banner }}" alt="{{ article.title }}_banner">
+{% else %}
+<img class="img-fluid" src="{% static '/img/banniere.png' %}" alt="ma bannière">
+{% endif %}
+{% endblock %}
 
 {% block content %}
 <article class="content-article">

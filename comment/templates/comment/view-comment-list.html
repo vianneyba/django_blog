@@ -15,6 +15,9 @@
 		<div class="comment">
 			<div>
 				<span class="comment-author">{{ comment.author.username }}</span>, il y à {{ comment.created_at | timesince }}
+				{% if user == comment.author %}
+				<a href="{% url 'comment:update' article.id comment.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+				{% endif %}
 			</div>
 
 			{% include 'like_dislike/view-like.html' with type='comment' id_likable=comment.id comment=comment %}
