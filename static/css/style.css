@@ -32,6 +32,7 @@ header img {
   background: #030407;
   color: #ABBCDA;
   min-height: 100vh;
+  padding: 10px;
 }
 
 article {
@@ -185,6 +186,14 @@ form .btn-primary {
 }
 .comments .comment .comment-author {
   text-transform: capitalize;
+}
+
+.block-login {
+  width: 40%;
+  margin: auto;
+}
+.block-login input {
+  margin-left: 10px;
 }
 
 /*# sourceMappingURL=style.css.map */

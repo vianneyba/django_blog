@@ -50,6 +50,7 @@ header {
     background: $color_F5;
     color: $color_F1;
     min-height: 100vh;
+    padding: 10px;
 }
 
 article {
@@ -198,5 +199,13 @@ form {
         .comment-author {
             text-transform: capitalize;
         }
+    }
+}
+
+.block-login {
+    width: 40%;
+    margin: auto;
+    input {
+        margin-left: 10px;
     }
 }

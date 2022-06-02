@@ -9,24 +9,16 @@
 				</div> 
 			{% endif %}
 
-			{% if next %}
-				{% if user.is_authenticated %}
-					<p>Vous n'avze pas accés a cette page</p>
-				{% else %}
-					<p>merci de vous connecter</p>
-				{% endif %}
-			{% endif %}
-
-			<div class="col-lg-5 offset-lg-3">
+			<div class="block-login">
 				<form method="post" action="{% url 'authenticate:login' %}">
 					{% csrf_token %}
 
 					<div class="form-group row">
-		    			<label class="col-2 col-form-label" for="username">Username:</label>
+					<label class="col-2 col-form-label" for="username">Username: </label>
 		    			<div class="col-10">
 							<input type="text" class="form-control" id="username" name="username">
 						</div>
-						<label class="col-2 col-form-label" for="password">Password:</label>
+						<label class="col-2 col-form-label" for="password">Password: </label>
 		    			<div class="col-10">
 							<input type="password" class="form-control" id="password" name="password">
 						</div>
@@ -36,7 +28,9 @@
 					</div>
 				</form>
 
-				<p><a href="{% url 'authenticate:login' %}">Mot de passe perdu?</a></p>
+				<p>
+					<a href="{% url 'authenticate:login' %}">Mot de passe perdu?</a>
+				</p>
 			</div>
 		</div>
 	</article>
