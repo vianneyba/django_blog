@@ -59,6 +59,10 @@ class Game(models.Model):
             command = '/media/vianney/9652ebcd-97f2-40db-bb3c-33a810ed6f40/vianney/jeux/Programme/yuzu-20220416-3af07cfab.AppImage'
             path_rom = f'\'{self.exec_model.path}{self.path}\''
             command_line = f'{command} {path_rom}'
+        elif self.exec_model.core.command == 'psp':
+            command = 'ppsspp'
+            path_rom = f'\'{self.exec_model.path}{self.path}\''
+            command_line = f'{command} {path_rom}'
 
         return command_line
 
