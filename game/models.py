@@ -45,6 +45,7 @@ class Game(models.Model):
 
     def get_command_line(self):
         path_core = '/usr/lib/x86_64-linux-gnu/libretro/'
+        print(self.exec_model.core.command)
 
         if self.exec_model.core.command == 'retroarch':
             command = 'retroarch -fv -L'
@@ -63,8 +64,8 @@ class Game(models.Model):
             command = 'ppsspp'
             path_rom = f'\'{self.exec_model.path}{self.path}\''
             command_line = f'{command} {path_rom}'
-        elif  self.exec_model.core.command == 'pc_wine':
-            command_line = f'playonlinux --run "{game.path}"'
+        elif self.exec_model.core.command == 'pc_wine':
+            command_line = f'playonlinux --run "{self.path}"'
 
         return command_line
 
