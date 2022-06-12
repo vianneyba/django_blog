@@ -63,6 +63,8 @@ class Game(models.Model):
             command = 'ppsspp'
             path_rom = f'\'{self.exec_model.path}{self.path}\''
             command_line = f'{command} {path_rom}'
+        elif  self.exec_model.core.command == 'pc_wine':
+            command_line = f'playonlinux --run "{game.path}"'
 
         return command_line
 
