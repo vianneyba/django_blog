@@ -9,6 +9,7 @@ class Core(models.Model):
 
 
 class ExecModel(models.Model):
+    name = models.CharField(max_length=50, default='')
     core = models.ForeignKey(Core, on_delete=models.CASCADE)
     path = models.CharField(null=True, max_length=150)
 
@@ -45,7 +46,6 @@ class Game(models.Model):
 
     def get_command_line(self):
         path_core = '/usr/lib/x86_64-linux-gnu/libretro/'
-        print(self.exec_model.core.command)
 
         if self.exec_model.core.command == 'retroarch':
             command = 'retroarch -fv -L'
@@ -66,6 +66,9 @@ class Game(models.Model):
             command_line = f'{command} {path_rom}'
         elif self.exec_model.core.command == 'pc_wine':
             command_line = f'playonlinux --run "{self.path}"'
+        elif self.exec_model.core.command == 'gamecube':
+            path_rom = f'\'{self.exec_model.path}{self.path}\''
+            command_line = f'dolphin-emu -b -e {path_rom}'
 
         return command_line
 
