@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'authenticate.apps.AuthenticateConfig',
     'comment.apps.CommentConfig',
-    'like_dislike.apps.LikeDislikeConfig'
+    'like_dislike.apps.LikeDislikeConfig',
+    'game.apps.GameConfig'
 ]
 
 MIDDLEWARE = [
