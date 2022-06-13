@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from game.models import Game, ExecModel, Core
+from game.models import Game, ExecModel, Core, System
+
+class SystemSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = System
+        fields = '__all__'
 
 class CoreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,7 +18,8 @@ class ExecModelSerializer(serializers.ModelSerializer):
         fields = ['core', 'path']
 
 class GameSerializer(serializers.ModelSerializer):
-    exec_model = ExecModelSerializer(read_only=True)
+    # exec_model = ExecModelSerializer(read_only=True)
+    system = SystemSerializer()
     command_line = serializers.SerializerMethodField('get_command_line')
 
     def get_command_line(self, game):
@@ -21,4 +27,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['name', 'exec_model', 'command_line']
+        fields = [
+            'name', 'desc', 'image', 'rating', 'releasedate',
+            'genre', 'developper', 'publisher', 'region', 'players',
+            'system', 'command_line']

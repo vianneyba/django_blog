@@ -14,7 +14,7 @@ class ExecModel(models.Model):
     path = models.CharField(null=True, max_length=150)
 
     def __str__(self):
-        return f'{self.core.name}'
+        return f'{self.name} avec {self.core.name}'
 
 
 class System(models.Model):
@@ -32,7 +32,7 @@ class Game(models.Model):
     rating = models.FloatField(null=True, blank=True)
     releasedate = models.DateField(null=True, blank=True)
     genre = models.CharField(null=True, max_length=30, blank=True)
-    developer = models.CharField(null=True, max_length=30, blank=True)
+    developper = models.CharField(null=True, max_length=30, blank=True)
     publisher = models.CharField(null=True, max_length=30, blank=True)
     region = models.CharField(null=True, max_length=10, blank=True)
     players = models.PositiveIntegerField(null=True, blank=True)

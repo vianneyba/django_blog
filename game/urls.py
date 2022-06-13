@@ -6,6 +6,7 @@ app_name = 'game'
 
 router = routers.DefaultRouter()
 router.register(r'games', views.GamesViewset, basename='games')
+router.register(r'systems', views.SystemsViewset, basename='systems')
 
 urlpatterns = [
     # path('', views.index, name='index'),

@@ -10,5 +10,6 @@ def admin_media(request):
         'WITH_REGISTRATION': settings.WITH_REGISTRATION,
         'TITLE_SITE': settings.TITLE_SITE,
         'CATEGORIES': CATEGORIES,
-        'DEFAULT_LANG': 'French'
+        'DEFAULT_LANG': 'French',
+        'URL_IMAGE': settings.URL_IMAGE,
     }

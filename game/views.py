@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from game.models import Game
+from game.models import Game, System
 from game import serializers
 
 @staff_member_required
@@ -23,9 +23,9 @@ def list_game(request):
     paginator = Paginator(games_list, 25)
 
     page = request.GET.get('page')
-    games = paginator.get_page(page)
+    page_obj = paginator.get_page(page)
     return render(request, 'game_view.html',
-        {'games': games, 'url': url})
+        {'page_obj': page_obj, 'url': url})
 
 @staff_member_required
 def run_game(request, pk):
@@ -43,6 +43,24 @@ class GamesViewset(ModelViewSet):
 
     def retrieve(self, request, pk=None):
         queryset = Game.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = serializers.GameSerializer(user)
+        game = get_object_or_404(queryset, pk=pk)
+        serializer = serializers.GameSerializer(game)
         return Response(serializer.data)
+
+    def list(self, request):
+        queryset = Game.objects.all()
+        slug_system = request.query_params.get('system', None)
+        name_game = request.query_params.get('game', None)
+
+        if slug_system is not None:
+            queryset = queryset.filter(system__slug=slug_system)
+        if name_game is not None:
+            queryset = queryset.filter(name__icontains=name_game)
+
+        
+        serializer = serializers.GameSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+class SystemsViewset(ModelViewSet):
+    serializer_class = serializers.SystemSerializer
+    queryset = System.objects.all()

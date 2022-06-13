@@ -18,12 +18,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for game in games %}
+            {% for game in page_obj %}
             <tr>
                 <td><a href="{% url 'game:run-game' game.id %}">{{ game.name }}</a></td>
                 <td>
                     <a href="{% url 'game:run-game' game.id %}">
-                    <img src="http://192.168.1.22/game/screenmarqueesmall/{{ game.id }}_screenmarqueesmall.png" alt="{{ game.name }}">
+                    <img src="{{URL_IMAGE}}/{{ game.sc_id }}_screenmarqueesmall.png" alt="{{ game.name }}">
                     </a>
                 </td>
                 <td><a href="?system={{ game.system.slug }}">{{ game.system.title }}</a></td>
@@ -32,17 +32,7 @@
         </tbody>
     </table>
 
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            {% if games.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ games.previous_page_number }}{{ url }}">Previous</a></li>
-            {% endif %}
-            <li class="page-item">Page {{ games.number }} of {{ games.paginator.num_pages }}.</li>
-            {% if games.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ games.next_page_number }}{{ url }}">Next</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+    {% include 'paginator.html' %}
 {% endblock %}
 </body>
 </html>

@@ -73,17 +73,24 @@ def index(request):
 def by_category(request, category):
     articles = Article.objects.filter(category__slug=category)
 
+    if len(articles) == 0:
+        raise Http404
+
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
 
 def by_tag(request, tag):
     articles = Article.objects.filter(tags__slug=tag)
 
+    if len(articles) == 0:
+        raise Http404
+
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
 
 def by_slug(request, slug):
     context = return_article(request, slug=slug)
+
     if context is None:
         raise Http404
 
@@ -97,6 +104,9 @@ def by_author(request, author):
         articles = Article.objects.filter(author__username=author)
     else:
         articles = Article.objects.filter(author__username=author, published=True)
+
+    if len(articles) == 0:
+        raise Http404
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)

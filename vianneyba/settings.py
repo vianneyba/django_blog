@@ -106,7 +106,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 50,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',)
 }
@@ -114,3 +114,4 @@ REST_FRAMEWORK = {
 WITH_COMMENT = env.bool('WITH_COMMENT')
 WITH_REGISTRATION = env.bool('WITH_REGISTRATION')
 TITLE_SITE = env.str("TITLE_SITE")
+URL_IMAGE = env.str("URL_IMAGE")
