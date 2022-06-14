@@ -83,6 +83,12 @@ class Game:
                 list_game.append(game)
         return list_game
 
+    @classmethod
+    def search_by_name_system(cls, name, system):
+        for game in cls.list_game:
+            if game.name == name and game.system.title == system:
+                return game
+
 class Article:
     def __init__(self, title, content, category):
         self.id = None
@@ -246,20 +252,19 @@ class window_game:
         frame.grid(row=row, column=col, sticky="nsew")
 
     def view_list_game(self, row=0, col=1, rowspan=10):
-        yDefilB = Scrollbar(self.win, orient='vertical')
-        yDefilB.grid(row=row, column=col+1, rowspan=rowspan,sticky='ns')
+        columns = ('title', 'system')
+        self.list_game = ttk.Treeview(root, columns=columns, show='headings', selectmode='browse')
+        self.list_game.heading('title', text='Titre')
+        self.list_game.heading('system', text='System')
+        self.list_game.column('title', minwidth=250, width=300, stretch=NO) 
+        self.list_game.column('system', minwidth=150, width=190)
+        self.list_game.bind('<<TreeviewSelect>>', self.callback_list_game)
 
-        xDefilB = Scrollbar(self.win, orient='horizontal')
-        xDefilB.grid(row=row+1, column=col, rowspan=rowspan,sticky='ew')
-
-        self.list_game = Listbox(self.win,
-            xscrollcommand=xDefilB.set, yscrollcommand=yDefilB.set, width=50, height=16)
+        scrollbar = ttk.Scrollbar(root, orient=VERTICAL, command=self.list_game.yview)
+        self.list_game.configure(yscroll=scrollbar.set)
+        scrollbar.grid(row=row, column=col+1,rowspan=rowspan, sticky='ns')
         self.list_game.grid(row=row, column=col, rowspan=rowspan, sticky='nsew')
-        xDefilB['command'] = self.list_game.xview
-        yDefilB['command'] = self.list_game.yview
-        
-        self.list_game.bind("<<ListboxSelect>>", self.callback_list_game)
-    
+
     def entry_search(self, row=0, col=0):
         frame = LabelFrame(self.win, text="Recherche")
         label_search = Label(frame, text='recherche: ')
@@ -272,28 +277,25 @@ class window_game:
 
 
     def get_list_game(self):
-        self.list_game.delete(0,END)
-        response = self.client_api.get_list_game()
+        self.clear_list_game()
+        games = self.client_api.get_list_game()
+        self.change_list_game(games)
 
-        for game in response:
-            self.list_game.insert(END, f'{game.id} - {game.name}')
+    def clear_list_game(self):
+        for item in self.list_game.get_children():
+            self.list_game.delete(item)
 
     def callback_system_changed(self, event):
         name = self.selected_system.get()
         system = System.search_by_name(name)
         self.client_api.get_list_game(system=system.slug)
         games = Game.search_by_system(system)
-        self.list_game.delete(0,END)
-        for game in games:
-            self.list_game.insert(END, f'{game.id} - {game.name}')
-
+        self.change_list_game(games)
 
     def callback_list_game(self, event):
-        selection = event.widget.curselection()
-        index = selection[0]
-        data = event.widget.get(index)
-        id_game = data.split(" - ")[0]
-        game = Game.search_by_id(id_game)
+        item = self.list_game.item(self.list_game.selection())
+        record = item['values']
+        game = Game.search_by_name_system(record[0], record[1])
         print(game.command_line)
         os.system(game.command_line)
 
@@ -301,9 +303,13 @@ class window_game:
         word = self.entry_search.get()
         self.client_api.get_list_game(game=word)
         games = Game.search_game(word)
-        self.list_game.delete(0, END)
+        self.change_list_game(games)
+
+    def change_list_game(self, games):
+        self.clear_list_game()
         for game in games:
-            self.list_game.insert(END, f'{game.id} - {game.name}')
+            info_game = (game.name, game.system.title)
+            self.list_game.insert('', END, values=info_game)
 
 root = Tk()
 root.title('Vianney Game')
