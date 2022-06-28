@@ -12,4 +12,5 @@ def admin_media(request):
         'CATEGORIES': CATEGORIES,
         'DEFAULT_LANG': 'French',
         'URL_IMAGE': settings.URL_IMAGE,
+        'PATH_IMAGE': 'http://vianneyba.fr/images/cover'
     }

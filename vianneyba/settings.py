@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import environ
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -22,7 +23,8 @@ INSTALLED_APPS = [
     'authenticate.apps.AuthenticateConfig',
     'comment.apps.CommentConfig',
     'like_dislike.apps.LikeDislikeConfig',
-    'game.apps.GameConfig'
+    'game.apps.GameConfig',
+    'music.apps.MusicConfig'
 ]
 
 MIDDLEWARE = [
@@ -110,6 +112,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',)
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120)}
 
 WITH_COMMENT = env.bool('WITH_COMMENT')
 WITH_REGISTRATION = env.bool('WITH_REGISTRATION')

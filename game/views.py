@@ -57,7 +57,6 @@ class GamesViewset(ModelViewSet):
         if name_game is not None:
             queryset = queryset.filter(name__icontains=name_game)
 
-        
         serializer = serializers.GameSerializer(queryset, many=True)
         return Response(serializer.data)
 

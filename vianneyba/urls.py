@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('launch-game/', include('game.urls')),
     path('', include('blog.urls')),
+    path('music/', include('music.urls')),
     path('accounts/', include('authenticate.urls')),
     path('comments/', include('comment.urls')),
     path('i-like/', include('like_dislike.urls')),
