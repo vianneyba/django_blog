@@ -1,5 +1,6 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
+from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
@@ -14,13 +15,16 @@ def return_paginator(request, queryset):
 
 @staff_member_required
 def index(request):
-    albums = models.Album.objects.all()
+    albums = models.Album.objects.all().order_by('-pk')
     if request.GET.get('date'):
         release_year = request.GET.get('date')
         albums = albums.filter(release_year=release_year)
     if request.GET.get('band'):
         band = request.GET.get('band')
         albums = albums.filter(band=band)
+    if request.GET.get('search'):
+        q = request.GET.get('search')
+        albums = albums.filter(Q(band__name__icontains=q) | Q(title__icontains=q))
     
     context = {'page_obj': return_paginator(request, albums)}
     return render(request, 'music/index.html', context)

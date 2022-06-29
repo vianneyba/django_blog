@@ -14,7 +14,7 @@
             </h3>
             <p>{{ album.title | title }}</p>
             <p>
-                <a href="{# path_for('musicByYear', { 'year': album.release_year }) #}">{{ album.releaseDate }}</a>
+                <a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.releaseDate }}</a>
             </p>
             <p>
                 <a href="{# path_for('musicByNote', { 'note': album.score }) #}">{# include 'mp3/note.html' #}</a>

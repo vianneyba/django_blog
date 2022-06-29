@@ -3,25 +3,34 @@
 {% block content %}
 
 <div class="row">
-{% for album in page_obj %}
-<div class="col-lg-4 home-album">
-    <div class="row">
-      <div class="col-md-12">
-        <a href="{% url 'music:view-album' album.id %}">
-          <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ album.code }}.jpg" alt="{{ album.group.name | upper }} - {{ album.title }}"/>
-        </a>
-      </div>
-
-      <div class="col-md-12">
-        <h4 class="text-center"><a href="{% url 'music:index' %}?band={{ album.band.id }}">{{ album.band.name | upper }}</a></h4>
-        <p class="text-center"><a href="{% url 'music:view-album' album.id %}">{{ album.title | title }}</a>
-          [<a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>]
-        </p>
-      </div>
+    <div class="col-md-12">
+        <div class="col-md-6 offset-md-3">
+            <form action="" method="get" class="form-example">
+                <input type="text" name="search" required>
+                <button type="submit" class="btn btn-primary mb-2">Recherche</button>
+            </form>
+        </div>
     </div>
-  </div>
+{% for album in page_obj %}
+    <div class="col-md-4 home-album">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{% url 'music:view-album' album.id %}">
+                    <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ album.code }}.jpg" alt="{{ album.group.name | upper }} - {{ album.title }}"/>
+                </a>
+            </div>
 
+            <div class="col-md-12">
+                <h4 class="text-center"><a href="{% url 'music:index' %}?band={{ album.band.id }}">{{ album.band.name | upper }}</a></h4>
+                <p class="text-center">
+                    <a href="{% url 'music:view-album' album.id %}">{{ album.title | title }}</a>
+                    [<a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>]
+                </p>
+            </div>
+        </div>
+    </div>
 {% endfor %}
+{% include 'paginator.html' %}
 </div>
 
 
