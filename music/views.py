@@ -25,6 +25,9 @@ def index(request):
     if request.GET.get('search'):
         q = request.GET.get('search')
         albums = albums.filter(Q(band__name__icontains=q) | Q(title__icontains=q))
+    if request.GET.get('code'):
+        code = request.GET.get('code')
+        albums = albums.get(code=code)
     
     context = {'page_obj': return_paginator(request, albums)}
     return render(request, 'music/index.html', context)
@@ -35,8 +38,22 @@ def view_album(request, pk):
 
     return render(request, 'music/view_album.html', {'album': album})
 
+def view_album_by_code(request, pk):
+    album = models.Album.objects.get(code=pk)
+
+    return render(request, 'music/view_album.html', {'album': album})
+
 class AlbumList(viewsets.ModelViewSet):
 
     queryset= models.Album.objects.all()
     serializer_class= serializers.AlbumSerializer
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = models.Album.objects.all()
+        if self.request.query_params.get('band') is not None:
+            print('by id band')
+            pk = self.request.query_params.get('band')
+            queryset = queryset.filter(band_id=pk)
+
+        return queryset
