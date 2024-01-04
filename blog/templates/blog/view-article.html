@@ -27,7 +27,7 @@
     <section class='article'>
         <h1 class="entry-title">{{ article.title }}</h1>
         <div class="entry-content">
-            {{ article.content | markdown | safe }}
+            {{ article.content | safe }}
         </div>
     </section>
     
@@ -41,7 +41,7 @@
                     <a href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
                 {% endfor %}
             {% endif %}
-            | <a href="{% url 'blog:by-slug' article.slug %}" rel="bookmark" title="Permalink to {{ article.title | striptags }}">Permalink</a>            
+            <!-- | <a href="{% url 'blog:by-slug' article.slug %}" rel="bookmark" title="Permalink to {{ article.title | striptags }}">Permalink</a>-->
         </div>
     </footer>
 

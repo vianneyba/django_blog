@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="article-form">
+    <form method="post" action="{% url 'magazine:write-article' %}">
+        {% csrf_token %}
+        <div class="form-group">		
+			{{ form_write_article.as_p }}
+		</div>
+        <button type="submit" class="btn btn-primary">Ajouter l'article</button>
+    </form>
+</div>
+
+{% endblock %}

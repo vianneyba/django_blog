@@ -39,7 +39,7 @@ class Game(models.Model):
     path = models.CharField(null=True, max_length=150)
     system = models.ForeignKey(System, on_delete=models.CASCADE)
     sc_id = models.IntegerField(default=0)
-    exec_model = models.ForeignKey(ExecModel, on_delete=models.CASCADE)
+    exec_model = models.ForeignKey(ExecModel, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
         return f'{self.name} [{self.system}]'

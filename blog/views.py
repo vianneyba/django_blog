@@ -16,10 +16,12 @@ from comment.models import Comment
 from comment.forms import CommentForm
 from django.http import Http404
 
+
 def search_category(category):
     slug = slugify(category)
     category = Category.objects.get(slug=slug)
     return category.id
+
 
 def search_tag(tags, article):
     t = tags.split(';')
@@ -32,12 +34,14 @@ def search_tag(tags, article):
             tag.save()
         article.tags.add(tag)
 
+
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     return page_obj
+
 
 def return_article(request, slug=None, pk=None):
     try:
@@ -64,11 +68,13 @@ def return_article(request, slug=None, pk=None):
         'progress_bar': progress_bar,
         'like': article.search_like(request.user)}
 
+
 def index(request):
     articles = Article.objects.all().filter(published=True)
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
+
 
 def by_category(request, category):
     articles = Article.objects.filter(category__slug=category)
@@ -79,6 +85,7 @@ def by_category(request, category):
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
 
+
 def by_tag(request, tag):
     articles = Article.objects.filter(tags__slug=tag)
 
@@ -87,6 +94,7 @@ def by_tag(request, tag):
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
+
 
 def by_slug(request, slug):
     context = return_article(request, slug=slug)
@@ -99,6 +107,7 @@ def by_slug(request, slug):
     context['form_comment'] = form_comment
     return render(request, 'blog/view-article.html', context)
 
+
 def by_author(request, author):
     if request.GET.get('view') == 'all' and author == request.user.username:
         articles = Article.objects.filter(author__username=author)
@@ -110,6 +119,7 @@ def by_author(request, author):
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
+
 
 def add_article(request):
     form_add_article = ArticleForm()
@@ -124,6 +134,7 @@ def add_article(request):
     context = {'form_add_article': form_add_article}
     return render(request, 'blog/add-article.html', context)
 
+
 def update_article(request, pk):
     article = Article.objects.get(pk=pk)
     form_add_article = ArticleForm(instance=article)
@@ -134,12 +145,12 @@ def update_article(request, pk):
             form_add_article.save()
             return redirect('blog:by-slug', slug=article.slug)
         
-     
     context = {
         'article': article,
         'form_add_article': form_add_article,
         'type': 'update'}
     return render(request, 'blog/add-article.html', context)
+
 
 def publish_article(request, pk, value):
     if value == 'True':

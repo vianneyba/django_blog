@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row article-form">
+    <div class="col-md-3">
+        <a href="{% url 'magazine:add-link' article.id %}">Ajout Lien</a><br>
+        <a href="{% url 'magazine:add-paragraph' article.id %}">Ajout Paragraphe</a>
+    </div>
+    
+    <div class="col-md-9">
+        <h1>{{article.game.name}} sur {{article.game.system.title}}</h1>
+
+        <div class="col-md-12">
+            <p>Article sur {{ article.num_page }} page{% if article.num_page > 1 %}s{% endif%}</p>
+            <p>{{ article.preface }}</p>
+            <p>dans le {{ article.title_mag }} numéro {{ article.num_mag }}</p>
+        </div>
+        
+        <div class="col-md-12">
+            {% for link in article.link_set.all %}
+                <a href="{{ link }}">lien {{ forloop.counter }}</a><br>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-12">
+            {% for paragraph in article.paragraph_set.all %}
+                <h1>{{ paragraph.title }}</h1>
+                <p>{{ paragraph.text }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

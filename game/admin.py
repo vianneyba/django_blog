@@ -3,7 +3,7 @@ from game.models import Game, System, Core, ExecModel
 
 class GameAdmin(admin.ModelAdmin):
     search_fields = ['name']
-    list_display = ('name', 'system', 'path')
+    list_display = ('name', 'path')
 
 admin.site.register(Game, GameAdmin)
 admin.site.register(System)

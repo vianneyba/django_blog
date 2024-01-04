@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="article-form">
+    <h1>{{article.game.name}} sur {{article.game.system.title}}</h1>
+    <form method="post" action="{% url 'magazine:add-link' article.id %}">
+        {% csrf_token %}
+        <div class="form-group">		
+			{{ form.as_p }}
+		</div>
+        <button type="submit" class="btn btn-primary">Ajouter un lien</button>
+    </form>
+</div>
+{% endblock %}
