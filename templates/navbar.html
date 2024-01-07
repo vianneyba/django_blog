@@ -11,24 +11,25 @@
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<a class="dropdown-item" href="{% url 'blog:add-article' %}">Rédiger</a>
 							<a class="dropdown-item" href="{% url 'game:list-game'%}">launch</a>
-						<!-- { if session.auth.id == 1 %} -->
-						<!-- <a class="dropdown-item" href="{ path_for('musicHome') }">Musique</a> -->
-						<!-- { endif %} -->
-						<!-- <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> -->
+						{% if user.is_superuser %}
+							<a class="dropdown-item" href="{% url 'magazine:write-article' %}">Ajout Article Mag</a>
+							<a class="dropdown-item" href="{% url 'music:index' %}">Musique</a>
+						{% endif %}
+						{# <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> #}
 						<a class="dropdown-item" href="{% url 'blog:by-author' user.username %}?view=all">Mes Articles</a>
-						<!-- <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> -->
+						{# <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> #}
 					</div>
 				</li>
 			{% endif %}
-			<!-- { endif %} -->
-			
-			<!-- { if session.auth.id == 1 or session.auth.id == 3 %} -->
-				<!-- <li class="nav-item"><a class="nav-link" href="{ path_for('quizz') }">Quizz</a></li> -->
-      		<!-- { endif %} -->
+			{# { endif %} #}
+
+			{# { if session.auth.id == 1 or session.auth.id == 3 %} #}
+				{# <li class="nav-item"><a class="nav-link" href="{ path_for('quizz') }">Quizz</a></li> #}
+      		{# { endif %} #}
       
-      <!-- { if session.auth.isAdmin %} -->
-        <!-- <li class="nav-item"><a class="nav-link" href="{ path_for('adminChmod') }">Admin</a></li> -->
-      <!-- { endif %} -->
+      {# { if session.auth.isAdmin %} #}
+        {# <li class="nav-item"><a class="nav-link" href="{ path_for('adminChmod') }">Admin</a></li> #}
+      {# { endif %} #}
 		</ul>  
 
 		<ul class="navbar-nav mr-auto">
@@ -38,14 +39,14 @@
 			{% endfor %}
 		</ul> 	      
 		
-		<!-- <form class="form-inline my-2 my-lg-0" method="get" action=" path_for('articleSearch') }">
+		{# <form class="form-inline my-2 my-lg-0" method="get" action=" path_for('articleSearch') }">
 			<div class="input-group">
 				<input class="form-control mr-sm-2" type="text" class="form-control" placeholder="Recherche" name="search">
 				<div class="input-group-btn">
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Recherche</button>
 				</div>
 			</div>
-		</form>  	       -->
+		</form> #}
 
 		{% if WITH_REGISTRATION %}
 		<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">

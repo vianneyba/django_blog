@@ -1,0 +1,23 @@
+<div class="insert">
+    {% for insert in inserts %}
+    
+    {{ insert.id_mun }}
+        {% if insert.id_num == id %}
+        <div class="row">
+
+            <div class="col-md-12">
+                <h1>{{ insert.title }}</h1>
+                <p>{{ insert.text }}</p>
+            </div>
+
+            {% for images in insert.photos.all %}
+                <div class="col-md-4">
+                    {% include "magazine/photo_in_article.html" with images=insert.photos.all id=forloop.counter dir=dir %}
+                </div>
+            {% endfor %}
+        </div>
+            
+
+        {% endif %}
+    {% endfor %}
+</div>

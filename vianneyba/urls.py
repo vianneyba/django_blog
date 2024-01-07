@@ -10,7 +10,7 @@ urlpatterns = [
     path('accounts/', include('authenticate.urls')),
     path('comments/', include('comment.urls')),
     path('i-like/', include('like_dislike.urls')),
-    path('write-article/', include('magazine.urls')),
+    path('article/', include('magazine.urls')),
     path('', include('blog.urls')),
 ]
 

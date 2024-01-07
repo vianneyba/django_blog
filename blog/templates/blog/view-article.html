@@ -27,7 +27,7 @@
     <section class='article'>
         <h1 class="entry-title">{{ article.title }}</h1>
         <div class="entry-content">
-            {{ article.content | safe }}
+            {{ article.content | markdown | safe }}
         </div>
     </section>
     
@@ -41,9 +41,18 @@
                     <a href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
                 {% endfor %}
             {% endif %}
-            <!-- | <a href="{% url 'blog:by-slug' article.slug %}" rel="bookmark" title="Permalink to {{ article.title | striptags }}">Permalink</a>-->
+             {# | <a href="{% url 'blog:by-slug' article.slug %}" rel="bookmark" title="Permalink to {{ article.title | striptags }}">Permalink</a> #}
         </div>
     </footer>
+
+    {% if article.articles_mag %}
+        {% for art in article.articles_mag.all %}
+            <hr>
+            <div class="insert-article">
+                {% include "magazine/article/"|add:art.slug|add:".html" with article=art %}
+            </div>
+        {% endfor %}
+    {% endif %}
 
     {% include 'comment/view-comment-list.html' %}
 

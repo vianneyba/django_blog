@@ -1,0 +1,12 @@
+{# Template pour voir les notes dans les tests de jeux #}
+<table class="table score_table">
+    {% for score in scores %}
+        <tr class="tr_master">
+            <td>{{ score.title }}</td>
+            <td class="score">{{ score.score }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ score.text }}</td>
+        </tr>
+    {% endfor %}
+</table>

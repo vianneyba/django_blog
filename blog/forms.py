@@ -1,15 +1,14 @@
 from django import forms
-from blog.models import Article
+from blog.models import Article as ArticleBlog
+from magazine.models import Article as ArticleMag
 
 class ArticleForm(forms.ModelForm):
     class Meta:
-        model = Article
+        model = ArticleBlog
         exclude = ('created_at', 'published', 'update_date',
-            'author', 'like_count', 'dislike_count')
+            'author', 'like_count', 'dislike_count', 'slug')
         widgets = {
             'title': forms.TextInput(attrs={
-                'class': 'form-control'}),
-            'slug': forms.TextInput(attrs={
                 'class': 'form-control'}),
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -22,6 +21,7 @@ class ArticleForm(forms.ModelForm):
                 'class': 'form-control'}),
             'banner': forms.TextInput(attrs={
                 'class': 'form-control'}), 
+            'articles_mag': forms.CheckboxSelectMultiple()
         }
 
 

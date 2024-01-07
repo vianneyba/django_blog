@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+    <div class="col-md-2">
+        <form action=""  method="get">
+            <label for="system-select">Systèmes</label>
+            <select name="scan-system" id="pet-select">
+                {% for system in systems %}
+                    <option value="{{ system.slug }}">{{ system.title }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">a Scanner</button>
+        </form>
+    </div>
+
     <form class="col-md-6 offset-md-3" action=""  method="get">
         <div class="form-group">
             <label for="inputSearch">recherche</label>

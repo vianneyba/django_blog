@@ -1,0 +1,15 @@
+{# Template pour voir les photographies dans les test magazine #}
+{% for image in images %}
+    {% if image.id_num == id %}
+        <figure class="figure">
+            <img class="figure-img img-fluid rounded"
+            src="http://vianneyba.free.fr/images/{{ dir }}/{{ image.link }}.jpg"
+            alt="{{ image.text }}" />
+        
+            <figcaption>
+            {{ image.text }}
+            </figcaption>
+        </figure>
+    {% endif %}
+{% endfor %}
+  

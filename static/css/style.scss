@@ -6,6 +6,7 @@ $color_F3: #30343C;
 $color_F4: #0F1218;
 $color_F5: #030407;
 $color_red: #F2504B;
+$color_red_2: #530c0a;
 $vert: #63B96B;
 
 $transparent_color: rgba(0, 0, 0, 0.5);
@@ -88,7 +89,33 @@ article {
         @include border-r($border-radius, $border-radius);
         background-color: $color_F3;
         padding: 10px;
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+        }
+    }
+    .insert {
+        @include border-r($border-radius, $border-radius);
+        background-color: $color_F3;
+        padding: 10px;
+        margin: 10px;
+    }
+}
 
+.score_table {
+    @include border-r($border-radius, $border-radius);
+    border: 2px solid;
+    border-color: $color_red;
+    .tr_master {
+        color: $color_red;
+        background-color: $color_red_2;
+    }
+    .score {
+        font-size: 1.3rem;
+        text-align: right;
+    }
+    td {
+        border-top: 1px solid $color_red;
     }
 }
 
@@ -233,4 +260,8 @@ form {
         margin: auto;
         width: 30%;
     }
+}
+
+.insert-article {
+    @include border-r($border-radius, $border-radius);
 }

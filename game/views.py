@@ -7,12 +7,17 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from game.models import Game, System
 from game import serializers
+from game.insert_games import insert
+
 
 @staff_member_required
 def list_game(request):
     url =''
     games_list = Game.objects.all()
+    systems = System.objects.all()
 
+    if 'scan-system' in request.GET and request.GET["scan-system"] != '':
+        insert(request.GET["scan-system"])
     if 'system' in request.GET and request.GET["system"] != '':
         url += f'&system={request.GET["system"]}'
         games_list = games_list.filter(system__slug=request.GET["system"])
@@ -25,7 +30,8 @@ def list_game(request):
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
     return render(request, 'game_view.html',
-        {'page_obj': page_obj, 'url': url})
+        {'page_obj': page_obj, 'url': url, 'systems': systems})
+
 
 @staff_member_required
 def run_game(request, pk):
@@ -37,28 +43,45 @@ def run_game(request, pk):
 
     return HttpResponse("Hello, world. You're at the polls index.")
 
+
+@staff_member_required
+def insert_games(request, system):
+    insert(system)
+    return HttpResponse("Hello, world. You're at the polls index.")
+
+
 class GamesViewset(ModelViewSet):
     serializer_class = serializers.GameSerializer
-    queryset = Game.objects.all()
 
-    def retrieve(self, request, pk=None):
+    # def retrieve(self, request, pk=None):
+    #     queryset = Game.objects.all()
+    #     game = get_object_or_404(queryset, pk=pk)
+    #     serializer = serializers.GameSerializer(game)
+    #     return Response(serializer.data)
+
+    # def list(self, request):
+    #     slug_system = request.query_params.get('system', None)
+    #     name_game = request.query_params.get('game', None)
+    #     print(f'nom = {name_game}')
+    #     if slug_system is not None:
+    #         queryset = queryset.filter(system__slug=slug_system)
+    #     if name_game is not None:
+    #         queryset = queryset.filter(name__icontains=name_game)
+
+    #     serializer = serializers.GameSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+    
+    def get_queryset(self):
         queryset = Game.objects.all()
-        game = get_object_or_404(queryset, pk=pk)
-        serializer = serializers.GameSerializer(game)
-        return Response(serializer.data)
+        game = self.request.query_params.get('game')
+        system = self.request.query_params.get('system')
+        
+        if game is not None:
+            queryset = queryset.filter(name=game)
+        if system is not None:
+            queryset = queryset.filter(system__slug=system)
 
-    def list(self, request):
-        queryset = Game.objects.all()
-        slug_system = request.query_params.get('system', None)
-        name_game = request.query_params.get('game', None)
-
-        if slug_system is not None:
-            queryset = queryset.filter(system__slug=slug_system)
-        if name_game is not None:
-            queryset = queryset.filter(name__icontains=name_game)
-
-        serializer = serializers.GameSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset
 
 class SystemsViewset(ModelViewSet):
     serializer_class = serializers.SystemSerializer

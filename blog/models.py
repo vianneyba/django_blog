@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
 from django.utils import timezone
+from magazine.models import Article
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -29,6 +31,7 @@ class Article(models.Model):
 	dislike_count = models.IntegerField(default=0)
 	tags = models.ManyToManyField(Tag, blank=True)
 	banner = models.URLField(blank=True)
+	articles_mag = models.ManyToManyField(Article)
 
 	def __str__(self):
 		return self.title
@@ -39,6 +42,12 @@ class Article(models.Model):
 			if like.user == user:
 				return like
 		return None
+
+	def save(self, *args, **kwargs):
+		slug = f'{self.title}'
+		self.slug = slugify(slug)
+		super(Article, self).save(*args, **kwargs)
+
 
 	def count_comments(self):
 		return len(self.comment_set.all())

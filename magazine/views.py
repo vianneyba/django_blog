@@ -1,61 +1,87 @@
 from django.shortcuts import render, redirect
 from django.template.defaultfilters import slugify
-from magazine.models import Article
-from magazine.forms import ArticleForm, ParagraphForm, PhotoForm, InsertForm, LinkForm, ScoreForm
+from django.db import IntegrityError
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
+from magazine.models import Article, Insert
+from magazine import forms
+from magazine import serializers
+
+
+def view(request, slug):
+    article = Article.objects.get(slug=slug)
+
+    template = f'magazine/article/{article.slug}.html'
+    context = {'article': article, 'template': template}
+    return render(request, "magazine/view-article-finish.html", context)
 
 
 def write_article(request):
-    form_write_article = ArticleForm()
+    form = forms.ArticleForm()
+
     if request.method == 'POST':
-        form_write_article = ArticleForm(request.POST)
-        if form_write_article.is_valid():
-            article = form_write_article.save(commit=False)
-            link = f'{article.game.name} {article.title_mag} {article.num_mag}'
-            article.slug = slugify(link)
-            article.save()
+        form = forms.ArticleForm(request.POST)
+        if form.is_valid():
+            article = form.save()
             return redirect('magazine:view-article', pk=article.id)
 
-    context = {'form_write_article': form_write_article}
+    context = {'form': form}
     return render(request, 'magazine/write-article.html', context)
 
 
 def add_paragraph(request, pk):
     article = Article.objects.get(id=pk)
-    form_add_paragraph = ParagraphForm(initial={'article': article.id})
+    form = forms.ParagraphForm(initial={'article': article.id})
 
     if request.method == 'POST':
-        form_add_paragraph = ParagraphForm(request.POST)
-        if form_add_paragraph.is_valid():
-            form_add_paragraph.save()
-            return redirect('magazine:add-paragraph', pk=article.id)
+        form = forms.ParagraphForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('magazine:view-article', pk=article.id)
 
-    context = {'form_add_paragraph': form_add_paragraph, 'article': article}
+    context = {'form': form, 'article': article}
     return render(request, 'magazine/add-paragraph.html', context)
 
 
 def add_photo(request, pk):
     article = Article.objects.get(id=pk)
-    form = PhotoForm(initial={'article': article.id})
+    form = forms.PhotoForm(initial={'article': article.id})
 
     if request.method == 'POST':
-        form = PhotoForm(request.POST)
+        form = forms.PhotoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('magazine:add-photo', pk=article.id)
+            return redirect('magazine:view-article', pk=article.id)
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-photo.html', context)
 
 
-def add_insert(request, pk):
+def add_photo_insert(request, pk, pk_insert):
     article = Article.objects.get(id=pk)
-    form = InsertForm(initial={'article': article.id})
+    insert = Insert.objects.get(id=pk_insert)
+
+    form = forms.PhotoInsertForm(initial={'insert': insert.id})
 
     if request.method == 'POST':
-        form = InsertForm(request.POST)
+        form = forms.PhotoInsertForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('magazine:add-insert', pk=article.id)
+            return redirect('magazine:view-article', pk=article.id)
+
+    context = {'form': form, 'article': article, 'insert': insert}
+    return render(request, 'magazine/add-insert-photo.html', context)
+
+
+def add_insert(request, pk):
+    article = Article.objects.get(id=pk)
+    form = forms.InsertForm(initial={'article': article.id})
+
+    if request.method == 'POST':
+        form = forms.InsertForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('magazine:view-article', pk=article.id)
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-insert.html', context)
@@ -63,13 +89,13 @@ def add_insert(request, pk):
 
 def add_link(request, pk):
     article = Article.objects.get(id=pk)
-    form = LinkForm(initial={'article': article.id})
+    form = forms.LinkForm(initial={'article': article.id})
 
     if request.method == 'POST':
-        form = LinkForm(request.POST)
+        form = forms.LinkForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('magazine:add-link', pk=article.id)
+            return redirect('magazine:view-article', pk=article.id)
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-link.html', context)
@@ -77,20 +103,53 @@ def add_link(request, pk):
 
 def add_score(request, pk):
     article = Article.objects.get(id=pk)
-    form = ScoreForm(initial={'article': article.id})
+    form = forms.ScoreForm(initial={'article': article.id})
 
     if request.method == 'POST':
-        form = ScoreForm(request.POST)
+        form = forms.ScoreForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('magazine:add-score', pk=article.id)
+            return redirect('magazine:view-article', pk=article.id)
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-score.html', context)
+
+
+def add_opinion(request, pk):
+    article = Article.objects.get(id=pk)
+    form = forms.OpinionForm(initial={'article': article.id})
+
+    if request.method == 'POST':
+        form = forms.OpinionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('magazine:view-article', pk=article.id)
+
+    context = {'form': form, 'article': article}
+    return render(request, 'magazine/add-opinion.html', context)
+
 
 def view_article(request, pk):
     article = Article.objects.get(id=pk)
     context = {'article': article}
 
-    print(article.paragraph_set.all())
     return render(request, 'magazine/view-article.html', context)
+
+class ArticleList(viewsets.ModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = serializers.ArticleSerializer
+    # permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
+
+    def create(self, request, *args, **kwargs):
+        tempdict = request.data.copy()
+        serializer = serializers.ArticleSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED)
+            except IntegrityError:
+                return Response(
+                    'Existe déja',
+                    status=status.HTTP_409_CONFLICT)

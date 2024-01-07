@@ -1,0 +1,61 @@
+<article>
+
+    <h1>[TEST] {{ article.game.name }} dans {{ article.title_mag }} numéro {{ article.num_mag }}</h1>
+    
+    <div class="row">
+   
+    
+        <div class="col-md-12">
+            {{ article.preface }}
+        </div>
+        
+        <div class="col-md-8">
+            {% include "magazine/avis_in_article.html" with opinions=article.opinions.all id=1 %}
+        </div>
+
+        <div class="col-md-4">
+            {% include "magazine/photo_in_article.html" with images=article.photos.all id=1 dir=article.slug %}
+        </div class>
+
+        <div class="col-md-4">
+            {% include "magazine/photo_in_article.html" with images=article.photos.all id=2 dir=article.slug %}
+        </div>
+
+        <div class="col-md-4">
+            {% include "magazine/photo_in_article.html" with images=article.photos.all id=3 dir=article.slug %}
+        </div>
+
+        <div class="col-md-4">
+            {% include "magazine/photo_in_article.html" with images=article.photos.all id=4 dir=article.slug %}
+        </div>
+
+        <div class="col-md-4">
+            {% include "magazine/photo_in_article.html" with images=article.photos.all id=5 dir=article.slug %}
+        </div>
+
+        <div class="col-md-8">
+            {% include "magazine/avis_in_article.html" with opinions=article.opinions.all id=2 %}
+        </div>
+
+        <div class="col-md-12">
+            {% include "magazine/insert_in_article.html" with inserts=article.inserts.all id=1 dir=article.slug %}
+        </div>
+
+        
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-12">
+                    {% include "magazine/photo_in_article.html" with images=article.photos.all id=6 dir=article.slug %}
+                </div>
+                <div class="col-md-12">
+                    {% include "magazine/photo_in_article.html" with images=article.photos.all id=7 dir=article.slug %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            {% include "magazine/view-score.html" with scores=article.scores.all id=6 dir=article.slug %}
+        </div>
+
+    </div>
+</article>

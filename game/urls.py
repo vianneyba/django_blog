@@ -9,7 +9,7 @@ router.register(r'games', views.GamesViewset, basename='games')
 router.register(r'systems', views.SystemsViewset, basename='systems')
 
 urlpatterns = [
-    # path('', views.index, name='index'),
+    path('insert/<system>/', views.insert_games, name='insert-games'),
     path('', views.list_game, name='list-game'),
     path('api/', include(router.urls)),
     # path('article/publish/<pk>/<value>', views.publish_article, name='publish-article'),

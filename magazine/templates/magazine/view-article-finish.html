@@ -1,0 +1,15 @@
+{# Template pour voir les tests de jeux des magazines #}
+{% extends "base.html" %}
+{% load template_filters %}
+
+{% block title %}[TEST] {{ article.game.name }} dans {{ article.title_mag }} numéro {{ article.num_mag }}{% endblock %}
+
+{% block content %}
+    {% include template with article=article %}
+
+    <p>Lien vers les pages du test: 
+        {% for link in article.links.all %}
+            <a href="{{ link }}">lien {{ forloop.counter }}</a> {% if not forloop.last %} | {% endif %}
+        {% endfor %}
+    </p>
+{% endblock %}

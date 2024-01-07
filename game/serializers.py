@@ -18,16 +18,15 @@ class ExecModelSerializer(serializers.ModelSerializer):
         fields = ['core', 'path']
 
 class GameSerializer(serializers.ModelSerializer):
-    # exec_model = ExecModelSerializer(read_only=True)
+    # exec_model = ExecModelSerializer(read_only=True, required=False)
     system = SystemSerializer()
-    command_line = serializers.SerializerMethodField('get_command_line')
+    # command_line = serializers.SerializerMethodField('get_command_line')
 
     def get_command_line(self, game):
         return game.get_command_line()
 
     class Meta:
         model = Game
-        fields = [
-            'pk', 'name', 'desc', 'image', 'rating', 'releasedate',
+        fields = ['pk', 'name', 'desc', 'image', 'rating', 'releasedate',
             'genre', 'developper', 'publisher', 'region', 'players',
-            'system', 'command_line']
+            'system']
