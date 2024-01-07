@@ -4,7 +4,6 @@ from game.models import Game
 
 class Article(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    num_page = models.IntegerField()
     slug = models.SlugField(unique=True, blank=True)
     preface = models.TextField(max_length=1500)
     title_mag = models.CharField(max_length=40, blank=True)
@@ -21,6 +20,14 @@ class Article(models.Model):
         else:
             super(Article, self).save(*args, **kwargs)
 
+    def num_page(self):
+        return len(self.links.all())
+
+    class Meta:
+        ordering = ['game__name']
+        verbose_name = 'Gestion de l\'article'
+        verbose_name_plural = 'Gestion des articles'
+
 
 class Insert(models.Model):
     article = models.ForeignKey(Article, related_name='inserts', on_delete=models.CASCADE, null=True)
@@ -30,21 +37,28 @@ class Insert(models.Model):
 
     def __str__(self):
         if self.title is not None or self.title != '':
-            return self.title
+            text = self.title
         else:
-            return self.text[0:20]
+            text=  self.text[0:20]
+
+        return f'{self.article.game.name} sur {self.article.game.system.title}: {text}'
 
     def save(self, *args, **kwargs):
         self.id_num = len(self.article.inserts.all())+1
         super(Insert, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['article__game__name']
+        verbose_name = 'Gestion de l\encart'
+        verbose_name_plural = 'Gestion des encarts'
+
 
 class Opinion(models.Model):
-    article = models.ForeignKey(Article, related_name='opinions', on_delete=models.CASCADE, null=True)
+    article = models.ForeignKey(Article, related_name='opinions', on_delete=models.CASCADE)
     text = models.TextField(max_length=1500)
     tester = models.CharField(max_length=35)
     advice = models.CharField(max_length=25, blank=True)
-    id_num = models.IntegerField(unique=True, default=0)
+    id_num = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.tester} - {self.text[0:40]}'
@@ -53,6 +67,11 @@ class Opinion(models.Model):
         self.id_num = len(self.article.opinions.all())+1
         super(Opinion, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['article__game__name']
+        verbose_name = 'Gestion de l\'avis testeur'
+        verbose_name_plural = 'Gestion des avis testeurs'
+
 
 class Score(models.Model):
     article = models.ForeignKey(Article, related_name='scores', on_delete=models.CASCADE)
@@ -60,6 +79,13 @@ class Score(models.Model):
     score = models.CharField(max_length=15)
     text = models.TextField(max_length=500, blank=True)
 
+    def __str__(self):
+        return f'{self.article.game.name} sur {self.article.game.system.title}: {self.title} {self.score}'
+
+    class Meta:
+        ordering = ['article__game__name']
+        verbose_name = 'Gestion des notes'
+        verbose_name_plural = 'Gestion des notes'
 
 class Photo(models.Model):
     link = models.SlugField(max_length=100, null=False, blank=True, unique=True)
@@ -70,7 +96,7 @@ class Photo(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.link
+        return f'{self.id_num} - {self.link}'
 
 
 class PhotoArticle(Photo):
@@ -83,6 +109,11 @@ class PhotoArticle(Photo):
         self.link = slugify(link)
         super(Photo, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['article__game__name']
+        verbose_name = 'Gestion de la photo de l\'article'
+        verbose_name_plural = 'Gestion des photos des articles'
+
 
 class PhotoInsert(Photo):
     insert = models.ForeignKey(Insert, related_name='photos', on_delete=models.CASCADE)
@@ -94,20 +125,38 @@ class PhotoInsert(Photo):
         self.link = slugify(link)
         super(Photo, self).save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['insert']
+        verbose_name = 'Gestion de la photo de l\'encart'
+        verbose_name_plural = 'Gestion des photos des encarts'
 
 class Link(models.Model):
     article = models.ForeignKey(Article, related_name='links', on_delete=models.CASCADE)
     url = models.URLField(max_length=200)
 
     def __str__(self):
-        return f'{self.url}'
+        return f'{self.article.game.name} sur {self.article.game.system.title} [{self.url[0:50]}...{self.url[-50:]}]'
+
+    class Meta:
+        ordering = ['article__game__name']
+        verbose_name = 'Gestion du lien'
+        verbose_name_plural = 'Gestion des liens'
 
 
 class Paragraph(models.Model):
     article = models.ForeignKey(Article, related_name='paragraphs', on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=100, blank=True)
-    text = models.TextField(max_length=2000)
+    text = models.TextField(max_length=2500)
     id_num = models.IntegerField(blank=True, default=0)
 
     def __str__(self):
-        return f'{self.article.game} - {self.text[0:70]}'
+        return f'{self.id_num}: {self.article.game} - {self.text[0:100]}'
+
+    def save(self, *args, **kwargs):
+        self.id_num = len(self.article.iparagraphs.all())+1
+        super(Insert, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['article__game__name']
+        verbose_name = 'Gestion du paragraphe'
+        verbose_name_plural = 'Gestion des paragraphes'

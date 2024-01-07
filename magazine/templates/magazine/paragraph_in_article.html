@@ -1,0 +1,12 @@
+<div>
+    {% for paragraph in paragraphs %}
+        {% if paragraph.id_num == id %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>{{ paragraph.title }}</h1>
+                    <p>{{ paragraph.text }}</p>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

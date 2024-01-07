@@ -5,6 +5,7 @@ $color_F2: #5A6477;
 $color_F3: #30343C;
 $color_F4: #0F1218;
 $color_F5: #030407;
+$color_F6: #524347;
 $color_red: #F2504B;
 $color_red_2: #530c0a;
 $vert: #63B96B;
@@ -90,8 +91,9 @@ article {
         background-color: $color_F3;
         padding: 10px;
         h1 {
+            color: $color_F6;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
     }
     .insert {

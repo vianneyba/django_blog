@@ -1,7 +1,10 @@
 <div class="avis">
     {% for opt in opinions %}
         {% if opt.id_num == id %}
-            <h1>Commentaire de {{ opt.tester }}</h1>
+            <h1>
+                Commentaire de {{ opt.tester }}
+                {% if opt.advice %}: {{opt.advice}}{% endif %}
+            </h1>
             <p>{{ opt.text }}</p>
         {% endif %}
     {% endfor %}
