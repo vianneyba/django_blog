@@ -1,73 +1,95 @@
 {% extends "base.html" %}
+{# <i class="fa fa-plus-square" aria-hidden="true"></i> #}
+{# <i class="fa fa-pencil-square" aria-hidden="true"></i> #}
+
+{% block menu %}
+    {% include "magazine/menu.html" %}
+{% endblock %}
 
 {% block content %}
-<div class="row article-form">
-    {% include "magazine/menu.html" %}
-    
-    <div class="col-md-10">
-        <h1>{{article.game.name}} sur {{article.game.system.title}}</h1>
+<h1>
+    {{article.game.name}} sur {{article.game.system.title}}
+    <a href="{% url 'magazine:add-article' %}?id={{article.id}}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+</h1>
 
-        <div class="col-md-12">
-            <p>Article sur {{ article.num_page }} page{% if article.num_page > 1 %}s{% endif%}</p>
-            <p>{{ article.preface }}</p>
-            <p>dans le {{ article.title_mag }} numéro {{ article.num_mag }}</p>
+<div class="col-md-12">
+    <p>Article sur {{ article.num_page }} page{% if article.num_page > 1 %}s{% endif%}</p>
+    <p>{{ article.preface }}</p>
+    <p>dans le {{ article.title_mag }} numéro {{ article.num_mag }}</p>
+</div>
+
+<h1>
+    Les Liens
+    <a href="{% url 'magazine:add-link' article.id %}"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+</h1>
+<div class="col-md-12">
+    {% for link in article.links.all %}
+        <a href="{{ link }}">lien {{ forloop.counter }}</a><br>
+    {% endfor %}
+</div>
+
+<h1>
+    Les Paragraphes
+    <a href="{% url 'magazine:add-paragraph' article.id %}"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+</h1>
+<div class="col-md-12">
+    {% for paragraph in article.paragraphs.all %}
+        <h1>{{ paragraph.title }}</h1>
+        <p>{{ paragraph.text }}</p>
+    {% endfor %}
+</div>
+
+<h1>
+    Les Encarts
+    <a href="{% url 'magazine:add-insert' article.id %}"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+</h1>
+<div class="col-md-12">
+    {% for insert in article.inserts.all %}
+        <h1>
+            {{ insert.title }}
+            <a href="{% url 'magazine:add-photo-insert' article.id insert.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        </h1>
+        <p>{{ insert.text }}</p>
+    {% endfor %}
+</div>
+
+<h1>
+    Les Photographies
+    <a href="{% url 'magazine:add-photo' article.id %}"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+</h1>
+<div class="col-md-12">
+    <div class="row">
+        {% for photo in article.photos.all %}
+        <div class="col-md-3">
+            <p>{{ photo.link }}</p>
+            <p>
+                <img src="http://vianneyba.free.fr/images/{{ article.slug }}/{{ photo.link }}.jpg" 
+                    alt="{{ photo.text }}"
+                    class="img-fluid"
+                />
+            </p>
+            <p>{{ photo.text }}</p>
         </div>
-        
-        <div class="col-md-12">
-            {% for link in article.links.all %}
-                <a href="{{ link }}">lien {{ forloop.counter }}</a><br>
-            {% endfor %}
-        </div>
-
-        <div class="col-md-12">
-            {% for paragraph in article.paragraph_set.all %}
-                <h1>{{ paragraph.title }}</h1>
-                <p>{{ paragraph.text }}</p>
-            {% endfor %}
-        </div>
-
-        <h1>Encart</h1>
-        <div class="col-md-12">
-            {% for insert in article.inserts.all %}
-                <h1>
-                    {{ insert.title }}
-                    <a href="{% url 'magazine:add-photo-insert' article.id insert.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
-                </h1>
-                <p>{{ insert.text }}</p>
-            {% endfor %}
-        </div>
-
-        <div class="col-md-12">
-            {% for photo in article.photoarticle_set.all %}
-                <p>{{ photo.link }}</p>
-                <p>{{ photo.text }}</p>
-            {% endfor %}
-        </div>
-
-        <div class="col-md-12">
-            <h1>OPINION</h1>
-            <div class="row">
-
-                {% for opinion in article.opinions.all %}
-                <div class="col-md-6">
-                    <h5>{{ opinion.tester }}</h5>
-                    <p>{{ opinion.text }}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <table class="col-md-12">
-            {% for score in article.score_set.all %}
-            <tr>
-                <td>{{ score.title | upper }}</td>
-                <td>{{ score.score }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">{{ score.text }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% endfor %}
     </div>
 </div>
+
+<h1>
+    Les Avis
+    <a href="{% url 'magazine:add-opinion' article.id %}"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+</h1>
+<div class="col-md-12">
+    <div class="row">
+        {% for opinion in article.opinions.all %}
+        <div class="col-md-6">
+            <h5>{{ opinion.tester }}</h5>
+            <p>{{ opinion.text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<table class="col-md-12">
+    {% include "magazine/view-score.html" with scores=article.scores.all %}
+</table>
 {% endblock %}

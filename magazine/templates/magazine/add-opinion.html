@@ -2,18 +2,17 @@
 
 {% block title %}Ajouter un commentaire sur {{ article.game.name }} {{ article.title_mag }} {{ article.num_mag }}{% endblock %}
 
-{% block content %}
-<div class="row article-form">
+{% block menu %}
     {% include "magazine/menu.html" %}
-    <div class="col-md-9">
-        <h1>{{article.game.name}} sur {{article.game.system.title}}</h1>
-        <form method="post" action="{% url 'magazine:add-opinion' article.id %}">
-            {% csrf_token %}
-            <div class="form-group">		
-                {{ form.as_p }}
-            </div>
-            <button type="submit" class="btn btn-primary">Ajouter un commentaire</button>
-        </form>
+{% endblock %}
+
+{% block content %}
+<h1>{{article.game.name}} sur {{article.game.system.title}}</h1>
+<form method="post" action="{% url 'magazine:add-opinion' article.id %}">
+    {% csrf_token %}
+    <div class="form-group">		
+        {{ form.as_p }}
     </div>
-</div>
+    <button type="submit" class="btn btn-primary">Ajouter un commentaire</button>
+</form>
 {% endblock %}

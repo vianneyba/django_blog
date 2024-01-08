@@ -1,18 +1,17 @@
 {% extends "base.html" %}
 
+{% block menu %}
+    {% if article %}
+            {% include "magazine/menu.html" %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
-
-<div class="row article-form">
-    {% include "magazine/menu.html" %}
-    <div class="col-md-9">
-        <form method="post" action="{% url 'magazine:write-article' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.as_p }}
-            </div>
-            <button type="submit" class="btn btn-primary">Ajouter l'article</button>
-        </form>
+<form method="post" action="{% url 'magazine:add-article' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form.as_p }}
     </div>
-</div>
-
+    <button type="submit" class="btn btn-primary">Ajouter l'article</button>
+</form>
 {% endblock %}

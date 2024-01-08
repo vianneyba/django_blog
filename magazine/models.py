@@ -87,8 +87,9 @@ class Score(models.Model):
         verbose_name = 'Gestion des notes'
         verbose_name_plural = 'Gestion des notes'
 
+
 class Photo(models.Model):
-    link = models.SlugField(max_length=100, null=False, blank=True, unique=True)
+    link = models.SlugField(max_length=100, null=False, blank=True)
     text = models.TextField(max_length=500)
     id_num = models.IntegerField(blank=True, default=0)
 
@@ -121,7 +122,7 @@ class PhotoInsert(Photo):
     def save(self, *args, **kwargs):
         num = len(self.insert.photos.all()) + 1
         self.id_num = num
-        link = f'encart {self.insert.id_num}_{num}'
+        link = f'encart {self.insert.id}_{num}'
         self.link = slugify(link)
         super(Photo, self).save(*args, **kwargs)
 
@@ -129,6 +130,7 @@ class PhotoInsert(Photo):
         ordering = ['insert']
         verbose_name = 'Gestion de la photo de l\'encart'
         verbose_name_plural = 'Gestion des photos des encarts'
+
 
 class Link(models.Model):
     article = models.ForeignKey(Article, related_name='links', on_delete=models.CASCADE)
@@ -153,8 +155,8 @@ class Paragraph(models.Model):
         return f'{self.id_num}: {self.article.game} - {self.text[0:100]}'
 
     def save(self, *args, **kwargs):
-        self.id_num = len(self.article.iparagraphs.all())+1
-        super(Insert, self).save(*args, **kwargs)
+        self.id_num = len(self.article.paragraphs.all())+1
+        super(Paragraph, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['article__game__name']

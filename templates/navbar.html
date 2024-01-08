@@ -12,7 +12,7 @@
 							<a class="dropdown-item" href="{% url 'blog:add-article' %}">Rédiger</a>
 							<a class="dropdown-item" href="{% url 'game:list-game'%}">launch</a>
 						{% if user.is_superuser %}
-							<a class="dropdown-item" href="{% url 'magazine:write-article' %}">Ajout Article Mag</a>
+							<a class="dropdown-item" href="{% url 'magazine:add-article' %}">Ajout Article Mag</a>
 							<a class="dropdown-item" href="{% url 'music:index' %}">Musique</a>
 						{% endif %}
 						{# <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> #}

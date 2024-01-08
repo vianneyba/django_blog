@@ -5,12 +5,24 @@ class ArticleForm(forms.ModelForm):
     class Meta:
         model = models.Article
         fields = '__all__'
+        exclude = ('slug',)
+        widgets = {
+            'preface': forms.Textarea(attrs={
+                'class': 'form-control',
+                'cols': 80,
+                'rows': 10}),
+            'title_mag': forms.TextInput(attrs={
+                'class': 'form-control'}),
+            'num_mag' : forms.TextInput(attrs={
+                'class': 'form-control'}),
+        }
 
 
 class ParagraphForm(forms.ModelForm):
     class Meta:
         model = models.Paragraph
         fields = '__all__'
+        exclude = ('id_num',)
 
 
 class PhotoForm(forms.ModelForm):

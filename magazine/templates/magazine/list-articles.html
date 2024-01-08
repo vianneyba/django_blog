@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for article in articles %}
+    <article>
+        <h1>
+            <a href="{% url 'magazine:view' article.slug %}">
+                [TEST] {{ article.game.name }} dans {{ article.title_mag }} numéro {{ article.num_mag }}
+            </a>
+            <a href="{% url 'magazine:view-article' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        </h1>
+
+        <p>{{ article.preface | safe }}</p>
+
+        {% include "magazine/view_links.html" with links=article.links.all %}
+
+    </article>
+
+{% endfor %}
+
+{% endblock %}

@@ -76,6 +76,42 @@ article .avis {
   background-color: #30343C;
   padding: 10px;
 }
+article .avis h1 {
+  color: #524347;
+  text-align: center;
+  font-size: 1.3rem;
+}
+article .insert {
+  padding: 10px 15px 10px 15px;
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px #5A6477 solid;
+  border-radius: 15px 15px 15px 15px;
+  background-color: #30343C;
+  padding: 10px;
+  margin: 10px;
+}
+
+.score_table {
+  padding: 10px 15px 10px 15px;
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px #5A6477 solid;
+  border-radius: 15px 15px 15px 15px;
+  border: 2px solid;
+  border-color: #F2504B;
+}
+.score_table .tr_master {
+  color: #F2504B;
+  background-color: #530c0a;
+}
+.score_table .score {
+  font-size: 1.3rem;
+  text-align: right;
+}
+.score_table td {
+  border-top: 1px solid #F2504B;
+}
 
 .vote {
   margin-left: 20px;
@@ -219,6 +255,14 @@ form .btn-primary {
 .error_page .btn_return {
   margin: auto;
   width: 30%;
+}
+
+.insert-article {
+  padding: 10px 15px 10px 15px;
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px #5A6477 solid;
+  border-radius: 15px 15px 15px 15px;
 }
 
 /*# sourceMappingURL=style.css.map */

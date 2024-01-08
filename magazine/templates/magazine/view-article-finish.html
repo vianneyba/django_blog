@@ -6,9 +6,5 @@
 {% block content %}
     {% include template with article=article %}
 
-    <p>Lien vers les pages du test: 
-        {% for link in article.links.all %}
-            <a href="{{ link.url }}">lien {{ forloop.counter }}</a> {% if not forloop.last %} | {% endif %}
-        {% endfor %}
-    </p>
+    {% include "magazine/view_links.html" with links=article.links.all %}
 {% endblock %}
