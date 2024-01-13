@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'like_dislike.apps.LikeDislikeConfig',
     'game.apps.GameConfig',
     'music.apps.MusicConfig',
-    'magazine.apps.MagazineConfig'
+    'magazine.apps.MagazineConfig',
+    'polls.apps.PollsConfig'
 ]
 
 MIDDLEWARE = [

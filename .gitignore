@@ -2,6 +2,7 @@
 *.pot
 *.pyc
 __pycache__
+__init__.py
 migrations
 static/*
 !static/css/style.scss
@@ -9,3 +10,4 @@ static/*
 db.sqlite3
 media
 vianneyba/.env
+env/

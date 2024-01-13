@@ -1,8 +1,10 @@
+import re
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from magazine.models import Article
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -11,12 +13,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
+
 
 class Article(models.Model):
 	title = models.CharField('Titre:', max_length=100)
@@ -48,7 +52,6 @@ class Article(models.Model):
 		self.slug = slugify(slug)
 		super(Article, self).save(*args, **kwargs)
 
-
 	def count_comments(self):
 		return len(self.comment_set.all())
 
@@ -58,6 +61,10 @@ class Article(models.Model):
 				self.tags.append(t)
 			else:
 				self.tags.append(tag)
+
+	def view_content(self):
+		pattern = r"{{ [a-zA-Z0-9 -_]{1,} }}"
+		return re.sub(pattern, "", self.content)
 
 	class Meta:
 		ordering = ['-created_at']

@@ -2,12 +2,19 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from game.models import Game
 
+
+TYPE_CHOICES = [
+    ('test', 'test'), ('preview', 'preview')
+]
+
+
 class Article(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, blank=True)
-    preface = models.TextField(max_length=1500)
+    preface = models.TextField(max_length=1700)
     title_mag = models.CharField(max_length=40, blank=True)
     num_mag = models.IntegerField(blank=True, default=0)
+    type_art = models.CharField(max_length=10, choices=TYPE_CHOICES, default='test')
 
     def __str__(self):
         return self.slug

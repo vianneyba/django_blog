@@ -102,6 +102,11 @@ article {
         padding: 10px;
         margin: 10px;
     }
+    .entry-article{
+        button {
+            margin: 10px;
+        }
+    }
 }
 
 .score_table {
@@ -266,4 +271,11 @@ form {
 
 .insert-article {
     @include border-r($border-radius, $border-radius);
+}
+
+.form_title_suggestion {
+    display: block;
+    button {
+        width: auto;
+     }
 }

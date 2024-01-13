@@ -1,6 +1,5 @@
 from django import forms
 from blog.models import Article as ArticleBlog
-from magazine.models import Article as ArticleMag
 
 class ArticleForm(forms.ModelForm):
     class Meta:

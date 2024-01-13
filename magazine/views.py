@@ -143,7 +143,7 @@ def view_article(request, pk):
 def list_articles(request):
     articles = models.Article.objects.all()
 
-    context = {'articles': articles, 'view_menu':False}
+    context = {'articles': articles, 'view_menu': True}
     return render(request, 'magazine/list-articles.html', context)
 
 

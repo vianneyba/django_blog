@@ -1,5 +1,6 @@
 import re
 from django.core.exceptions import ObjectDoesNotExist
+from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from rest_framework.viewsets import ModelViewSet
@@ -15,6 +16,7 @@ from blog.forms import ArticleForm
 from comment.models import Comment
 from comment.forms import CommentForm
 from django.http import Http404
+from blog.create_blog import Blog_Article
 
 
 def search_category(category):
@@ -44,29 +46,34 @@ def return_paginator(request, queryset):
 
 
 def return_article(request, slug=None, pk=None):
+    context = {}
+
     try:
         if slug is not None:
-            article = Article.objects.get(slug=slug)
+            context['article'] = Article.objects.get(slug=slug)
         elif pk is not None:
-            article = Article.objects.get(pk=pk)
+            context['article'] = Article.objects.get(pk=pk)
 
-        Comments = Comment.objects.filter(article__id=article.id)
+        Blog_Article(context['article'], request)
+
+
+        comments = Comment.objects.filter(article__id=context['article'].id)
+        context['comments'] = return_paginator(request, comments)
     except ObjectDoesNotExist:
         return None
 
-    if article.published is False and article.author != request.user:
+    if context['article'].published is False and context['article'].author != request.user:
         return None
 
-    if (article.like_count+article.dislike_count) == 0:
-        progress_bar = 50
+    if (context['article'].like_count + context['article'].dislike_count) == 0:
+        context['progress_bar'] = 50
     else:
-        progress_bar= round(100 * (int(article.like_count)/(article.like_count+article.dislike_count)))
+        context['progress_bar'] = round(100 * (int(context['article'].like_count)/(context['article'].like_count+context['article'].dislike_count)))
 
-    return {
-        'article': article,
-        'comments': return_paginator(request, Comments),
-        'progress_bar': progress_bar,
-        'like': article.search_like(request.user)}
+    context['like'] = context['article'].search_like(request.user)
+
+
+    return context
 
 
 def index(request):

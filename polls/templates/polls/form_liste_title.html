@@ -1,0 +1,24 @@
+{% if user.is_authenticated %}
+    <form action="{{ url }}" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf }}">
+        <input type="hidden" name="id_top" value="{{ top.id }}">
+        <input type="hidden" name="article_blog" value="{{ article_blog.slug }}">
+        <div class="col-md-6 offset-md-3">
+
+            <h1>{{ top.title }}</h1>
+
+            {% for line in my_top %}
+                <div class="mb-3">
+                    <label for="choice_{{ forloop.counter }}" class="form-label">Top {{ forloop.counter }}:</label>
+                    <input type="text" class="form-control" id="choice_{{ forloop.counter }}" name="choice_{{forloop.counter }}" value="{{ line.suggestion }}">
+                </div>
+            {% endfor %}
+            
+
+            <button type="submit" class="btn btn-primary">Valider votre Top</button>
+        </div>
+    </form>
+{% else %}
+    <p>oooh domage que tu n'est pas connecté! sinon tu aurais pu donner ton avis sur: {{ top.title }}</p>
+    <p>alors tu sais ce qu'il te reste a faire <a href="{% url 'authenticate:register' %}">INSCRIT TOI!</a></p>
+{% endif %}

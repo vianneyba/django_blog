@@ -24,7 +24,7 @@
 </h1>
 <div class="col-md-12">
     {% for link in article.links.all %}
-        <a href="{{ link }}">lien {{ forloop.counter }}</a><br>
+        <a href="{{ link.url }}">lien {{ forloop.counter }}</a><br>
     {% endfor %}
 </div>
 

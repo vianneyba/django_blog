@@ -11,6 +11,7 @@ urlpatterns = [
     path('comments/', include('comment.urls')),
     path('i-like/', include('like_dislike.urls')),
     path('article/', include('magazine.urls')),
+    path('polls/', include('polls.urls')),
     path('', include('blog.urls')),
 ]
 

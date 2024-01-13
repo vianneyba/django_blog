@@ -27,7 +27,7 @@
     <section class='article'>
         <h1 class="entry-title">{{ article.title }}</h1>
         <div class="entry-content">
-            {{ article.content | markdown | safe }}
+            {{ article.content | safe }}
         </div>
     </section>
     
@@ -47,7 +47,6 @@
 
     {% if article.articles_mag %}
         {% for art in article.articles_mag.all %}
-            <hr>
             <div class="insert-article">
                 {% include "magazine/article/"|add:art.slug|add:".html" with article=art %}
             </div>

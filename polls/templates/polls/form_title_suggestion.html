@@ -1,0 +1,19 @@
+
+    <div class="col-md-6 offset-md-3">
+        <form action="{{ url }}" class="form-inline" method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf }}">
+            <input type="hidden" name="article_blog" value="{{ article_blog.slug }}">
+            <input type="hidden" name="game" value="{{ id }}">
+            {% if suggestion %}
+                <p>merci <span class="text-success">{{ suggestion.user.username }}</span> pour ta suggestion. je vais voir si <span class="text-success">{{ suggestion.suggestion }}</span> peut me plaire</p>
+            {% endif %}
+            <p>
+                vous pouvez me proposer un titre de jeux similaire, soit pour me le faire découvrir ou, si je le 
+                l'apprécie, je puisse le steamer et donner mon avis dans une futur vidéo
+            </p>
+            <div class="form-group">
+                <input id="title_suggestion" name="suggestion" class="form-control mb-2 mr-sm-2" placeholder="titre d'un jeux similaire">
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            </div>
+        </form>
+    </div>

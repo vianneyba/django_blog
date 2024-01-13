@@ -91,6 +91,9 @@ article .insert {
   padding: 10px;
   margin: 10px;
 }
+article .entry-article button {
+  margin: 10px;
+}
 
 .score_table {
   padding: 10px 15px 10px 15px;
@@ -263,6 +266,13 @@ form .btn-primary {
   background-color: rgba(0, 0, 0, 0.5);
   border: 2px #5A6477 solid;
   border-radius: 15px 15px 15px 15px;
+}
+
+.form_title_suggestion {
+  display: block;
+}
+.form_title_suggestion button {
+  width: auto;
 }
 
 /*# sourceMappingURL=style.css.map */
