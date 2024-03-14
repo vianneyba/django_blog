@@ -30,6 +30,7 @@ class Track(models.Model):
 	album = models.ForeignKey(Album, related_name='tracks', on_delete=models.CASCADE)
 	order = models.IntegerField()
 	title = models.CharField(max_length=100)
+	score = models.IntegerField(null=True, blank=True)
 
 	class Meta:
 		ordering= ('order',)

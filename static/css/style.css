@@ -233,7 +233,7 @@ form input {
   margin: 6px 0px;
 }
 form .btn-primary {
-  margin: 10px auto;
+  margin: 10px;
 }
 
 .separator {
@@ -327,6 +327,19 @@ form .btn-primary {
 }
 .form_title_suggestion button {
   width: auto;
+}
+
+.ratingverse {
+  text-indent: -9%;
+}
+.ratingverse li {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.ratingverse .track_ok {
+  color: red;
+  font-size: 2rem;
 }
 
 /*# sourceMappingURL=style.css.map */

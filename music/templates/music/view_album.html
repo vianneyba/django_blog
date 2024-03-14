@@ -4,34 +4,52 @@
 
 {% block content %}
     <div class="row"> 
+
+        <div class="col-md-12">
+            <div class="col-md-6 offset-md-3">
+                <form action="{% url 'music:index' %}" method="get" class="form-example">
+                    <input type="text" name="search" required>
+                    <button type="submit" class="btn btn-primary mb-2">Recherche</button>
+                </form>
+            </div>
+        </div>
+
         <section class="col-md-4">
             <img class="img-fluid img-thumbnail" src="{{ PATH_IMAGE }}/{{ album.code }}.jpg" />
         </section>
         
-        <section class="col-md-4">
+        <section class="col-md-3">
             <h3>
                 <a href="{% url 'music:index' %}?band={{ album.band.id }}">{{ album.band.name | upper }}</a>
             </h3>
+
             <p>{{ album.title | title }}</p>
+
             <p>
                 <a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.releaseDate }}</a>
+            </p>
+            <p>
+                <span class="ratingverse">
+
+                    {% for i in '12345'|make_list %}
+                        <a {% if album.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-album-note' %}?album={{album.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
+                    {% endfor %}
+                </span>
             </p>
             <p>
                 <a href="{# path_for('musicByNote', { 'note': album.score }) #}">{# include 'mp3/note.html' #}</a>
             </p>
         </section>
 
-        <section class="col-md-4">
-            <ul>
+        <section class="col-md-5">
+            <ul class="ratingverse">
                 {% for track in album.tracks.all %}
                 <li>
                     {{ track.order }} - {{ track.title }}
-                    <span class="ratingverse">
-                        <a {# if track.score > 0 #}class="ok"{# endif #} href="{# path_for('musicAddTrackNote', { 'id': album.id, 'idTrack': track.order, 'note': 1 #) #}" title="Donner 1 étoile">☆</a>
-                        <a {# if track.score > 1 #}class="ok"{# endif #} href="{# path_for('musicAddTrackNote', { 'id': album.id, 'idTrack': track.order, 'note': 2 #) #}" title="Donner 2 étoiles">☆</a>
-                        <a {# if track.score > 2 #}class="ok"{# endif #} href="{# path_for('musicAddTrackNote', { 'id': album.id, 'idTrack': track.order, 'note': 3 #) #}" title="Donner 3 étoiles">☆</a>
-                        <a {# if track.score > 3 #}class="ok"{# endif #} href="{# path_for('musicAddTrackNote', { 'id': album.id, 'idTrack': track.order, 'note': 4 #) #}" title="Donner 4 étoiles">☆</a>
-                        <a {# if track.score > 4 #}class="ok"{# endif #} href="{# path_for('musicAddTrackNote', { 'id': album.id, 'idTrack': track.order, 'note': 5 #) #}" title="Donner 5 étoiles">☆</a>
+                    <span>
+                        {% for i in '12345'|make_list %}
+                            <a {% if track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{album.id}}&track={{track.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
+                        {% endfor %}
                     </span>
                 </li>
                 {% endfor %}

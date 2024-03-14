@@ -4,13 +4,20 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="col-md-6 offset-md-3">
-            <form action="" method="get" class="form-example">
-                <input type="text" name="search" required>
-                <button type="submit" class="btn btn-primary mb-2">Recherche</button>
+        <div class="col-md-8 offset-md-3">
+            <form action="" method="get">
+                <div class="form-group row">
+                    <input class="col-md-4 col-form-label" type="text" name="search" required>
+                    <button type="submit" class="btn btn-primary">Recherche</button>
+                    <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=tracks&note=4">Top Titres</a>
+                    <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=albums&note=4">Top Albums</a>
+                    <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=albums">Voir Tous</a>
+                </div>
             </form>
         </div>
     </div>
+
+{% if my_type == 'albums' %} 
 {% for album in page_obj %}
     <div class="col-md-4 home-album">
         <div class="row">
@@ -30,7 +37,33 @@
         </div>
     </div>
 {% endfor %}
-{% include 'paginator.html' %}
+{% elif my_type == 'tracks' %}
+{% for track in page_obj %}
+    <div class="col-md-4 home-album">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{% url 'music:view-album' track.album.id %}">
+                    <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ track.album.code }}.jpg" alt="{{ track.album.group.name | upper }} - {{ track.album.title }}"/>
+                </a>
+            </div>
+
+            <div class="col-md-12">
+                <h4 class="text-center"><a href="{% url 'music:index' %}?band={{ track.album.band.id }}">{{ track.album.band.name | upper }}</a></h4>
+                <p class="text-center">
+                    <a href="{% url 'music:view-album' track.album.id %}">{{ track.album.title | title }}</a>
+                    [<a href="{% url 'music:index'  %}?date={{ track.album.release_year }}">{{ track.album.release_year }}</a>]
+                </p>
+                <p class="text-center">{{ track.order }} - {{ track.title}}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endif %}
+    <div class="col-md-12">
+        <div class="col-md-4 offset-md-4">
+            {% include 'paginator.html' with my_type=my_type note=note %}
+        </div>
+    </div>
 </div>
 
 

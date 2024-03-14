@@ -238,7 +238,7 @@ form {
         margin: 6px 0px; 
     }
     .btn-primary {
-        margin: 10px auto; 
+        margin: 10px; 
     }
 }
 
@@ -327,4 +327,17 @@ form {
     button {
         width: auto;
      }
+}
+
+.ratingverse {
+    text-indent : -9%;
+    li {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .track_ok {
+        color: red;
+        font-size: 2rem;
+    }
 }
