@@ -1,0 +1,9 @@
+<form action="{% url 'music:index' %}" method="get">
+    <div class="form-group row">
+        <input class="col-md-4 col-form-label" type="text" name="search" required>
+        <button type="submit" class="btn btn-primary">Recherche</button>
+        <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=tracks&note=4">Top Titres</a>
+        <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=albums&note=4">Top Albums</a>
+        <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=albums">Voir Tous</a>
+    </div>
+</form>
