@@ -10,6 +10,7 @@ from game.models import Game, System
 from magazine import forms
 from magazine import serializers
 from magazine.convert_ini import Template, Export
+from blog.create_blog import Blog_Article
 
 def view(request, slug):
     article = models.Article.objects.get(slug=slug)
@@ -133,36 +134,46 @@ def add_opinion(request, pk):
     return render(request, 'magazine/add-opinion.html', context)
 
 
-def view_article(request, pk):
-    article = models.Article.objects.get(id=pk)
-    context = {'article': article, 'view_menu': True}
+def view_article(request, my_type, pk):
+    if my_type == 'id':
+        article = models.Article.objects.get(id=pk)
 
-    return render(request, 'magazine/view-article.html', context)
+    template = Template(article.my_id)
+    article.content =template.return_template()
+    article.title = template.create_title_article("texte")
+
+    context = {'article': article, 'view_menu': False}
+
+    return render(request, 'magazine/view-article-name.html', context)
 
 
 def view_article_by_name(request, name):
-    template = Template(name)
 
+    template = Template(name)
 
     # context = {'template': my_module.template, 'article':my_module.article, 'view_menu': False}
     context = {'template': template.return_template(), 'my_id': template.config['info']['id']}
 
     return render(request, 'magazine/view-article-name.html', context)
 
-def export(request, name):
-    template = Template(name)
-    my_doc = Export()
-    my_doc.read_file(name)
-    my_doc.create_game()
-    my_doc.create_article()
+def export(request):
+    if 'code' in request.GET:
+        code = request.GET.get('code')
+        template = Template(code)
+        my_doc = Export()
+        my_doc.read_file(code)
+        my_doc.create_game()
+        my_doc.create_article()
 
-    return HttpResponse(template.export_pelican())
+    #  return HttpResponse(template.export_pelican())
+
+    return render(request, 'magazine/export.html')
 
 
 def list_articles(request):
     articles = models.Article.objects.all()
 
-    context = {'articles': articles, 'view_menu': True}
+    context = {'articles': articles, 'view_menu': False}
     return render(request, 'magazine/list-articles.html', context)
 
 

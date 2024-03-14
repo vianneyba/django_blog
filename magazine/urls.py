@@ -17,7 +17,9 @@ urlpatterns = [
     path('add-link/<pk>/', views.add_link, name='add-link'),
     path('add-score/<pk>/', views.add_score, name='add-score'),
     path('add-opinion/<pk>', views.add_opinion, name='add-opinion'),
-    path('view-article/<pk>/', views.view_article, name='view-article'),
+    path('view-article/<my_type>/<pk>/', views.view_article, name='view-article'),
+    path('export/', views.export, name='export'),
     path('', views.list_articles, name='list-articles'),
+
     path('api/', include(router.urls)),
 ]

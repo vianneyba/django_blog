@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from game.models import Game, System
 from slugify import slugify
-from magazine.models import Article
+# from magazine.models import Article
 import configparser
 from time import gmtime, strftime
 import re
@@ -236,9 +236,7 @@ class Template:
         return table
 
     def create_link(self):
-        i = re.findall(r"(@-- add_link[\w\s=]+--@)", self.template)
-        my_div = self.search_el(i[0], case=12)
-        my_div += f"\t<a href=\"{self.config['magazine']['link']}\">{self.config['magazine']['title']} numero {self.config['magazine']['numero']}</a>"
+        my_div = f"\t<a href=\"{self.config['magazine']['link']}\">{self.config['magazine']['title']} numero {self.config['magazine']['numero']}</a>"
         my_div += " sur <a href=\"https://www.abandonware-magazines.org/index.php\">Abandonware Magazines</a> >> "
         
         links = self.config['article']['links'].split(":::")
@@ -252,6 +250,14 @@ class Template:
             i += 1
 
         my_div += "</div>\n"
+
+        return my_div
+
+    def _create_link(self):
+        i = re.findall(r"(@-- add_link[\w\s=]+--@)", self.template)
+        my_div = self.search_el(i[0], case=12)
+        my_div += self.create_link()
+
         pattern = f"@-- add_link[\w\s=]+--@"
         self.template = re.sub(pattern, my_div, self.template)
 
@@ -278,9 +284,7 @@ class Template:
             'game.title': r"(@-- game.title[\w\s=]+--@)",
             'album.title': r"(@-- album.title[\w\s=]+--@)",
             'game.notes.pm': r"(@-- game.notes.pm[\w\s=]+--@)",
-            'album.tacklist': r"(@-- album.tacklist[\w\s=]+--@)",
-
-
+            'album.tacklist': r"(@-- album.tacklist[\w\s=]+--@)"
         }
         if re.search(regex['game.title'], self.template):
             txt = self.create_title_article(my_type='html')
@@ -341,7 +345,7 @@ class Template:
         if re.search(r"@-- preface[\w\s=]+--@", self.template):
             self.create_preface()
         if re.search(r"@-- add_link[\w\s=]+--@", self.template):
-            self.create_link()
+            self._create_link()
 
         return ''.join(('<article>',self.template,'\n</article>'))
 
@@ -405,8 +409,9 @@ class Export:
     def read_file(self, name):
         self.config.read(f'magazine/article/{name}.ini')
 
-    def create_article(self, my_type):
-        preface = ""
+    def create_article(self, my_type=None):
+        my_type = self.config['info']['type']
+
         if my_type == "game":
             game = self.config['jeux']['title']
             support = self.config['jeux']['support']

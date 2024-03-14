@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from game.models import Game
+from magazine.convert_ini import Template
 
 
 TYPE_CHOICES = [
@@ -30,6 +31,30 @@ class Article(models.Model):
 
     def num_page(self):
         return len(self.links.all())
+
+    def view(self):
+        try:
+            return self.template.return_template()
+        except AttributeError:
+            self.template = Template(self.my_id)
+            print('on execute le template')
+            return self.template.return_template()
+
+    def title(self):
+        try:
+            return self.template.create_title_article("texte")
+        except AttributeError:
+            self.template = Template(self.my_id)
+            print('on execute le template')
+            return self.template.create_title_article("texte")
+
+    def link(self):
+        try:
+            return self.template.create_link()
+        except AttributeError:
+            self.template = Template(self.my_id)
+            print('on execute le template')
+            return self.template.create_link()
 
     class Meta:
         # ordering = ['game__name']
