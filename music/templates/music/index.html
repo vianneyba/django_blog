@@ -5,15 +5,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="col-md-8 offset-md-3">
-            <form action="" method="get">
-                <div class="form-group row">
-                    <input class="col-md-4 col-form-label" type="text" name="search" required>
-                    <button type="submit" class="btn btn-primary">Recherche</button>
-                    <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=tracks&note=4">Top Titres</a>
-                    <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=albums&note=4">Top Albums</a>
-                    <a class="btn btn-outline-dark btn-sm m-2" href="{% url 'music:index' %}?type=albums">Voir Tous</a>
-                </div>
-            </form>
+            {% include 'music/search_bar.html' %}
         </div>
     </div>
 
@@ -48,12 +40,12 @@
             </div>
 
             <div class="col-md-12">
-                <h4 class="text-center"><a href="{% url 'music:index' %}?band={{ track.album.band.id }}">{{ track.album.band.name | upper }}</a></h4>
+                <h4 class="text-center">{{ track.order }} - {{ track.title}}</h4>
+                <p class="text-center"><a href="{% url 'music:index' %}?band={{ track.album.band.id }}">{{ track.album.band.name | upper }}</a></p>
                 <p class="text-center">
                     <a href="{% url 'music:view-album' track.album.id %}">{{ track.album.title | title }}</a>
                     [<a href="{% url 'music:index'  %}?date={{ track.album.release_year }}">{{ track.album.release_year }}</a>]
                 </p>
-                <p class="text-center">{{ track.order }} - {{ track.title}}</p>
             </div>
         </div>
     </div>

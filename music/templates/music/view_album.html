@@ -4,13 +4,9 @@
 
 {% block content %}
     <div class="row"> 
-
         <div class="col-md-12">
-            <div class="col-md-6 offset-md-3">
-                <form action="{% url 'music:index' %}" method="get" class="form-example">
-                    <input type="text" name="search" required>
-                    <button type="submit" class="btn btn-primary mb-2">Recherche</button>
-                </form>
+            <div class="col-md-8 offset-md-3">
+                {% include 'music/search_bar.html' %}
             </div>
         </div>
 
@@ -26,18 +22,14 @@
             <p>{{ album.title | title }}</p>
 
             <p>
-                <a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.releaseDate }}</a>
+                <a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>
             </p>
             <p>
                 <span class="ratingverse">
-
                     {% for i in '12345'|make_list %}
                         <a {% if album.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-album-note' %}?album={{album.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
                     {% endfor %}
                 </span>
-            </p>
-            <p>
-                <a href="{# path_for('musicByNote', { 'note': album.score }) #}">{# include 'mp3/note.html' #}</a>
             </p>
         </section>
 
@@ -56,30 +48,4 @@
             </ul>
         </section>
     </div>
-
-    <!-- <script>
-      let btn1 = document.getElementById("masquer");
-      let divTrackScore = document.getElementsByClassName("ratingverse");
-
-      function visibleNote(type) {
-        btn1.innerHTML= type== "none" ? "afficher" : "masquer"
-        for(let i=0; i < divTrackScore.length; i++){
-          divTrackScore[i].style.display = type;
-        }
-      }
-
-      let showNote= false
-      if(!showNote) {
-        visibleNote("none")
-      }
-
-      btn1.addEventListener("click", function(e) {
-        showNote= !showNote;
-        if(!showNote) {
-          visibleNote("none")
-        } else { 
-          visibleNote("inline")
-        }
-      });
-    </script> -->
 {% endblock %}

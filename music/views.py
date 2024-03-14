@@ -27,6 +27,10 @@ def index(request):
                 note = request.GET.get('note')
                 albums = albums.filter(score__gte=note).order_by('-score')
                 context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+            elif request.GET.get('code'):
+                code = request.GET.get('code')
+                album = models.Album.objects.get(code=code)
+                return render(request, 'music/view_album.html', {'album': album})
 
             context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
         else:
@@ -45,9 +49,6 @@ def index(request):
         if request.GET.get('search'):
             q = request.GET.get('search')
             albums = albums.filter(Q(band__name__icontains=q) | Q(title__icontains=q))
-        if request.GET.get('code'):
-            code = request.GET.get('code')
-            albums = albums.get(code=code)
         context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
     return render(request, 'music/index.html', context)
 
