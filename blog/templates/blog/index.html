@@ -13,7 +13,11 @@
 
 		{% endfor  %}
 
-		{% include 'paginator.html' %}
+		<div class="col-md-12">
+			<div class="col-md-4 offset-md-4">
+				{% include 'paginator.html' %}
+			</div>
+		</div>
 
 	{% else %}
 		<article>

@@ -16,5 +16,5 @@ urlpatterns = [
     path('article/update/<pk>', views.update_article, name='update-article'),
     path('auteur/<author>/', views.by_author, name='by-author'),
     path('tag/<tag>/', views.by_tag, name='by-tag'),
-    path('<slug>/', views.by_slug, name='by-slug'),
+    path('blog/<slug>/', views.by_slug, name='by-slug'),
 ]

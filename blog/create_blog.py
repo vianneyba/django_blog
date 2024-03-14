@@ -1,4 +1,5 @@
 import re
+import markdown
 from django.urls import reverse
 from django.template.loader import render_to_string
 from django.middleware.csrf import get_token
@@ -10,7 +11,8 @@ class Blog_Article:
     patterns = {
         "p_add_form_title_suggestion": r"{{ add_form_title_suggestion sc_id=([0-9]{1,}) }}",
         "p_top_list": r"{{ top_list slug=([0-9-a-z-]{1,}) }}",
-        "p_article": r"{{ article=([0-9a-zA-Z-]{1,}) }}"
+        "p_article": r"{{ article=([0-9a-zA-Z-]{1,}) }}",
+        "choice_type": r"{{ type=(markdown|html) }}",
     }
 
     def __init__(self, blog, request):
@@ -24,6 +26,8 @@ class Blog_Article:
             self.add_top_list()
         if re.search(self.patterns['p_article'], self.blog.content):
             self.add_article()
+        if re.search(self.patterns['choice_type'], self.blog.content):
+            self.choice_type()
 
     def add_title_suggestion(self):
         """
@@ -93,3 +97,13 @@ class Blog_Article:
 
         template = Template(slug)
         self.blog.content = re.sub(self.patterns['p_article'], template.return_template(), self.blog.content)
+    
+    def choice_type(self):
+        x = re.search(self.patterns['choice_type'], self.blog.content)
+        my_type = x.groups()[0]
+        print("x = "+x.groups()[0])
+        if my_type == 'markdown':
+            print("je suis du markdown")
+            self.blog.content = markdown.markdown(self.blog.content)
+
+        self.blog.content = re.sub(self.patterns['choice_type'], '', self.blog.content)
