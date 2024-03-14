@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from game.models import Game, System
 from game import serializers
-from game.insert_games import insert
+# from game.insert_games import insert
 
 
 @staff_member_required

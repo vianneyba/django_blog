@@ -1,5 +1,5 @@
 <a href="{% url 'magazine:add-article' %}">Ecrire un article</a><br>
-<a href="{% url 'magazine:view-article' article.id %}">Voir l'article</a><br>
+<a href="{% url 'magazine:view' article.slug %}">Voir l'article</a><br>
 <a href="{% url 'magazine:add-link' article.id %}">Ajout Lien</a><br>
 <a href="{% url 'magazine:add-paragraph' article.id %}">Ajout Paragraphe</a><br>
 <a href="{% url 'magazine:add-insert' article.id %}">Ajouter un encart</a><br>

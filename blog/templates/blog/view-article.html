@@ -6,9 +6,9 @@
 
 {% block banner %}
 {% if  article.banner != "" %}
-<img class="img-fluid" src="{{ article.banner }}" alt="{{ article.title }}_banner">
+    <img class="img-fluid" src="{{ article.banner }}" alt="{{ article.title }}_banner" width="1300" height="300">
 {% else %}
-<img class="img-fluid" src="{% static '/img/banniere.png' %}" alt="ma bannière">
+    <img class="img-fluid" src="{% static '/img/banniere.png' %}" alt="ma bannière">
 {% endif %}
 {% endblock %}
 

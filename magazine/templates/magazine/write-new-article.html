@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'magazine/partial/menu_article.html' %}
+<div class="mb-3">
+    <form action="{% url 'magazine:write-article' %}" method="post">
+        {% csrf_token %}
+        {% if my_id %}
+            <input type="hidden" name="my_id" value="{{ my_id }}">
+        {% endif %}
+        <textarea class="form-control" name="ini" rows="20" cols="50">{{ text }}</textarea>
+        <button type="submit" class="btn btn-primary">{{ button }}</button>
+    </form>
+</div>
+
+{% endblock %}

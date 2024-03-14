@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Login dans registration</title>
-</head>
-<body>
-	<h1>Page de connextion</h1>
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Page de connexion</h1>
 	<form method="post" action="{% url 'authenticate:register' %}">
 		{% csrf_token %}
 
@@ -18,5 +14,4 @@
 
 		<input type="submit" value="login">
 	</form>
-</body>
-</html>
+{% endblock content %}

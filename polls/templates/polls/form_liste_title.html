@@ -20,5 +20,10 @@
     </form>
 {% else %}
     <p>oooh domage que tu n'est pas connecté! sinon tu aurais pu donner ton avis sur: {{ top.title }}</p>
-    <p>alors tu sais ce qu'il te reste a faire <a href="{% url 'authenticate:register' %}">INSCRIT TOI!</a></p>
+    <p>
+        alors tu sais ce qu'il te reste a faire 
+        <a href="{% url 'authenticate:login' %}">
+            <span class="text-uppercase">connecte toi!!!</span>
+        </a>
+    </p>
 {% endif %}

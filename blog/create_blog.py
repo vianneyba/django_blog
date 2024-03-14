@@ -4,18 +4,26 @@ from django.template.loader import render_to_string
 from django.middleware.csrf import get_token
 from game.models import Game
 from polls.models import Title_Suggestion, Liste_Title, Choice_Liste_Title
+from magazine.convert_ini import Template
 
 class Blog_Article:
+    patterns = {
+        "p_add_form_title_suggestion": r"{{ add_form_title_suggestion sc_id=([0-9]{1,}) }}",
+        "p_top_list": r"{{ top_list slug=([0-9-a-z-]{1,}) }}",
+        "p_article": r"{{ article=([0-9a-zA-Z-]{1,}) }}"
+    }
+
     def __init__(self, blog, request):
         self.crfs = get_token(request)
         self.request = request
         self.blog = blog
 
-        if re.search(r"{{ add_form_title_suggestion sc_id=([0-9]{1,}) }}", self.blog.content):
+        if re.search(self.patterns['p_add_form_title_suggestion'], self.blog.content):
             self.add_title_suggestion()
         if re.search(r"{{ top_list slug=([0-9-a-z-]{1,}) }}", self.blog.content):
             self.add_top_list()
-        
+        if re.search(self.patterns['p_article'], self.blog.content):
+            self.add_article()
 
     def add_title_suggestion(self):
         """
@@ -23,7 +31,7 @@ class Blog_Article:
         """
 
         # recherche de l'id du jeu
-        x = re.search(r"{{ add_form_title_suggestion sc_id=([0-9]{1,}) }}", self.blog.content)
+        x = re.search(self.patterns['p_add_form_title_suggestion'], self.blog.content)
         sc_id = x.groups()[0]
 
         # récupération du jeux
@@ -35,15 +43,14 @@ class Blog_Article:
 
         url = reverse("polls:add-title-suggestion")
         content = render_to_string("polls/form_title_suggestion.html", {
+            'user': self.request.user,
             'article_blog': self.blog,
             'url': url,
             'csrf': self.crfs,
             'id': game.id,
             'suggestion': suggestion})
 
-
-        pattern = r"{{ add_form_title_suggestion sc_id=[0-9]{1,} }}"
-        self.blog.content = re.sub(pattern, content, self.blog.content)
+        self.blog.content = re.sub(self.patterns['p_add_form_title_suggestion'], content, self.blog.content)
 
     def add_top_list(self):
         """"
@@ -78,3 +85,11 @@ class Blog_Article:
         pattern = r"{{ top_list slug=([0-9-a-z-]{1,}) }}"
         self.blog.content = re.sub(pattern, content, self.blog.content)
 
+    def add_article(self):
+        x = re.search(self.patterns['p_article'], self.blog.content)
+        slug = x.groups()[0]
+
+        my_file = f"magazine.article.{slug}"
+
+        template = Template(slug)
+        self.blog.content = re.sub(self.patterns['p_article'], template.return_template(), self.blog.content)

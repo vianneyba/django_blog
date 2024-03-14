@@ -86,10 +86,48 @@ article {
         font-size: 0.9rem;
         float: right
     }
-    .avis {
+    .article_avis {
         @include border-r($border-radius, $border-radius);
         background-color: $color_F3;
         padding: 10px;
+        margin-bottom: 10px;
+        h1 {
+            color: $color_F6;
+            font-size: 1.5rem;
+        }
+    }
+    .article_signature {
+        text-align: right;
+        font-size: 1.2rem;
+        color: $color_red_2;
+        font-weight: bold;
+        span {
+            font-size: 0.8rem;
+            font-weight: lighter;
+        }
+        &:before {
+            content: "écrit par: ";
+          }
+    }
+    .article_plus {
+        padding-left: 35px;
+        color: $vert;
+        &::before {
+            content: "+ ";
+        }
+    }
+    .article_moins {
+            padding-left: 35px;
+            color: $color_red;
+            &::before {
+                content: "- ";
+            }
+    }
+    .article_encart {
+        @include border-r($border-radius, $border-radius);
+        background-color: $color_F4;
+        padding: 10px;
+        margin-bottom: 10px;
         h1 {
             color: $color_F6;
             text-align: center;
@@ -107,6 +145,13 @@ article {
             margin: 10px;
         }
     }
+    .footer-article{
+        margin-top: 20px;
+        margin-left: 40px;
+    }
+    a {
+        color: $color_F6;
+    };
 }
 
 .score_table {
@@ -123,6 +168,10 @@ article {
     }
     td {
         border-top: 1px solid $color_red;
+    }
+    th {
+        font-size: 1.5rem;
+        text-align: center;
     }
 }
 

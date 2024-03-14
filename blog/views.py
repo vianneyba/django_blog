@@ -170,7 +170,7 @@ def publish_article(request, pk, value):
         article.save()
 
     return redirect('blog:index')
-    
+
 
 class ArticleViewset(ModelViewSet):
     permission_classes = (ArticlePermissions,)

@@ -1,15 +1,15 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.template.defaultfilters import slugify
-from django.db import IntegrityError
+from django.http import HttpResponse
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from magazine import models
 from game.models import Game, System
-from game.serializers import GameSerializer
 from magazine import forms
 from magazine import serializers
-
+from magazine.convert_ini import Template, Export
 
 def view(request, slug):
     article = models.Article.objects.get(slug=slug)
@@ -135,9 +135,28 @@ def add_opinion(request, pk):
 
 def view_article(request, pk):
     article = models.Article.objects.get(id=pk)
-    context = {'article': article}
+    context = {'article': article, 'view_menu': True}
 
     return render(request, 'magazine/view-article.html', context)
+
+
+def view_article_by_name(request, name):
+    template = Template(name)
+
+
+    # context = {'template': my_module.template, 'article':my_module.article, 'view_menu': False}
+    context = {'template': template.return_template(), 'my_id': template.config['info']['id']}
+
+    return render(request, 'magazine/view-article-name.html', context)
+
+def export(request, name):
+    template = Template(name)
+    my_doc = Export()
+    my_doc.read_file(name)
+    my_doc.create_game()
+    my_doc.create_article()
+
+    return HttpResponse(template.export_pelican())
 
 
 def list_articles(request):
@@ -145,6 +164,70 @@ def list_articles(request):
 
     context = {'articles': articles, 'view_menu': True}
     return render(request, 'magazine/list-articles.html', context)
+
+
+def update_article(request, my_id):
+    file = open(f"magazine/article/{my_id}.ini", "r")
+    content = file.read()
+
+    context = {"text": content, "button": "Update", "my_id": my_id}
+    return render(request, 'magazine/write-new-article.html', context)
+
+
+def write_article(request):
+    if request.method == 'POST':
+        my_doc = Export()
+        if "my_id" in request.POST:
+            my_doc.write_file(request.POST['my_id'], request.POST['ini'])
+        else:
+            my_doc.create_ini(request.POST['ini'])
+
+        url = reverse("magazine:view-article-by-name", args=(my_doc.config['info']['id'],))
+        return redirect(url)
+
+    txt = "[info]\n"
+    txt += "id = \n"
+    txt += "\n"
+    txt += "[jeux]\n"
+    txt += "id_sc = \n"
+    txt += "title = \n"
+    txt += "support = \n"
+    txt += "tags = \n"
+    txt += "core = \n"
+    txt += "\n"
+    txt += "[magazine]\n"
+    txt += "title = \n"
+    txt += "numero = \n"
+    txt += "mois = \n"
+    txt += "link = \n"
+    txt += "\n"
+    txt += "[article]\n"
+    txt += "category = \n"
+    txt += "type = \n"
+    txt += "preface = \n"
+    txt += "links = \n"
+    txt += "template = \n"
+    txt += "\n"
+    txt += "[paragraphes]\n"
+    txt += "1 = \n"
+    txt += "2 = \n"
+    txt += "\n"
+    txt += "[avis]\n"
+    txt += "1 = \n"
+    txt += "2 = \n"
+    txt += "\n"
+    txt += "[notes]\n"
+    txt += "Animation = \n"
+    txt += "Bruitage = \n"
+    txt += "Graphisme = \n"
+    txt += "Intérêt = \n"
+    txt += "\n"
+    txt += "[photos]\n"
+    txt += "1 = \n"
+    txt += "2 = \n"
+
+    context = {'text': txt, 'button': 'Nouveau'}
+    return render(request, 'magazine/write-new-article.html', context)
 
 
 class ArticleList(viewsets.ModelViewSet):

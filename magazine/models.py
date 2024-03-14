@@ -4,25 +4,26 @@ from game.models import Game
 
 
 TYPE_CHOICES = [
-    ('test', 'test'), ('preview', 'preview')
+    ('test', 'test'), ('preview', 'preview'), ('annonce', 'annonce')
 ]
 
 
 class Article(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    # game = models.ForeignKey(Game, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, blank=True)
     preface = models.TextField(max_length=1700)
-    title_mag = models.CharField(max_length=40, blank=True)
-    num_mag = models.IntegerField(blank=True, default=0)
+    my_id = models.CharField(max_length=16, blank=True)
+    # title_mag = models.CharField(max_length=40, blank=True)
+    # num_mag = models.IntegerField(blank=True, default=0)
     type_art = models.CharField(max_length=10, choices=TYPE_CHOICES, default='test')
 
     def __str__(self):
-        return self.slug
+        return f"{self.slug} - {self.preface[0:30]}"
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = f'{self.game.name} {self.game.system.slug} {self.title_mag} {self.num_mag}'
-            self.slug = slugify(slug)
+            # slug = f'{self.game.name} {self.game.system.slug} {self.title_mag} {self.num_mag}'
+            # self.slug = slugify(slug)
             super(Article, self).save(*args, **kwargs)
         else:
             super(Article, self).save(*args, **kwargs)
@@ -31,7 +32,7 @@ class Article(models.Model):
         return len(self.links.all())
 
     class Meta:
-        ordering = ['game__name']
+        # ordering = ['game__name']
         verbose_name = 'Gestion de l\'article'
         verbose_name_plural = 'Gestion des articles'
 
@@ -55,7 +56,7 @@ class Insert(models.Model):
         super(Insert, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['article__game__name']
+        # ordering = ['article__game__name']
         verbose_name = 'Gestion de l\encart'
         verbose_name_plural = 'Gestion des encarts'
 
@@ -75,7 +76,7 @@ class Opinion(models.Model):
         super(Opinion, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['article__game__name']
+        # ordering = ['article__game__name']
         verbose_name = 'Gestion de l\'avis testeur'
         verbose_name_plural = 'Gestion des avis testeurs'
 
@@ -90,7 +91,7 @@ class Score(models.Model):
         return f'{self.article.game.name} sur {self.article.game.system.title}: {self.title} {self.score}'
 
     class Meta:
-        ordering = ['article__game__name']
+        # ordering = ['article__game__name']
         verbose_name = 'Gestion des notes'
         verbose_name_plural = 'Gestion des notes'
 
@@ -113,12 +114,12 @@ class PhotoArticle(Photo):
     def save(self, *args, **kwargs):
         num = len(self.article.photos.all()) + 1
         self.id_num = num
-        link = f'{self.article.game.name} {self.article.title_mag} {self.article.num_mag}_{num}'
-        self.link = slugify(link)
+        # link = f'{self.article.game.name} {self.article.title_mag} {self.article.num_mag}_{num}'
+        # self.link = slugify(link)
         super(Photo, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['article__game__name']
+        # ordering = ['article__game__name']
         verbose_name = 'Gestion de la photo de l\'article'
         verbose_name_plural = 'Gestion des photos des articles'
 
@@ -143,11 +144,11 @@ class Link(models.Model):
     article = models.ForeignKey(Article, related_name='links', on_delete=models.CASCADE)
     url = models.URLField(max_length=200)
 
-    def __str__(self):
-        return f'{self.article.game.name} sur {self.article.game.system.title} [{self.url[0:50]}...{self.url[-50:]}]'
+    # def __str__(self):
+    #     return f'{self.article.game.name} sur {self.article.game.system.title} [{self.url[0:50]}...{self.url[-50:]}]'
 
     class Meta:
-        ordering = ['article__game__name']
+        # ordering = ['article__game__name']
         verbose_name = 'Gestion du lien'
         verbose_name_plural = 'Gestion des liens'
 
@@ -158,14 +159,14 @@ class Paragraph(models.Model):
     text = models.TextField(max_length=2500)
     id_num = models.IntegerField(blank=True, default=0)
 
-    def __str__(self):
-        return f'{self.id_num}: {self.article.game} - {self.text[0:100]}'
+    # def __str__(self):
+    #     return f'{self.id_num}: {self.article.game} - {self.text[0:100]}'
 
     def save(self, *args, **kwargs):
         self.id_num = len(self.article.paragraphs.all())+1
         super(Paragraph, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['article__game__name']
+        # ordering = ['article__game__name']
         verbose_name = 'Gestion du paragraphe'
         verbose_name_plural = 'Gestion des paragraphes'

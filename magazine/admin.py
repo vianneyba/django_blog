@@ -2,7 +2,7 @@ from django.contrib import admin
 from magazine import models
 
 class ArticleAdmin(admin.ModelAdmin):
-    exclude = ["slug"]
+    exclude = []
 
 class ParagraphAdmin(admin.ModelAdmin):
     exclude = ["id_num"]

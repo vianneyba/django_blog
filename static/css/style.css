@@ -1,3 +1,4 @@
+@charset "UTF-8";
 html {
   height: 100%;
 }
@@ -67,7 +68,7 @@ article .entry-next {
   font-size: 0.9rem;
   float: right;
 }
-article .avis {
+article .article_avis {
   padding: 10px 15px 10px 15px;
   margin-top: 20px;
   background-color: rgba(0, 0, 0, 0.5);
@@ -75,8 +76,50 @@ article .avis {
   border-radius: 15px 15px 15px 15px;
   background-color: #30343C;
   padding: 10px;
+  margin-bottom: 10px;
 }
-article .avis h1 {
+article .article_avis h1 {
+  color: #524347;
+  font-size: 1.5rem;
+}
+article .article_signature {
+  text-align: right;
+  font-size: 1.2rem;
+  color: #530c0a;
+  font-weight: bold;
+}
+article .article_signature span {
+  font-size: 0.8rem;
+  font-weight: lighter;
+}
+article .article_signature:before {
+  content: "écrit par: ";
+}
+article .article_plus {
+  padding-left: 35px;
+  color: #63B96B;
+}
+article .article_plus::before {
+  content: "+ ";
+}
+article .article_moins {
+  padding-left: 35px;
+  color: #F2504B;
+}
+article .article_moins::before {
+  content: "- ";
+}
+article .article_encart {
+  padding: 10px 15px 10px 15px;
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px #5A6477 solid;
+  border-radius: 15px 15px 15px 15px;
+  background-color: #0F1218;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+article .article_encart h1 {
   color: #524347;
   text-align: center;
   font-size: 1.3rem;
@@ -93,6 +136,13 @@ article .insert {
 }
 article .entry-article button {
   margin: 10px;
+}
+article .footer-article {
+  margin-top: 20px;
+  margin-left: 40px;
+}
+article a {
+  color: #524347;
 }
 
 .score_table {
@@ -114,6 +164,10 @@ article .entry-article button {
 }
 .score_table td {
   border-top: 1px solid #F2504B;
+}
+.score_table th {
+  font-size: 1.5rem;
+  text-align: center;
 }
 
 .vote {

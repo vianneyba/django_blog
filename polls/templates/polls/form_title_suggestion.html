@@ -1,4 +1,4 @@
-
+{% if user.is_authenticated %}
     <div class="col-md-6 offset-md-3">
         <form action="{{ url }}" class="form-inline" method="post">
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf }}">
@@ -17,3 +17,12 @@
             </div>
         </form>
     </div>
+{% else %}
+    <p>oooh domage que tu n'est pas connecté! sinon tu aurais pu donner ton avis sur: {{ top.title }}</p>
+    <p>
+        alors tu sais ce qu'il te reste a faire 
+        <a href="{% url 'authenticate:login' %}">
+            <span class="text-uppercase">connecte toi!!!</span>
+        </a>
+    </p>
+{% endif %}

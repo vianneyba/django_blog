@@ -4,22 +4,22 @@
 	<div class="collapse navbar-collapse">
 		<ul class="navbar-nav mr-auto">
 			{% if user.is_active and user.is_staff %}
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Mon Compte
-					</a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="{% url 'blog:add-article' %}">Rédiger</a>
-							<a class="dropdown-item" href="{% url 'game:list-game'%}">launch</a>
-						{% if user.is_superuser %}
-							<a class="dropdown-item" href="{% url 'magazine:add-article' %}">Ajout Article Mag</a>
-							<a class="dropdown-item" href="{% url 'music:index' %}">Musique</a>
-						{% endif %}
-						{# <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> #}
-						<a class="dropdown-item" href="{% url 'blog:by-author' user.username %}?view=all">Mes Articles</a>
-						{# <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> #}
-					</div>
-				</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Mon Compte
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="{% url 'blog:add-article' %}">Rédiger</a>
+						<a class="dropdown-item" href="{% url 'game:list-game'%}">launch</a>
+					{% if user.is_superuser %}
+						<a class="dropdown-item" href="{% url 'magazine:add-article' %}">Ajout Article Mag</a>
+						<a class="dropdown-item" href="{% url 'music:index' %}">Musique</a>
+					{% endif %}
+					{# <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> #}
+					<a class="dropdown-item" href="{% url 'blog:by-author' user.username %}?view=all">Mes Articles</a>
+					{# <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> #}
+				</div>
+			</li>
 			{% endif %}
 			{# { endif %} #}
 
@@ -33,9 +33,8 @@
 		</ul>  
 
 		<ul class="navbar-nav mr-auto">
-			
 			{% for category in CATEGORIES %}
-				<li class="nav-item"><a class="nav-link" href="{% url 'blog:by-category' category.0 %}">{{ category.1 | upper }}</a></li>
+			<li class="nav-item"><a class="nav-link" href="{% url 'blog:by-category' category.0 %}">{{ category.1 | upper }}</a></li>
 			{% endfor %}
 		</ul> 	      
 		
@@ -51,9 +50,9 @@
 		{% if WITH_REGISTRATION %}
 		<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">
 			{% if user.username %}
-				<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a></li>
+			<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a></li>
 			{% else %}
-				<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a></li>
+			<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a></li>
 			{% endif %}
 		</button>
 		{% endif %}

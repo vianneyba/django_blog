@@ -28,14 +28,14 @@ class Article(models.Model):
 	slug = models.SlugField(unique=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	published = models.BooleanField(default=False)
-	update_date = models.DateTimeField(default=timezone.now, blank=True)
+	update_date = models.DateTimeField(default=timezone.now)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	like_count = models.IntegerField(default=0)
 	dislike_count = models.IntegerField(default=0)
-	tags = models.ManyToManyField(Tag, blank=True)
+	tags = models.ManyToManyField(Tag)
 	banner = models.URLField(blank=True)
-	articles_mag = models.ManyToManyField(Article)
+	articles_mag = models.ManyToManyField(Article, blank=True)
 
 	def __str__(self):
 		return self.title
