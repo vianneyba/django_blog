@@ -131,10 +131,6 @@ def view_article(request, my_type, pk):
     if my_type == 'id':
         article = models.Article.objects.get(id=pk)
 
-    template = Template(article.my_id)
-    article.content =template.return_template()
-    article.title = template.create_title_article("texte")
-
     context = {'article': article, 'view_menu': False}
 
     return render(request, 'magazine/view-article-name.html', context)

@@ -292,34 +292,36 @@ class Template:
 
     def return_template(self):
         regex = {
-            'game.title': r"(@-- game.title[\w\s=]+--@)",
-            'album.title': r"(@-- album.title[\w\s=]+--@)",
-            'game.notes.pm': r"(@-- game.notes.pm[\w\s=]+--@)",
-            'album.tacklist': r"(@-- album.tacklist[\w\s=]+--@)"
+            'game.title': r"(@--\s?game.title[\w\s=]+--@)",
+            'album.title': r"(@--\s?album.title[\w\s=]+--@)",
+            'game.notes.pm': r"(@--\s?game.notes.pm[\w\s=]+--@)",
+            'album.tacklist': r"(@--\s?album.tacklist[\w\s=]+--@)",
+            'paragraphe': r"(@--\s?paragraphe=(\d+) ([\w\s=]+)?--@)"
         }
         if re.search(regex['game.title'], self.template):
             txt = self.create_title_article(my_type='html')
             self.create_my_div(regex['game.title'], txt)
+
         if re.search(regex['album.title'], self.template):
             txt = self.create_title_album()
             self.create_my_div(regex['album.title'], txt)
+
         if re.search(regex['album.tacklist'], self.template):
             txt = self.create_tacklist()
             self.create_my_div(regex['album.tacklist'], txt)
 
-
-        if re.search(r"@-- paragraphe=(\d+)[\w\s=]+--@", self.template):
-            i = re.findall(r"(@-- paragraphe=(\d+)[\w\s=]+--@)", self.template)
+        if re.search(regex['paragraphe'], self.template):
+            i = re.findall(regex['paragraphe'], self.template)
             for paragraphe in i:
                 my_div = self.search_el(paragraphe[0], genre="paragraphe", my_id=paragraphe[1])
                 my_div += self.create_paragraphe(self.config['paragraphes'][paragraphe[1]])
                 my_div += "</div>"
-                pattern = f"@-- paragraphe={paragraphe[1]}[\w\s=]+--@"
+                pattern = f"@-- paragraphe={paragraphe[1]} ([\w\s=]+)?--@"
                 self.template = re.sub(pattern, my_div, self.template)
+
         if re.search(regex['game.notes.pm'], self.template):
             txt = self.create_note()
             txt += self.create_plus_moins()
-
             self.create_my_div(regex['game.notes.pm'], txt)
 
         if re.search(r"@-- avis=(\d+)[\w\s=]+--@", self.template):
@@ -330,6 +332,7 @@ class Template:
                 my_div += "</div>"
                 pattern = f"@-- avis={avis[1]}[\w\s=]+--@"
                 self.template = re.sub(pattern, my_div, self.template)
+
         if re.search(r"@-- game.notes[\w\s=]+--@", self.template):
             i = re.findall(r"(@-- game.notes[\w\s=]+--@)", self.template)
             my_div = self.search_el(i[0], genre="notes")
@@ -337,6 +340,7 @@ class Template:
             my_div += "</div>"
             pattern = f"@-- game.notes[\w\s=]+--@"
             self.template = re.sub(pattern, my_div, self.template)
+
         if re.search(r"@-- photo=(\d+)[\w\s=]+--@", self.template):
             i = re.findall(r"(@-- photo=(\d+)[\w\s=]+--@)", self.template)
             for photo in i:
@@ -345,6 +349,7 @@ class Template:
                 my_div += "</div>"
                 pattern = f"@-- photo={photo[1]}[\w\s=]+--@"
                 self.template = re.sub(pattern, my_div, self.template)
+
         if re.search(r"@-- encart=(\d+)[\w\s=]+--@", self.template):
             i = re.findall(r"(@-- encart=(\d+)[\w\s=]+--@)", self.template)
             for encart in i:
@@ -353,8 +358,10 @@ class Template:
                 my_div += "</div>"
                 pattern = f"@-- encart={encart[1]}[\w\s=]+--@"
                 self.template = re.sub(pattern, my_div, self.template)
+
         if re.search(r"@-- preface[\w\s=]+--@", self.template):
             self.create_preface()
+
         if re.search(r"@-- add_link[\w\s=]+--@", self.template):
             self._create_link()
 
@@ -452,8 +459,6 @@ class Export:
                 preface=preface,
                 my_id=self.config['info']['id'])
             self.article.save()
-
-            print(f"self.article = {self.article}")
 
     def create_game(self):
         search_game = self.config['jeux']['title']
