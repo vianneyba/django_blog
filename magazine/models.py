@@ -37,24 +37,28 @@ class Article(models.Model):
             return self.template.return_template()
         except AttributeError:
             self.template = Template(self.my_id)
-            print('on execute le template')
             return self.template.return_template()
 
     def title(self):
         try:
-            return self.template.create_title_article("texte")
+            return self.template.create_title("texte")
         except AttributeError:
             self.template = Template(self.my_id)
-            print('on execute le template')
-            return self.template.create_title_article("texte")
+            return self.template.create_title("texte")
 
     def link(self):
         try:
             return self.template.create_link()
         except AttributeError:
             self.template = Template(self.my_id)
-            print('on execute le template')
             return self.template.create_link()
+
+    def export_pelican(self):
+        try:
+            return self.template.export_pelican()
+        except AttributeError:
+            self.template = Template(self.my_id)
+            return self.template.export_pelican()
 
     class Meta:
         # ordering = ['game__name']

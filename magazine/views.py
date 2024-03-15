@@ -47,7 +47,6 @@ def add_paragraph(request, pk):
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-paragraph.html', context)
 
-
 def add_photo(request, pk):
     article = models.Article.objects.get(id=pk)
     form = forms.PhotoForm(initial={'article': article.id})
@@ -60,7 +59,6 @@ def add_photo(request, pk):
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-photo.html', context)
-
 
 def add_photo_insert(request, pk, pk_insert):
     article = models.Article.objects.get(id=pk)
@@ -77,7 +75,6 @@ def add_photo_insert(request, pk, pk_insert):
     context = {'form': form, 'article': article, 'insert': insert}
     return render(request, 'magazine/add_insert_photo.html', context)
 
-
 def add_insert(request, pk):
     article = models.Article.objects.get(id=pk)
     form = forms.InsertForm(initial={'article': article.id})
@@ -90,7 +87,6 @@ def add_insert(request, pk):
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-insert.html', context)
-
 
 def add_link(request, pk):
     article = models.Article.objects.get(id=pk)
@@ -105,7 +101,6 @@ def add_link(request, pk):
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-link.html', context)
 
-
 def add_score(request, pk):
     article = models.Article.objects.get(id=pk)
     form = forms.ScoreForm(initial={'article': article.id})
@@ -118,7 +113,6 @@ def add_score(request, pk):
 
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-score.html', context)
-
 
 def add_opinion(request, pk):
     article = models.Article.objects.get(id=pk)
@@ -133,7 +127,6 @@ def add_opinion(request, pk):
     context = {'form': form, 'article': article}
     return render(request, 'magazine/add-opinion.html', context)
 
-
 def view_article(request, my_type, pk):
     if my_type == 'id':
         article = models.Article.objects.get(id=pk)
@@ -146,7 +139,6 @@ def view_article(request, my_type, pk):
 
     return render(request, 'magazine/view-article-name.html', context)
 
-
 def view_article_by_name(request, name):
 
     template = Template(name)
@@ -157,17 +149,16 @@ def view_article_by_name(request, name):
     return render(request, 'magazine/view-article-name.html', context)
 
 def export(request):
+    article = None
     if 'code' in request.GET:
         code = request.GET.get('code')
-        template = Template(code)
-        my_doc = Export()
+        my_doc = Export(models.Article)
         my_doc.read_file(code)
-        my_doc.create_game()
         my_doc.create_article()
+        article = my_doc.article
 
-    #  return HttpResponse(template.export_pelican())
 
-    return render(request, 'magazine/export.html')
+    return render(request, 'magazine/export.html', {'article': article})
 
 
 def list_articles(request):
@@ -187,7 +178,7 @@ def update_article(request, my_id):
 
 def write_article(request):
     if request.method == 'POST':
-        my_doc = Export()
+        my_doc = Export(models.Article)
         if "my_id" in request.POST:
             my_doc.write_file(request.POST['my_id'], request.POST['ini'])
         else:

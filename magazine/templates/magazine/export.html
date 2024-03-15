@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col-md-6 offset-md-3">
+    <form method="get" action="{% url 'magazine:export' %}">
+        <div class="form-group row">
+            <input class="form-control col-sm-6" type="text" name="code" id="code">
+            <input class="btn btn-primary" type="submit" value="Importer">
+        </div>
+    </form>
+</div>
+
+{% if article is not None %}
+    <article>
+        <h4>
+            <a href="{% url 'magazine:view-article' 'id' article.id %}">{{ article.title }}</a>
+            <a href="{% url 'magazine:view-article' 'id' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        </h4>
+
+        <p>{{ article.preface | safe }}</p>
+
+        {{ article.link | safe }}
+
+    </article>
+
+{% endif %}
+
+{% endblock %}

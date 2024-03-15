@@ -11,8 +11,15 @@ class Template:
         self.config = configparser.ConfigParser(interpolation=None)
         self.config.read(f'magazine/article/{name}.ini')
         self.template = self.config['article']['template']
+        self.info_type = self.config['info']['type']
 
-    def create_title_album(self):
+    def create_title(self, my_type="html"):
+        if self.info_type == 'musique':
+            return self.create_title_album(my_type)
+        elif self.info_type == 'game':
+            return self.create_title_article(my_type)
+
+    def create_title_album(self, my_type="html"):
         band = self.config['album']['band']
         title = self.config['album']['title']
         year =  self.config['album']['year']
@@ -25,18 +32,21 @@ class Template:
 
         link = f"<a href=\"{url_site}\">{title_site}</a>"
         link_2 = f"<a href=\"{url_article}\">{chroniqueur}</a>"
-        return f"""
-            <div class="row">
-                <div class="col-md-8">
-                    <h1>{band} - {title} [{year}]</h1>
-                    <h3>sur {link} écrit par {link_2}</h3>
-                </div>
-                <div class="col-md-4">
-                    <img  class="img-fluid" src="http://vianneyba.fr/images/cover/{pk}.jpg">
-                </div>
-            </div>
-            """
 
+        if my_type == "html":
+            return f"""
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1>{band} - {title} [{year}]</h1>
+                        <h3>sur {link} écrit par {link_2}</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <img  class="img-fluid" src="http://vianneyba.fr/images/cover/{pk}.jpg">
+                    </div>
+                </div>
+                """
+        else:
+            return f"{band} - {title} [{year}] sur {title_site} écrit par {chroniqueur}"
 
     def create_title_article(self, my_type="html"):
         type_article = self.config['article']['type']
@@ -235,28 +245,29 @@ class Template:
 
         return table
 
-    def create_link(self):
-        my_div = f"\t<a href=\"{self.config['magazine']['link']}\">{self.config['magazine']['title']} numero {self.config['magazine']['numero']}</a>"
-        my_div += " sur <a href=\"https://www.abandonware-magazines.org/index.php\">Abandonware Magazines</a> >> "
-        
-        links = self.config['article']['links'].split(":::")
-        
-        i = 1
-        for link in links:
-            my_div += f"<a href=\"{link}\">page {i}</a>\n"
+    def create_link(self, text=""):
+        my_div = self.search_el(text, case=12)
+        if self.info_type == 'game':
+            my_div += f"\t<a href=\"{self.config['magazine']['link']}\">{self.config['magazine']['title']} numero {self.config['magazine']['numero']}</a>"
+            my_div += " sur <a href=\"https://www.abandonware-magazines.org/index.php\">Abandonware Magazines</a> >> "
 
-            if i != len(links):
-                my_div += " | "
-            i += 1
+            links = self.config['article']['links'].split(":::")
+
+            i = 1
+            for link in links:
+                my_div += f"<a href=\"{link}\">page {i}</a>\n"
+
+                if i != len(links):
+                    my_div += " | "
+                i += 1
+
 
         my_div += "</div>\n"
-
         return my_div
 
     def _create_link(self):
         i = re.findall(r"(@-- add_link[\w\s=]+--@)", self.template)
-        my_div = self.search_el(i[0], case=12)
-        my_div += self.create_link()
+        my_div = self.create_link(i[0])
 
         pattern = f"@-- add_link[\w\s=]+--@"
         self.template = re.sub(pattern, my_div, self.template)
@@ -372,7 +383,8 @@ class Template:
         """
 
 class Export:
-    def __init__(self):
+    def __init__(self, class_article):
+        self.class_article = class_article
         self.config = configparser.ConfigParser(interpolation=None)
         self.url = "magazine/article/"
 
@@ -413,6 +425,7 @@ class Export:
         my_type = self.config['info']['type']
 
         if my_type == "game":
+            self.create_game()
             game = self.config['jeux']['title']
             support = self.config['jeux']['support']
             title_mag = self.config['magazine']['title']
@@ -432,12 +445,15 @@ class Export:
             slug = slugify(f"{band} {title} {year} {title_site} {chroniqueur}")
 
         try:
-            self.article = Article.objects.get(slug=slug)
+            self.article = self.class_article.objects.get(slug=slug)
         except ObjectDoesNotExist:
-            self.article = Article(
+            self.article = self.class_article(
                 slug=slug,
                 preface=preface,
-                my_id=self.config['info']['id']).save()
+                my_id=self.config['info']['id'])
+            self.article.save()
+
+            print(f"self.article = {self.article}")
 
     def create_game(self):
         search_game = self.config['jeux']['title']
@@ -454,7 +470,7 @@ class Export:
     def create_system(self):
         search = self.config['jeux']['support']
         try:
-            system = System.objects.get(title=search)
+            system = System.objects.get(slug=search)
         except ObjectDoesNotExist:
             system = System(
                 title=search,
