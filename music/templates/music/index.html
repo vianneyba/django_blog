@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-12">
                 <a href="{% url 'music:view-album' album.id %}">
-                    <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ album.code }}.jpg" alt="{{ album.group.name | upper }} - {{ album.title }}"/>
+                    <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ album.code }}.avif" alt="{{ album.group.name | upper }} - {{ album.title }}"/>
                 </a>
             </div>
 
@@ -35,7 +35,7 @@
         <div class="row">
             <div class="col-md-12">
                 <a href="{% url 'music:view-album' track.album.id %}">
-                    <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ track.album.code }}.jpg" alt="{{ track.album.group.name | upper }} - {{ track.album.title }}"/>
+                    <img class="img-fluid" src="{{ PATH_IMAGE }}/{{ track.album.code }}.avif" alt="{{ track.album.group.name | upper }} - {{ track.album.title }}"/>
                 </a>
             </div>
 
