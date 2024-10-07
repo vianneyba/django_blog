@@ -19,8 +19,7 @@ class ArticleForm(forms.ModelForm):
             'tags': forms.SelectMultiple(attrs={
                 'class': 'form-control'}),
             'banner': forms.TextInput(attrs={
-                'class': 'form-control'}), 
-            'articles_mag': forms.CheckboxSelectMultiple()
+                'class': 'form-control'})
         }
 
 

@@ -17,25 +17,7 @@ from comment.models import Comment
 from comment.forms import CommentForm
 from django.http import Http404
 from blog.create_blog import Blog_Article
-
-
-def search_category(category):
-    slug = slugify(category)
-    category = Category.objects.get(slug=slug)
-    return category.id
-
-
-def search_tag(tags, article):
-    t = tags.split(';')
-    for name in t:
-        slug = slugify(name)
-        try:
-            tag = Tag.objects.get(slug=slug)
-        except ObjectDoesNotExist:
-            tag = Tag(name=name, slug=slug)
-            tag.save()
-        article.tags.add(tag)
-
+from django.contrib.auth.decorators import permission_required
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -44,8 +26,12 @@ def return_paginator(request, queryset):
 
     return page_obj
 
-
 def return_article(request, slug=None, pk=None):
+    """
+    Fonction qui renvoie tous les elements d'un article (article, commentaire, like)
+    slug        - slug de l'article
+    pk          - id d'un article
+    """
     context = {}
 
     try:
@@ -55,7 +41,6 @@ def return_article(request, slug=None, pk=None):
             context['article'] = Article.objects.get(pk=pk)
 
         Blog_Article(context['article'], request)
-
 
         comments = Comment.objects.filter(article__id=context['article'].id)
         context['comments'] = return_paginator(request, comments)
@@ -72,38 +57,23 @@ def return_article(request, slug=None, pk=None):
 
     context['like'] = context['article'].search_like(request.user)
 
-
     return context
 
-
 def index(request):
+    """
+    Page d'acceuil du blog
+    return de tous les articles du blog qui sont publié
+    """
     articles = Article.objects.all().filter(published=True)
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
 
-
-def by_category(request, category):
-    articles = Article.objects.filter(category__slug=category)
-
-    if len(articles) == 0:
-        raise Http404
-
-    context = {'page_obj': return_paginator(request, articles)}
-    return render(request, 'blog/index.html', context)
-
-
-def by_tag(request, tag):
-    articles = Article.objects.filter(tags__slug=tag)
-
-    if len(articles) == 0:
-        raise Http404
-
-    context = {'page_obj': return_paginator(request, articles)}
-    return render(request, 'blog/index.html', context)
-
-
 def by_slug(request, slug):
+    """
+    Page de vue d'un article du blog grace a son slug
+    return l'article demandé avec le formulaire de commentaire
+    """
     context = return_article(request, slug=slug)
 
     if context is None:
@@ -114,33 +84,15 @@ def by_slug(request, slug):
     context['form_comment'] = form_comment
     return render(request, 'blog/view-article.html', context)
 
-
-def by_author(request, author):
-    if request.GET.get('view') == 'all' and author == request.user.username:
-        articles = Article.objects.filter(author__username=author)
-    else:
-        articles = Article.objects.filter(author__username=author, published=True)
-
-    if len(articles) == 0:
-        raise Http404
+def by_category(request, category):
+    """
+    Fonction qui envoie une liste d'article d'une catégorie
+    category        -categorie recherché
+    """
+    articles = Article.objects.filter(category__slug=category, published=True)
 
     context = {'page_obj': return_paginator(request, articles)}
     return render(request, 'blog/index.html', context)
-
-
-def add_article(request):
-    form_add_article = ArticleForm()
-    if request.method == 'POST':
-        form_add_article = ArticleForm(request.POST)
-        if form_add_article.is_valid():
-            article = form_add_article.save(commit=False)
-            article.author = request.user
-            article.save()
-            return redirect('blog:by-slug', slug=article.slug)
-
-    context = {'form_add_article': form_add_article}
-    return render(request, 'blog/add-article.html', context)
-
 
 def update_article(request, pk):
     article = Article.objects.get(pk=pk)
@@ -158,18 +110,90 @@ def update_article(request, pk):
         'type': 'update'}
     return render(request, 'blog/add-article.html', context)
 
-
 def publish_article(request, pk, value):
+    """
+    fonction qui publie ou pas un article et qui renvoie a l'acceuil
+    pk      -id de l'article
+    value   -booleen
+    """
     if value == 'True':
         published = True
     else:
         published = False
+
     article = Article.objects.get(pk=pk)
     if article.author == request.user:
         article.published = published
         article.save()
 
     return redirect('blog:index')
+
+def by_author(request, author):
+    """
+    Fonction qui envoie une liste d'article d'un auteur
+    author      -auteur recherché
+    """
+    if request.GET.get('view') == 'all' and author == request.user.username:
+        articles = Article.objects.filter(author__username=author)
+    else:
+        articles = Article.objects.filter(author__username=author, published=True)
+
+    if len(articles) == 0:
+        raise Http404
+
+    context = {'page_obj': return_paginator(request, articles)}
+    return render(request, 'blog/index.html', context)
+
+def by_tag(request, tag):
+    """
+    page qui liste les articles grace a ses tags
+    return une liste d'article par rapport au tag qui sont publié
+    tag         -string
+    """
+    articles = Article.objects.filter(tags__slug=tag, published=True)
+
+    context = {'page_obj': return_paginator(request, articles)}
+    return render(request, 'blog/index.html', context)
+
+@permission_required("blog.add_article")
+def add_article(request):
+    """
+    Fonction pour écrire un article
+    """
+    form_add_article = ArticleForm()
+    if request.method == 'POST':
+        form_add_article = ArticleForm(request.POST)
+        if form_add_article.is_valid():
+            article = form_add_article.save(commit=False)
+            article.author = request.user
+            article.save()
+            return redirect('blog:by-slug', slug=article.slug)
+
+    context = {'form_add_article': form_add_article}
+    return render(request, 'blog/add-article.html', context)
+
+def search_category(category):
+    """
+    Fonction pour la création d'une catégorie
+    """
+    slug = slugify(category)
+    category = Category.objects.get(slug=slug)
+    return category.id
+
+def search_tag(tags, article):
+    """
+    Fonction pour la création des tags et les ajoutes a un article
+    tags        - string ex:'action;platform'
+    """
+    t = tags.split(';')
+    for name in t:
+        slug = slugify(name)
+        try:
+            tag = Tag.objects.get(slug=slug)
+        except ObjectDoesNotExist:
+            tag = Tag(name=name, slug=slug)
+            tag.save()
+        article.tags.add(tag)
 
 
 class ArticleViewset(ModelViewSet):

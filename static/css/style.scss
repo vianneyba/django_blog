@@ -27,7 +27,7 @@ html {
 body {
     background: $color_F1;
     color: $color_F5;
-    background-image: url(../img/background.jpg);
+    background-image: url(../img/background.avif);
     background-attachment:fixed;
     margin: 0;
     padding: 0;
@@ -37,7 +37,7 @@ a {
     text-decoration: none;
     color: $color_F1;
     &:hover {
-      text-decoration: none;   
+      text-decoration: none;
     }
 }
 header {
@@ -70,7 +70,7 @@ article {
     .article-footer {
         margin: 15px auto;
     }
-    .entry-title{
+    .entry-title {
         text-align: center;
     }
     .entry-category {
@@ -112,16 +112,25 @@ article {
     .article_plus {
         padding-left: 35px;
         color: $vert;
-        &::before {
-            content: "+ ";
+        li {
+            &::before {
+                content: "+ ";
+            }
         }
     }
     .article_moins {
-            padding-left: 35px;
-            color: $color_red;
+        padding-left: 35px;
+        color: $color_red;
+        li {
             &::before {
-                content: "- ";
+            content: "- ";
             }
+        }
+    }
+    .article_note {
+        ul {
+            list-style: none;
+        }
     }
     .article_encart {
         @include border-r($border-radius, $border-radius);
@@ -140,12 +149,12 @@ article {
         padding: 10px;
         margin: 10px;
     }
-    .entry-article{
+    .entry-articl {
         button {
             margin: 10px;
         }
     }
-    .footer-article{
+    .footer-article {
         margin-top: 20px;
         margin-left: 40px;
     }
@@ -235,15 +244,15 @@ article {
 form {
     margin: 15px 0px;
     input {
-        margin: 6px 0px; 
+        margin: 6px 0px;
     }
     .btn-primary {
-        margin: 10px; 
+        margin: 10px;
     }
 }
 
 .separator {
-    margin: 25px auto; 
+    margin: 25px auto;
     height: 3px;
     width: 50%;
     border: none;

@@ -35,7 +35,6 @@ class Article(models.Model):
 	dislike_count = models.IntegerField(default=0)
 	tags = models.ManyToManyField(Tag)
 	banner = models.URLField(blank=True)
-	articles_mag = models.ManyToManyField(Article, blank=True)
 
 	def __str__(self):
 		return self.title

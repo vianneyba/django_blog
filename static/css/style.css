@@ -6,7 +6,7 @@ html {
 body {
   background: #ABBCDA;
   color: #030407;
-  background-image: url(../img/background.jpg);
+  background-image: url(../img/background.avif);
   background-attachment: fixed;
   margin: 0;
   padding: 0;
@@ -99,15 +99,18 @@ article .article_plus {
   padding-left: 35px;
   color: #63B96B;
 }
-article .article_plus::before {
+article .article_plus li::before {
   content: "+ ";
 }
 article .article_moins {
   padding-left: 35px;
   color: #F2504B;
 }
-article .article_moins::before {
+article .article_moins li::before {
   content: "- ";
+}
+article .article_note ul {
+  list-style: none;
 }
 article .article_encart {
   padding: 10px 15px 10px 15px;
@@ -134,7 +137,7 @@ article .insert {
   padding: 10px;
   margin: 10px;
 }
-article .entry-article button {
+article .entry-articl button {
   margin: 10px;
 }
 article .footer-article {
@@ -179,7 +182,7 @@ article a {
 }
 .vote .vote_bar {
   display: inline-block;
-  border: 1px solid #e6c9c9;
+  border: 1px solid rgb(230, 201, 201);
   border-radius: 10px;
   width: 90px;
   padding: 3px;
@@ -341,5 +344,3 @@ form .btn-primary {
   color: red;
   font-size: 2rem;
 }
-
-/*# sourceMappingURL=style.css.map */

@@ -1,6 +1,82 @@
+{# Vue pour écrire un article  #}
 {% extends "base.html" %}
 
+{% block js %}
+function addTypeText(myRadio) {
+	let new_value = {% verbatim %}`{{ type=${myRadio.value} }}\n`{% endverbatim %};
+	let el = document.getElementById("id_content").value
+
+	position_markdown = el.search("type=markdown");
+	position_html = el.search("type=html");
+
+	if (position_markdown == -1 && position_html == -1) {
+		document.getElementById("id_content").value = new_value + el;
+	} else if (position_markdown != -1) {
+		let e = el.replace("type=markdown", "type=html");
+		document.getElementById("id_content").value = e;
+	} else if (position_html != -1) {
+		let e = el.replace("type=html", "type=markdown");
+		document.getElementById("id_content").value = e;
+	}
+}
+
+function addTest() {
+	let el = document.getElementById("id_content").value
+	let id_test = document.getElementById("id_test").value
+	let new_value = {% verbatim %}`\n{{ article=${id_test} }}`{% endverbatim %};
+	position = el.search("article=");
+	if (position == -1 ) {
+		console.log(`id_test = ${id_test}`)
+		document.getElementById("id_content").value = el + new_value;
+	}
+}
+
+function addSuggestion() {
+	let el = document.getElementById("id_content").value
+	let sc_id = document.getElementById("sc_id").value
+	let new_value = {% verbatim %}`\n{{ add_form_title_suggestion sc_id=${sc_id} }}`{% endverbatim %};
+	position = el.search("add_form_title_suggestion sc_id=");
+	if (position == -1 ) {
+		console.log(`sc_id = ${sc_id}`)
+		document.getElementById("id_content").value = el + new_value;
+	}
+}
+{% endblock %}
+
 {% block content %}
+
+<div class="row">
+	<form class="col-md-2">
+		<fieldset>
+			<legend>Texte en:</legend>
+
+			<input type="radio" id="HTML" name="type_text" value="html" onclick="addTypeText(this)" />
+			<label for="HTML">HTML</label><br />
+
+			<input type="radio" id="MARKDOWN" name="type_text" value="markdown" onclick="addTypeText(this)" />
+			<label for="MARKDOWN">MARKDOWN</label><br />
+		</fieldset>
+	  </form>
+	  <form class="col-md-2">
+		<fieldset>
+			<legend>Ajouter un test:</legend>
+			<div class="form-group">
+				<input type="text" class="form-control" id="id_test">
+				<button type="button" class="btn btn-primary btn-sm" onclick="addTest()"">add</button>
+			</div>
+		</fieldset>
+	  </form>
+	  <form class="col-md-2">
+		<fieldset>
+			<legend>Ajouter un test:</legend>
+			<div class="form-group">
+				<input type="text" class="form-control" id="sc_id">
+				<button type="button" class="btn btn-primary btn-sm" onclick="addSuggestion()"">add</button>
+			</div>
+		</fieldset>
+	  </form>
+</div>
+
 <div class="article-form">
 	{% if type == 'update' %}
 		<form method="post" action="{% url 'blog:update-article' article.id %}">

@@ -1,7 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from game.models import Game, System
 from slugify import slugify
-# from magazine.models import Article
 import configparser
 from time import gmtime, strftime
 import re

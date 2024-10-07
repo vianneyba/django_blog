@@ -16,6 +16,10 @@ class Title_Suggestion(models.Model):
     def __str__(self):
         return(f'{self.user.username} sur {self.game.name} avec {self.suggestion}')
 
+    class Meta:
+        verbose_name = 'Gestion Des Jeux Identiques'
+        verbose_name_plural = 'Gestion Des Jeux Identiques'
+
 
 class Question(models.Model):
     # type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='test')
@@ -48,6 +52,10 @@ class Liste_Title(models.Model):
     def __str__(self):
         return f'{self.title}'
 
+    class Meta:
+        verbose_name = 'Gestion Du Top'
+        verbose_name_plural = 'Gestion Des Tops'
+
 
 class Choice_Liste_Title(models.Model):
     liste = models.ForeignKey(Liste_Title, related_name='choices', on_delete=models.CASCADE, null=True)
@@ -57,3 +65,7 @@ class Choice_Liste_Title(models.Model):
 
     def __str__(self):
         return f'{self.liste}: {self.num_id} - {self.suggestion}'
+
+    class Meta:
+        verbose_name = 'Gestion Des Résultats Top'
+        verbose_name_plural = 'Gestion Des Résultats Top'

@@ -7,19 +7,21 @@
 		<link rel="stylesheet" href="{% static '/css/style.css' %}">
 		<meta property="article:author" content="{% block author %}{% endblock %}">
 		<title>{% block title %}{{ TITLE_SITE }}{% endblock %}</title>
+		<script>
+			{% block js %}{% endblock %}
+		</script>
 	</head>
 
 <body>
 	{% include "navbar.html" %}
 
 	<div class="container content">
-		<div class="row">
-			<header id="banner" class="container-fluid">
-				{% block banner %}
-					<img class="img-fluid" src="{% static '/img/banniere.png' %}" alt="ma bannière">
-				{% endblock %}
-			</header>
-		</div>
+		<header id="banner" class="container-fluid">
+			{% block banner %}
+				<img class="img-fluid" src="{% static '/img/banniere.avif' %}" alt="ma bannière">
+			{% endblock %}
+		</header>
+
 
 		<div class="row">
 			{% if view_menu == True %}
@@ -30,7 +32,7 @@
 			{% else %}
 				<div class="col-md-12">
 			{% endif %}
-					{% block content %}{% endblock %}
+				{% block content %}{% endblock %}
 				</div>
 
 		</div>

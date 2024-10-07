@@ -52,9 +52,9 @@
 		{% if WITH_REGISTRATION %}
 		<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">
 			{% if user.username %}
-			<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a></li>
+			<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a>
 			{% else %}
-			<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a></li>
+			<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a>
 			{% endif %}
 		</button>
 		{% endif %}

@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-    <form action="{{ url }}" method="post">
+    <form action="{#{ url }#}" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf }}">
         <input type="hidden" name="id_top" value="{{ top.id }}">
         <input type="hidden" name="article_blog" value="{{ article_blog.slug }}">
@@ -22,7 +22,7 @@
     <p>oooh domage que tu n'est pas connecté! sinon tu aurais pu donner ton avis sur: {{ top.title }}</p>
     <p>
         alors tu sais ce qu'il te reste a faire 
-        <a href="{% url 'authenticate:login' %}">
+        <a href="{#% url 'authenticate:login' %#}">
             <span class="text-uppercase">connecte toi!!!</span>
         </a>
     </p>

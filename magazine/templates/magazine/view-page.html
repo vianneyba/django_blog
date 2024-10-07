@@ -1,0 +1,58 @@
+{# Vue pour une page de test avec formulaire pour la modifier #}
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'magazine/partial/menu_article.html' %}
+
+{% if article == None %}
+<p>Auncun test</p>
+
+{% else %}
+<div class="row">
+    <div class="col-md-7">
+        <img class="img-fluid" src="{{ article.url }}" alt="{{ article.url }}">
+    </div>
+    <div class="col-md-5">
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="pk" id="pk" value="{{ article.pk }}" />
+
+            <div class="form-example">
+                <p>id ={{ article.pk }}</p>
+            </div>
+
+            <div class="form-example">
+                <label for="title_game">titre de la page: </label>
+                <input type="text" name="title_game" id="title_game" value="{{ article.title_game }}" />
+            </div>
+
+            <div class="form-example">
+                <label for="game_id">id du jeux: </label>
+                <input type="text" name="game_id" id="game_id" value="{{ article.game_id }}" />
+            </div>
+
+            <div>
+                <label for="type_article">type:</label>
+                
+                <select name="type_article" id="type_article">
+                    <option value="autre">Autre</option>
+                    <option value="test">Test</option>
+                    <option value="preview">Preview</option>
+                    <option value="annonce">Annonce</option>
+                    <option value="pub">Pub</option>
+                    <option value="dossier">Dossier</option>
+                </select>
+            </div>
+
+            <div class="form-example">
+                <input type="submit" value="Enregistrer" />
+                <input type="submit" name="dupliquer" value="Dupliquer" />
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endif %}
+
+{% endblock %}

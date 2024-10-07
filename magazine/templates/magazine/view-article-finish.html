@@ -1,10 +1,8 @@
-{# Template pour voir les tests de jeux des magazines #}
+{# Vue pour voir un test #}
 {% extends "base.html" %}
 
-{% block title %}[TEST] {{ article.game.name }} dans {{ article.title_mag }} numéro {{ article.num_mag }}{% endblock %}
+{% block title %}[TEST] {{ article.title_game }} dans {{ article.title_mag }} numéro {{ article.num_mag }}{% endblock %}
 
 {% block content %}
-    {% include template with article=article %}
-
-    {% include "magazine/view_links.html" with links=article.links.all %}
+    {{ content | safe }}
 {% endblock %}

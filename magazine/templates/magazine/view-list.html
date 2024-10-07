@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'magazine/partial/menu_article.html' %}
+
+<ul>
+{% for article in articles %}
+    <li>
+        <a href="{% url 'magazine:view-page' %}?article={{ article.pk }}">
+            {{ article.title_game }} dans {{ article.magazine.title_mag }} n{{ article.magazine.num_mag}}
+        </a>
+    </li>
+    
+{% endfor %}
+</ul>
+
+{% endblock %}

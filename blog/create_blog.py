@@ -8,6 +8,9 @@ from polls.models import Title_Suggestion, Liste_Title, Choice_Liste_Title
 from magazine.convert_ini import Template
 
 class Blog_Article:
+    """
+    a faire 
+    """
     patterns = {
         "p_add_form_title_suggestion": r"{{ add_form_title_suggestion sc_id=([0-9]{1,}) }}",
         "p_top_list": r"{{ top_list slug=([0-9-a-z-]{1,}) }}",
@@ -22,7 +25,7 @@ class Blog_Article:
 
         if re.search(self.patterns['p_add_form_title_suggestion'], self.blog.content):
             self.add_title_suggestion()
-        if re.search(r"{{ top_list slug=([0-9-a-z-]{1,}) }}", self.blog.content):
+        if re.search(self.patterns['p_top_list'], self.blog.content):
             self.add_top_list()
         if re.search(self.patterns['p_article'], self.blog.content):
             self.add_article()
@@ -62,7 +65,7 @@ class Blog_Article:
         """
 
         # recherche du slug du top
-        x = re.search(r"{{ top_list slug=([0-9-a-z-]{1,}) }}", self.blog.content)
+        x = re.search(self.patterns['p_top_list'], self.blog.content)
         slug = x.groups()[0]
 
         top = Liste_Title.objects.get(slug=slug)
@@ -73,7 +76,7 @@ class Blog_Article:
 
         if len(my_top) < top.num_choice_max:
             my_top = []
-            for a in range(1,4):
+            for a in range(0,top.num_choice_max):
                 l = Choice_Liste_Title(suggestion='')
                 my_top.append(l)
 
@@ -86,8 +89,7 @@ class Blog_Article:
             'csrf': self.crfs,
             'my_top': my_top})
 
-        pattern = r"{{ top_list slug=([0-9-a-z-]{1,}) }}"
-        self.blog.content = re.sub(pattern, content, self.blog.content)
+        self.blog.content = re.sub(self.patterns['p_top_list'], content, self.blog.content)
 
     def add_article(self):
         x = re.search(self.patterns['p_article'], self.blog.content)
@@ -95,15 +97,15 @@ class Blog_Article:
 
         my_file = f"magazine.article.{slug}"
 
-        template = Template(slug)
-        self.blog.content = re.sub(self.patterns['p_article'], template.return_template(), self.blog.content)
+        file = open(f"magazine/articles/{slug}.html", "r")
+        content = file.read()
+        file.close()
+        self.blog.content = re.sub(self.patterns['p_article'], content, self.blog.content)
     
     def choice_type(self):
         x = re.search(self.patterns['choice_type'], self.blog.content)
         my_type = x.groups()[0]
-        print("x = "+x.groups()[0])
         if my_type == 'markdown':
-            print("je suis du markdown")
             self.blog.content = markdown.markdown(self.blog.content)
 
         self.blog.content = re.sub(self.patterns['choice_type'], '', self.blog.content)

@@ -1,8 +1,10 @@
+from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.template.defaultfilters import slugify
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from magazine import models
@@ -11,15 +13,75 @@ from magazine import forms
 from magazine import serializers
 from magazine.convert_ini import Template, Export
 from blog.create_blog import Blog_Article
+import random
+import os
+from magazine.import_from_am import import_page
 
-def view(request, slug):
-    article = models.Article.objects.get(slug=slug)
+@permission_required("magazine.view_article")
+def view_article(request, my_type, pk):
+    """
+    fonction qui récupére le test en base de donnée et le contenu dans le fichier html
+    """
+    article = models.Article.objects.get(pk=pk)
 
-    template = f'magazine/article/{article.slug}.html'
-    context = {'article': article, 'template': template, 'view_menu': False}
+    file = open(f"magazine/articles/{article.my_id}.html", "r")
+    content = file.read()
+    file.close()
+
+    context = {'article': article, 'content': content, 'view_menu': False}
     return render(request, "magazine/view-article-finish.html", context)
 
+@permission_required("magazine.view_article")
+def view_page(request):
+    """
+    Fonction de recherche d'une page de test dans la base pour la modifier
+    get:num, get: mag
+    get:article
+    get:type=random
+    """
+    if request.method == 'POST':
+        pk = request.POST['pk']
+        test = models.Page.objects.get(pk=pk)
+        if "dupliquer" in request.POST:
+            test.pk = None
 
+        test.title_game = request.POST['title_game']
+        test.type_art = request.POST['type_article']
+        if request.POST['game_id'] != 'None':
+            test.game_id = request.POST['game_id']
+        test.save()
+
+    if "article" in request.GET:
+        pk = request.GET["article"]
+        try:
+            article = models.Page.objects.get(pk=pk)
+        except:
+            article = None
+    elif "type" in request.GET and request.GET["type"] == 'random':
+        items = list(models.Page.objects.all())
+        article = random.choice(items)
+    elif "mag" in request.GET and "num" in request.GET:
+        mag = request.GET['mag']
+        num = request.GET['num']
+        try:
+            magazine = models.Magazine.objects.get(title_mag=mag,num_mag=num)
+            article = magazine.page_set.all().filter(title_game='')[0]
+        except IndexError:
+            response = redirect('magazine:view-magazine')
+            response['Location'] += f'?mag={mag}&num={num}'
+            return response
+        except ObjectDoesNotExist:
+            article = None
+    else:
+        try:
+            article = models.Page.objects.filter(title_game='\n')[0]
+        except:
+            article = None
+
+    context = {'article': article}
+    return render(request, 'magazine/view-page.html', context)
+
+@permission_required("magazine.add_article")
 def add_article(request):
     form = forms.ArticleForm()
 
@@ -33,117 +95,7 @@ def add_article(request):
     context = {'form': form}
     return render(request, 'magazine/write-article.html', context)
 
-
-def add_paragraph(request, pk):
-    article = models.Article.objects.get(id=pk)
-    form = forms.ParagraphForm(initial={'article': article.id})
-
-    if request.method == 'POST':
-        form = forms.ParagraphForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article}
-    return render(request, 'magazine/add-paragraph.html', context)
-
-def add_photo(request, pk):
-    article = models.Article.objects.get(id=pk)
-    form = forms.PhotoForm(initial={'article': article.id})
-
-    if request.method == 'POST':
-        form = forms.PhotoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article}
-    return render(request, 'magazine/add-photo.html', context)
-
-def add_photo_insert(request, pk, pk_insert):
-    article = models.Article.objects.get(id=pk)
-    insert = models.Insert.objects.get(id=pk_insert)
-
-    form = forms.PhotoInsertForm(initial={'insert': insert.id})
-
-    if request.method == 'POST':
-        form = forms.PhotoInsertForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article, 'insert': insert}
-    return render(request, 'magazine/add_insert_photo.html', context)
-
-def add_insert(request, pk):
-    article = models.Article.objects.get(id=pk)
-    form = forms.InsertForm(initial={'article': article.id})
-
-    if request.method == 'POST':
-        form = forms.InsertForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article}
-    return render(request, 'magazine/add-insert.html', context)
-
-def add_link(request, pk):
-    article = models.Article.objects.get(id=pk)
-    form = forms.LinkForm(initial={'article': article.id})
-
-    if request.method == 'POST':
-        form = forms.LinkForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article}
-    return render(request, 'magazine/add-link.html', context)
-
-def add_score(request, pk):
-    article = models.Article.objects.get(id=pk)
-    form = forms.ScoreForm(initial={'article': article.id})
-
-    if request.method == 'POST':
-        form = forms.ScoreForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article}
-    return render(request, 'magazine/add-score.html', context)
-
-def add_opinion(request, pk):
-    article = models.Article.objects.get(id=pk)
-    form = forms.OpinionForm(initial={'article': article.id})
-
-    if request.method == 'POST':
-        form = forms.OpinionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('magazine:view-article', pk=article.id)
-
-    context = {'form': form, 'article': article}
-    return render(request, 'magazine/add-opinion.html', context)
-
-def view_article(request, my_type, pk):
-    if my_type == 'id':
-        article = models.Article.objects.get(id=pk)
-
-    context = {'article': article, 'view_menu': False}
-
-    return render(request, 'magazine/view-article-name.html', context)
-
-def view_article_by_name(request, name):
-
-    template = Template(name)
-
-    # context = {'template': my_module.template, 'article':my_module.article, 'view_menu': False}
-    context = {'template': template.return_template(), 'my_id': template.config['info']['id']}
-
-    return render(request, 'magazine/view-article-name.html', context)
-
+@permission_required("magazine.add_article")
 def export(request):
     article = None
     if 'code' in request.GET:
@@ -156,14 +108,17 @@ def export(request):
 
     return render(request, 'magazine/export.html', {'article': article})
 
-
+@permission_required("magazine.view_article")
 def list_articles(request):
+    """
+    Fonction qui liste tous les tests
+    """
     articles = models.Article.objects.all()
 
     context = {'articles': articles, 'view_menu': False}
     return render(request, 'magazine/list-articles.html', context)
 
-
+@permission_required("magazine.add_article")
 def update_article(request, my_id):
     file = open(f"magazine/article/{my_id}.ini", "r")
     content = file.read()
@@ -171,7 +126,7 @@ def update_article(request, my_id):
     context = {"text": content, "button": "Update", "my_id": my_id}
     return render(request, 'magazine/write-new-article.html', context)
 
-
+@permission_required("magazine.add_article")
 def write_article(request):
     if request.method == 'POST':
         my_doc = Export(models.Article)
@@ -226,75 +181,42 @@ def write_article(request):
 
     context = {'text': txt, 'button': 'Nouveau'}
     return render(request, 'magazine/write-new-article.html', context)
+ 
+@staff_member_required
+def import_mag(request, id_mag, title_mag, num_mag):
+    magazine = import_page(models, id_mag, title_mag, num_mag)
+    return render(request, 'magazine/view-magazine.html', {'magazines': [magazine]})
 
+def search_article(request):
+    """
+    Fonction qui recherche un test dans un magazine
+    post:url==      - recherche par l'url du test
+    """
+    context = {}
+    if request.method == 'POST':
+        if 'url==' in request.POST['search']:
+            url = request.POST['search'][5:]
+            tests = models.Page.objects.filter(url=url)
+        else:
+            search = request.POST['search']
+            tests = models.Page.objects.filter(title_game__contains=search)
+        
+        context['articles'] = tests
 
-class ArticleList(viewsets.ModelViewSet):
-    permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
-    queryset = models.Article.objects.all()
-    serializer_class = serializers.ArticleSerializer
+    return render(request, 'magazine/view-list.html', context)
 
-    def create(self, request, *args, **kwargs):
-        system_1 = request.data['article']['game']['system']
-        try:
-            system = System.objects.get(slug=system_1['slug'])
-        except ObjectDoesNotExist:
-            system = System(title=system_1['title'], slug=system_1['slug'])
-            system.save()
+def view_magazine(request):
+    """
+    Fonction qui liste les tests de magazine
+    get:mag         -nom du magazine
+    get:num         -numero du magazine
+    """
+    search = {}
 
-        game_1 = request.data['article']['game']
-        try:
-            game = Game.objects.get(name=game_1['name'], system=system)
-        except ObjectDoesNotExist:
-            game = Game(name=game_1['name'], system=system)
-            game.save()
+    if 'mag' in request.GET:
+        search['title_mag'] = request.GET['mag']
+    if 'num' in request.GET:
+        search['num_mag'] = request.GET['num']
 
-        article_1 = request.data['article']
-        try:
-            slug = f'{game.name} {game.system.slug} {article_1["title_mag"]} {article_1["num_mag"]}'
-            article = models.Article.objects.get(slug=slugify(slug))
-        except  ObjectDoesNotExist:
-            article = models.Article(preface=article_1['preface'], title_mag=article_1['title_mag'], num_mag=article_1['num_mag'])
-            article.game = game
-            article.save()
-
-        for paragraph_1 in article_1['paragraphs']:
-            paragraph = models.Paragraph(text=paragraph_1['text'], article=article)
-            paragraph.save()
-
-        for link_1 in article_1['links']:
-            link = models.Link(url=link_1['url'], article=article)
-            link.save()
-
-        for photo_1 in article_1['photoArticle']:
-            photo = models.PhotoArticle(text=photo_1['text'], article=article)
-            photo.save()
-
-        for insert_1 in article_1['inserts']:
-            insert = models.Insert(title=insert_1['title'], text=insert_1['text'], article=article)
-            insert.save()
-
-            if 'photoInserts' in insert_1:
-                for photo_1 in insert_1['photoInserts']:
-                    photo = models.PhotoInsert(text=photo_1['text'] ,insert=insert)
-                    photo.save()
-
-        for opinion_1 in article_1['opinions']:
-            opinion = models.Opinion(
-                tester=opinion_1['tester'],
-                text=opinion_1['text'],
-                advice=opinion_1['advice'],
-                article=article)
-            opinion.save()
-
-        for score_1 in article_1['scores']:
-            score = models.Score(
-                title=score_1['title'],
-                text=score_1['text'],
-                score=score_1['score'],
-                article=article)
-            score.save()
-
-        serializers_1 = serializers.ArticleSerializer(article)
-        return Response(
-                    serializers_1.data,
-                    status=status.HTTP_201_CREATED)
+    magazines = models.Magazine.objects.filter(**search)
+    return render(request, 'magazine/view-magazine.html', {'magazines': magazines})       

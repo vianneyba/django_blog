@@ -1,3 +1,4 @@
+{# vue d'un article dans une liste d'article comme l'accueil par exemple #}
 {% load markdown_extras %}
 
 <article class="row">
@@ -30,7 +31,7 @@
 		</div>
 
 		<div class="entry-article">
-			{{ article.view_content | markdown | safe | truncatewords_html:80 }}
+			{{ article.view_content | markdown | safe | truncatewords_html:120 }}
 			<button class="btn btn-secondary entry-next">
 				<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
 			</button>

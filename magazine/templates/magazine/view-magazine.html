@@ -1,0 +1,40 @@
+{# Vue une liste de magazine ou des page d'un magazine #}
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'magazine/partial/menu_article.html' %}
+
+
+<div>
+{% if magazines|length == 0 %}
+    <p>Aucun Magazine touvé</p>
+{% elif magazines|length > 1 %}
+    <ul>
+        {% for magazine in magazines %}
+            <li>
+                <a href="{{ magazine.url }}">{{ magazine.title_mag }} numéro {{ magazine.num_mag }}</a>
+                <a href="{% url 'magazine:view-magazine' %}?mag={{ magazine.title_mag }}&num={{ magazine.num_mag }}">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <h2>
+        <a href="{{ magazines.0.url }}">{{ magazines.0.title_mag }} numéro {{ magazines.0.num_mag }}</a>
+        <a href="{% url 'magazine:view-page' %}?mag={{ magazines.0.title_mag }}&num={{ magazines.0.num_mag }}"><i class="fa fa-pencil-square" aria-hidden="true"></a>
+    </h2>
+    <ul>
+    {% for page in magazines.0.page_set.all %}
+        <li>
+            {{ page.title_game}}
+            <a href="{{ page.url }}">{{ magazines.0.title_mag }} numéro {{ magazines.0.num_mag }}</a>
+            <a href="{% url 'magazine:view-page' %}?article={{ page.pk }}">
+                <i class="fa fa-pencil-square" aria-hidden="true"></i>
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+</div>
+{% endblock %}
