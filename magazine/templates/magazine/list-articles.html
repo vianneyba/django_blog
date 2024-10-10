@@ -5,10 +5,11 @@
 {% block title %}Liste Des Articles{% endblock %}
 
 {% block content %}
+    {% include 'magazine/partial/menu_article.html' %}
     {% for article in articles %}
         <article>
             <h4>
-                <a href="{% url 'magazine:view-article' 'id' article.id %}">{{ article.title_game }}</a>
+                <a href="{% url 'magazine:view-article' 'id' article.id %}">{{ article.title }}</a>
                 sur {{ article.system }}
                 <a href="{% url 'magazine:view-article' 'id' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
                 <a href="{% url 'magazine:view-article' 'id' article.id %}"><i class="fa fa-eye" aria-hidden="true"></i></a>

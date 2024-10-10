@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 import requests
 from bs4 import BeautifulSoup
-import sys
+import os
 
 def import_test_from_am(id_mag, mag, num):
 
@@ -19,13 +19,15 @@ def import_test_from_am(id_mag, mag, num):
             filedata = link.get("href").replace(')', '%29')
             my_text = f'{my_text}\n{filedata};'
 
-    f = open(f"magazine/articles/{mag}_{num}.csv", "w")
+    f = open(f"magazine/articles/{mag}_{num}.txt", "w")
     f.write(my_text)
     f.close()
 
 def import_page(models, id_mag, title_mag, num_mag):
-    import_test_from_am(id_mag, title_mag, num_mag)
-    f = open(f"magazine/articles/{title_mag}_{num_mag}.csv", "r")
+    file_txt = f"magazine/magazines/{title_mag}_{num_mag}.txt"
+    if os.path.exists(file_txt) is False:
+        import_test_from_am(id_mag, title_mag, num_mag)
+    f = open(file_txt, "r")
     i = 0
     for x in f:
         if i == 0:

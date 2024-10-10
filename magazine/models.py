@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from game.models import Game
 from magazine.convert_ini import Template
+import os
 
 
 TYPE_CHOICES = [
@@ -10,8 +11,8 @@ TYPE_CHOICES = [
 
 
 class Article(models.Model):
-    title_game = models.TextField(max_length=80)
-    system = models.TextField(max_length=40)
+    title = models.TextField(max_length=80)
+    system = models.TextField(max_length=40, blank=True)
     slug = models.SlugField(unique=True, blank=True)
     preface = models.TextField(max_length=1700)
     my_id = models.CharField(max_length=16, blank=True)
@@ -24,7 +25,7 @@ class Article(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = f'{self.title_game} {self.system} {self.title_mag} {self.num_mag}'
+            slug = f'{self.title} {self.system} {self.title_mag} {self.num_mag}'
             self.slug = slugify(slug)
             super(Article, self).save(*args, **kwargs)
         else:
@@ -33,12 +34,12 @@ class Article(models.Model):
     # def num_page(self):
     #     return len(self.links.all())
 
-    # def view(self):
-    #     try:
-    #         return self.template.return_template()
-    #     except AttributeError:
-    #         self.template = Template(self.my_id)
-    #         return self.template.return_template()
+    def view(self):
+        try:
+            return self.template.return_template()
+        except AttributeError:
+            self.template = Template(self.my_id)
+            return self.template.return_template()
 
     # def title(self):
     #     try:
@@ -83,3 +84,6 @@ class Page(models.Model):
 
     def __str__(self):
         return f"{self.title_game} dans {self.magazine.title_mag} numéro {self.magazine.num_mag} ({self.url})"
+    
+    def image(self):
+        return os.path.basename(self.url)

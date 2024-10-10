@@ -8,7 +8,7 @@ import re
 class Template:
     def __init__(self, name):
         self.config = configparser.ConfigParser(interpolation=None)
-        self.config.read(f'magazine/article/{name}.ini')
+        self.config.read(f'magazine/articles/{name}.ini')
         self.template = self.config['article']['template']
         self.info_type = self.config['info']['type']
 
@@ -40,7 +40,7 @@ class Template:
                         <h3>sur {link} écrit par {link_2}</h3>
                     </div>
                     <div class="col-md-4">
-                        <img  class="img-fluid" src="http://vianneyba.fr/images/cover/{pk}.jpg">
+                        <img  class="img-fluid" src="http://vianneyba.fr/images/cover/{pk}.avif">
                     </div>
                 </div>
                 """
@@ -121,13 +121,16 @@ class Template:
 
     def create_encart(self, my_id):
         paragraphe = self.config['encarts'][my_id]
+        txt = ""
         p = paragraphe.split(":::")
         s = p[1].split("\n")
-        title = p[0]
+        if p[0] != "none":
+            title = p[0]
+            txt += f"\t\t\t<h1>{title}</h1>"
+
         text = s[0]
         photos = s[1:]
 
-        txt = f"\t\t\t<h1>{title}</h1>"
         txt += f"\t\t\t<p>{text}</p>"
 
         if len(photos) > 0 and len(photos) < 5:
@@ -136,7 +139,7 @@ class Template:
             case_photo = round(12/len(photos))
             for photo in photos:
                 txt += f"<div class=\"col-md-{case_photo}\">"
-                link = f"encart-{my_id}_{i}.jpg"
+                link = f"encart-{my_id}_{i}.avif"
                 txt += self.create_photo(i, text=photo, name=link)
                 txt += "</div>"  
                 i += 1
@@ -425,26 +428,28 @@ class Export:
         self.read_file(name)
         
     def read_file(self, name):
-        self.config.read(f'magazine/article/{name}.ini')
+        self.config.read(f'magazine/articles/{name}.ini')
 
     def create_article(self, my_type=None):
         my_type = self.config['info']['type']
-
+# {% A FAIRE %}
         if my_type == "game":
             self.create_game()
-            game = self.config['jeux']['title']
+            title = self.config['jeux']['title']
+            title_article = title
             support = self.config['jeux']['support']
             title_mag = self.config['magazine']['title']
             num_mag = self.config['magazine']['numero']
             preface = self.config['article']['preface']
 
-            slug = slugify(f"{game} {support} {title_mag} {num_mag}")
+            slug = slugify(f"{title} {support} {title_mag} {num_mag}")
 
         elif my_type == "musique":
             band = self.config['album']['band']
             title = self.config['album']['title']
             year =  self.config['album']['year']
             title_site = self.config['article']['site']
+            title_mag = title_site
             chroniqueur = self.config['article']['chroniqueur']
             preface = self.config['paragraphes']['1']
 
@@ -456,6 +461,7 @@ class Export:
             self.article = self.class_article(
                 slug=slug,
                 preface=preface,
+                title_mag=title_mag,
                 my_id=self.config['info']['id'])
             self.article.save()
 

@@ -14,7 +14,7 @@
 					{% if user.is_superuser %}
 						<a class="dropdown-item" href="{% url 'magazine:add-article' %}">Ajout Article Mag</a>
 						<a class="dropdown-item" href="{% url 'music:index' %}">Musique</a>
-						<a class="dropdown-item" href="{% url 'magazine:export' %}">Export Article</a>
+						<a class="dropdown-item" href="{% url 'magazine:ini-to-html' %}">Export Article</a>
 						<a class="dropdown-item" href="{% url 'magazine:list-articles' %}">Liste Test</a>
 					{% endif %}
 					{# <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> #}

@@ -15,18 +15,26 @@ from magazine.convert_ini import Template, Export
 from blog.create_blog import Blog_Article
 import random
 import os
+import re
 from magazine.import_from_am import import_page
+from django.templatetags.static import static
+from django.conf import settings
 
 @permission_required("magazine.view_article")
-def view_article(request, my_type, pk):
+def view_article(request, m_type, pk):
     """
-    fonction qui récupére le test en base de donnée et le contenu dans le fichier html
+    fonction qui récupére le test en base de donnée et le contenu dans le fichier html ou ini
     """
     article = models.Article.objects.get(pk=pk)
-
-    file = open(f"magazine/articles/{article.my_id}.html", "r")
-    content = file.read()
-    file.close()
+    try:
+        file = open(f"magazine/articles/{article.my_id}.html", "r")
+        content = file.read()
+        file.close()
+    except FileNotFoundError:
+        my_doc = Export(models.Article)
+        my_doc.read_file(article.my_id)
+        my_doc.create_article()
+        content = my_doc.article.view()
 
     context = {'article': article, 'content': content, 'view_menu': False}
     return render(request, "magazine/view-article-finish.html", context)
@@ -96,7 +104,7 @@ def add_article(request):
     return render(request, 'magazine/write-article.html', context)
 
 @permission_required("magazine.add_article")
-def export(request):
+def ini_to_html(request):
     article = None
     if 'code' in request.GET:
         code = request.GET.get('code')
@@ -104,7 +112,6 @@ def export(request):
         my_doc.read_file(code)
         my_doc.create_article()
         article = my_doc.article
-
 
     return render(request, 'magazine/export.html', {'article': article})
 
@@ -191,12 +198,18 @@ def search_article(request):
     """
     Fonction qui recherche un test dans un magazine
     post:url==      - recherche par l'url du test
+    post:code==     - recherche le fichier ini
     """
     context = {}
     if request.method == 'POST':
         if 'url==' in request.POST['search']:
-            url = request.POST['search'][5:]
+            url = request.POST['search'].replace('url==', '')
             tests = models.Page.objects.filter(url=url)
+        elif 'code==' in request.POST['search']:
+            # return redirect('magazine:import-mag')
+            response = redirect('magazine:ini-to-html')
+            response['Location'] += '?code='+request.POST['search'].replace('code==', '')
+            return response
         else:
             search = request.POST['search']
             tests = models.Page.objects.filter(title_game__contains=search)
@@ -219,4 +232,93 @@ def view_magazine(request):
         search['num_mag'] = request.GET['num']
 
     magazines = models.Magazine.objects.filter(**search)
-    return render(request, 'magazine/view-magazine.html', {'magazines': magazines})       
+    return render(request, 'magazine/view-magazine.html', {'magazines': magazines})
+
+def scan(request):
+    result = ""
+    dir_scans = f"{settings.STATICFILES_DIRS[0]}/scans"
+
+    context = {'type': 'mag'}
+    context['magazines']= []
+
+    if request.method == 'POST':
+        path= request.GET['path']
+        pattern = re.compile('([a-zA-Z+ ]+)_([0-9]{3})')
+        match = pattern.search(path)
+        try:
+            magazine = models.Magazine.objects.get(url=request.POST['path'])
+        except ObjectDoesNotExist:
+            magazine = models.Magazine.objects.create(
+                url=request.POST['path'],
+                title_mag=match.group(1),
+                num_mag=match.group(2))
+
+        print(f'mon magazine = {magazine}')
+
+        title_game = request.POST['title_game']
+
+
+    if "path" in request.GET:
+        context['type'] = "page"
+        context['magazines'] = create_n(request.GET['path'], dir_scans)
+
+    for x in os.listdir(dir_scans):
+        context['magazines'].append(x)
+    # return HttpResponse(f"{result}")
+
+    # if request.method == 'POST':
+    #     name_img = request.POST['image']
+    #     p = re.compile('([a-zA-Z+ ]+)_([0-9]{3})_[0-9]{2,3}.avif')
+    #     m = p.search(name_img)
+
+
+    #     new_entry = models.Page.objects.create(
+    #         title_game=title_game,
+    #         url=request.POST['path_image'],
+    #         magazine=magazine,
+    #         type_art=request.POST['type_art'])
+
+    # context = {'type': 'mag'}
+    # directory = f"{settings.STATICFILES_DIRS[0]}/scans/"
+
+    # if "path" in request.GET:
+    #     dir_mag = request.GET['path'].replace("%20", " ")
+    #     context['directory_image'] = static(f"/scans/{link}")
+    #     context['magazines'] = create_n(dir_mag ,directory, context['directory_image'])
+    #     directory = f"{directory}{link}"
+    #     context['path'] = directory
+    #     context['type'] = "page"
+
+
+    # context['magazines'] = []
+
+
+    return render(request, 'magazine/page_scan.html', context)
+
+def create_n(path, dir_scans):
+    pages = []
+    pattern = re.compile('([a-zA-Z+ ]+)_([0-9]{3})')
+    match = pattern.search(path)
+
+    try:
+        magazine = models.Magazine.objects.get(url=f"{dir_scans}/{path}")
+    except:
+        magazine = models.Magazine.objects.create(
+            url=f"{dir_scans}/{path}",
+            title_mag=match.group(1),
+            num_mag=match.group(2))
+
+    for link_image in sorted(os.listdir(f"{dir_scans}/{path}")):
+        try:
+            link_image = static(f"/scans/{path}/{link_image}")
+            page = models.Page.objects.get(url=link_image)
+        except:
+            page = models.Page(
+                title_game="",
+                url=link_image,
+                magazine=magazine,
+                type_art="autre")
+
+        pages.append(page)
+
+    return pages
