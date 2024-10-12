@@ -127,7 +127,7 @@ def list_articles(request):
 
 @permission_required("magazine.add_article")
 def update_article(request, my_id):
-    file = open(f"magazine/article/{my_id}.ini", "r")
+    file = open(f"magazine/articles/{my_id}.ini", "r")
     content = file.read()
 
     context = {"text": content, "button": "Update", "my_id": my_id}
@@ -252,8 +252,6 @@ def scan(request):
                 url=request.POST['path'],
                 title_mag=match.group(1),
                 num_mag=match.group(2))
-
-        print(f'mon magazine = {magazine}')
 
         title_game = request.POST['title_game']
 

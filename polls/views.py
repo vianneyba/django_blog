@@ -9,7 +9,6 @@ def add_title_suggestion(request):
     if request.method == 'POST':
         form = SuggestionForm(request.POST)
         if form.is_valid():
-            print('form is valid')
             suggestion = form.save(commit=False)
             suggestion.user = request.user
             suggestion.save()
@@ -35,8 +34,6 @@ def valid_liste_title(request):
                     my_list.suggestion = value
                 except:
                     my_list = Choice_Liste_Title(liste=top, num_id=num_id, user=request.user, suggestion=value)
-                print(my_list)
-                print('on enregistre')
                 my_list.save()
 
         url = reverse("blog:by-slug", args=(request.POST.get("article_blog"),))

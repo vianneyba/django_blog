@@ -62,7 +62,6 @@ class GamesViewset(ModelViewSet):
     # def list(self, request):
     #     slug_system = request.query_params.get('system', None)
     #     name_game = request.query_params.get('game', None)
-    #     print(f'nom = {name_game}')
     #     if slug_system is not None:
     #         queryset = queryset.filter(system__slug=slug_system)
     #     if name_game is not None:

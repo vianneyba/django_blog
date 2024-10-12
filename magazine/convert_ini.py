@@ -139,12 +139,12 @@ class Template:
             case_photo = round(12/len(photos))
             for photo in photos:
                 txt += f"<div class=\"col-md-{case_photo}\">"
-                link = f"encart-{my_id}_{i}.avif"
+                link = self.config['magazine']['title']+"_"+self.config['magazine']['numero']+"_"+self.config['jeux']['id_sc']
+                link += f"/encart-{my_id}_{i}.avif"
                 txt += self.create_photo(i, text=photo, name=link)
                 txt += "</div>"  
                 i += 1
             txt += "</div>"
-
 
         return txt
 
@@ -178,10 +178,14 @@ class Template:
         link = self.config['prop']['link_image']
         if text == None:
             photo = self.config['photos'][my_id]
-            link += self.config['prop']['name_image']+"_"+my_id+".jpg"
+            link += "/"+self.config['magazine']['title']+"_"+self.config['magazine']['numero']+"_"+self.config['jeux']['id_sc']
+            link += f"/{my_id}.avif"
         else:
             photo = text
-            link += name
+            link += f"/{name}"
+
+        if text == "photo":
+            photo = ''
 
         static = "{static}"
         return f"""
@@ -298,7 +302,8 @@ class Template:
             'album.title': r"(@--\s?album.title[\w\s=]+--@)",
             'game.notes.pm': r"(@--\s?game.notes.pm[\w\s=]+--@)",
             'album.tacklist': r"(@--\s?album.tacklist[\w\s=]+--@)",
-            'paragraphe': r"(@--\s?paragraphe=(\d+) ([\w\s=]+)?--@)"
+            'paragraphe': r"(@--\s?paragraphe=(\d+) ([\w\s=]+)?--@)",
+            'encart': r"(@--\s?encart=([0-9]{1,2})([\w\s=]+)?--@)"
         }
         if re.search(regex['game.title'], self.template):
             txt = self.create_title_article(my_type='html')
@@ -352,8 +357,8 @@ class Template:
                 pattern = f"@-- photo={photo[1]}[\w\s=]+--@"
                 self.template = re.sub(pattern, my_div, self.template)
 
-        if re.search(r"@-- encart=(\d+)[\w\s=]+--@", self.template):
-            i = re.findall(r"(@-- encart=(\d+)[\w\s=]+--@)", self.template)
+        if re.search(regex['encart'], self.template):
+            i = re.findall(regex['encart'], self.template)
             for encart in i:
                 my_div = self.search_el(encart[0], genre="encart", my_id=encart[1])
                 my_div += self.create_encart(encart[1])
@@ -395,7 +400,7 @@ class Export:
     def __init__(self, class_article):
         self.class_article = class_article
         self.config = configparser.ConfigParser(interpolation=None)
-        self.url = "magazine/article/"
+        self.url = "magazine/articles/"
 
     def save_ini(self):
         with open(f"{self.url}{self.config['info']['id']}.ini", "w") as configfile:
@@ -406,7 +411,6 @@ class Export:
         import string
         alphabet = string.ascii_letters + string.digits
         name = ''.join(secrets.choice(alphabet) for i in range(12))
-        print(f"password= {name}")
         self.write_file(name, txt)
 
 

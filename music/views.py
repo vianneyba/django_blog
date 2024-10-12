@@ -98,7 +98,6 @@ class AlbumList(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = models.Album.objects.all()
         if self.request.query_params.get('band') is not None:
-            print('by id band')
             pk = self.request.query_params.get('band')
             queryset = queryset.filter(band_id=pk)
 

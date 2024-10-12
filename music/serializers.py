@@ -41,7 +41,6 @@ class AlbumSerializer(serializers.ModelSerializer):
         for track in tracks:
             try:
                 search_track = models.Track.objects.get(Q(title=track['title']), Q(album=album))
-                print(search_track)
             except:
                 models.Track.objects.create(**track, album=album)
         return album

@@ -26,7 +26,10 @@
     </header>
     
     <section class='article'>
-        <h1 class="entry-title">{{ article.title }}</h1>
+        <h1 class="entry-title">{{ article.title }}
+        {% if article.author.id == user.id %}
+			<a href="{% url 'blog:update-article' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        {% endif %}</h1>
         <div class="entry-content">
             {{ article.content | safe }}
         </div>
