@@ -187,7 +187,6 @@ class Template:
         if text == "photo":
             photo = ''
 
-        static = "{static}"
         return f"""
             <figure class="figure">
                 <img
@@ -454,6 +453,7 @@ class Export:
             year =  self.config['album']['year']
             title_site = self.config['article']['site']
             title_mag = title_site
+            num_mag= "0"
             chroniqueur = self.config['article']['chroniqueur']
             preface = self.config['paragraphes']['1']
 
@@ -463,9 +463,11 @@ class Export:
             self.article = self.class_article.objects.get(slug=slug)
         except ObjectDoesNotExist:
             self.article = self.class_article(
+                title=title,
                 slug=slug,
                 preface=preface,
                 title_mag=title_mag,
+                num_mag=num_mag,
                 my_id=self.config['info']['id'])
             self.article.save()
 
