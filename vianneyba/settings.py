@@ -94,15 +94,10 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -120,3 +115,4 @@ WITH_COMMENT = env.bool('WITH_COMMENT')
 WITH_REGISTRATION = env.bool('WITH_REGISTRATION')
 TITLE_SITE = env.str("TITLE_SITE")
 URL_IMAGE = env.str("URL_IMAGE")
+PATH_LOCAL = env.str("PATH_LOCAL")

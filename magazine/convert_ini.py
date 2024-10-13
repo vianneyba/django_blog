@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from game.models import Game, System
+from django.conf import settings
 from slugify import slugify
 import configparser
 from time import gmtime, strftime
@@ -8,7 +9,7 @@ import re
 class Template:
     def __init__(self, name):
         self.config = configparser.ConfigParser(interpolation=None)
-        self.config.read(f'magazine/articles/{name}.ini')
+        self.config.read(f'{settings.PATH_LOCAL}magazine/articles/{name}.ini')
         self.template = self.config['article']['template']
         self.info_type = self.config['info']['type']
 
@@ -398,7 +399,8 @@ class Export:
     def __init__(self, class_article):
         self.class_article = class_article
         self.config = configparser.ConfigParser(interpolation=None)
-        self.url = "magazine/articles/"
+        self.url = f"{settings.PATH_LOCAL}magazine/articles/"
+        print(f'---------------{self.url}---------------')
 
     def save_ini(self):
         with open(f"{self.url}{self.config['info']['id']}.ini", "w") as configfile:
@@ -412,7 +414,7 @@ class Export:
         self.write_file(name, txt)
 
 
-        self.config.read(f"{self.url}{name}.ini")
+        self.config.read(f"{settings.PATH_LOCAL}{self.url}{name}.ini")
         self.config['info']['id'] = name
         self.save_ini()
 
@@ -430,7 +432,7 @@ class Export:
         self.read_file(name)
         
     def read_file(self, name):
-        self.config.read(f'magazine/articles/{name}.ini')
+        self.config.read(f'{settings.PATH_LOCAL}magazine/articles/{name}.ini')
 
     def create_article(self, my_type=None):
         my_type = self.config['info']['type']
