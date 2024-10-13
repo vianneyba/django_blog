@@ -108,12 +108,15 @@ def ini_to_html(request):
     article = None
     if 'code' in request.GET:
         code = request.GET.get('code')
-        my_doc = Export(models.Article)
-        my_doc.read_file(code)
-        my_doc.create_article()
-        article = my_doc.article
+        my_doc = Template(code, models.Article)
+        my_doc.return_template()
+        article = "my_doc.article"
 
-    return render(request, 'magazine/export.html', {'article': article})
+    context = {
+        'content': my_doc.article.template,
+        'article': my_doc.article}
+
+    return render(request, 'magazine/export.html', context)
 
 @permission_required("magazine.view_article")
 def list_articles(request):

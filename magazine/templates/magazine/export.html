@@ -14,14 +14,11 @@
 {% if article is not None %}
     <article>
         <h4>
-            <a href="{% url 'magazine:view-article' 'id' article.id %}">{{ article.title }}</a>
-            <a href="{% url 'magazine:view-article' 'id' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+            <a href="{#% url 'magazine:view-article' 'id' article.id %#}">{{ article.title }}</a>
+            <a href="{#% url 'magazine:view-article' 'id' article.id %#}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
         </h4>
 
-        <p>{{ article.view | safe }}</p>
-
-        {{ article.link | safe }}
-
+        <p>{{ content | safe }}</p>
     </article>
 
 {% endif %}

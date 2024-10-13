@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>{{ type }}</h1>
+<div>
+    {% if type == "mag" %}
+    <ul>
+        {% for magazine in magazines %}
+            <li><a href="{% url 'magazine:scan' %}?path={{ magazine }}">{{ magazine }}</a></li>
+        {% endfor %}
+    </ul>
+    {% elif type == "page" %}
+        <div class="row">
+            <div class="col-md-5"></div>
+            {% for magazine in magazines %}
+                <div class="col-md-5">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="image" value="{{ magazine.image }}">
+                        <input type="hidden" name="path_image" value="{{directory_image}}/{{ image }}">
+                        <input type="hidden" name="path" value="{{ path }}">
+                        <input name="title_game" type="text" value="{{ magazine.title_game }}"/>
+                        <input type="submit" value="valider">
+                        <select name="type_art" id="type_article">
+                            <option value="autre">Autre</option>
+                            <option value="test">Test</option>
+                            <option value="preview">Preview</option>
+                            <option value="annonce">Annonce</option>
+                            <option value="pub">Pub</option>
+                            <option value="dossier">Dossier</option>
+                        </select>
+                    </form>
+                    <img class="img-fluid" src="{{ magazine.url }}" alt="{{ magazine }}">
+                </div>
+            {% endfor %}
+        </div>
+
+    {% endif %}
+</div>
+{% endblock %}

@@ -9,9 +9,9 @@
     {% for article in articles %}
         <article>
             <h4>
-                <a href="{% url 'magazine:view-article' 'id' article.id %}">{{ article.title }}</a>
+                <a href="{#% url 'magazine:view-article' 'id' article.id %#}">{{ article.title }}</a>
                 sur {{ article.system }}
-                <a href="{% url 'magazine:view-article' 'id' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+                <a href="{#% url 'magazine:view-article' 'id' article.id %#}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
                 <a href="{% url 'magazine:view-article' 'id' article.id %}"><i class="fa fa-eye" aria-hidden="true"></i></a>
             </h4>
 

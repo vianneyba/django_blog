@@ -1,0 +1,9 @@
+<div class="{{ class }}">
+    <a href="{{ link_mag }}">{{ title_mag }}</a> sur
+    {{ title_site }} >>
+    {% for link in links %}
+        <a href="{{ link }}">Page {{ forloop.counter }}</a> |
+    {% endfor %}
+</div>
+
+<!-- Consoles+ numero 007 sur Abandonware Magazines >> page 1 | page 2  -->

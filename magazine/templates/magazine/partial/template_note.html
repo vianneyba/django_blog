@@ -1,0 +1,16 @@
+<div class="{{ class }}">
+    <table class="table score_table">
+        
+        {% for note in notes %}
+        <tr class="tr_master">
+            <td>{{ note.field | upper }}</td>
+            <td class="text-right">{{ note.score }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ note.avis }}</td>
+
+        </tr>
+        {% endfor %}
+        
+    </table>
+</div>
