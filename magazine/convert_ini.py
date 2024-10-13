@@ -133,18 +133,17 @@ class Template:
 
         txt += f"\t\t\t<p>{text}</p>"
 
-        if len(photos) > 0 and len(photos) < 5:
-            txt += "<div class=\"row\">"
-            i = 1
-            case_photo = round(12/len(photos))
-            for photo in photos:
-                txt += f"<div class=\"col-md-{case_photo}\">"
-                link = self.config['magazine']['title']+"_"+self.config['magazine']['numero']+"_"+self.config['jeux']['id_sc']
-                link += f"/encart-{my_id}_{i}.avif"
-                txt += self.create_photo(i, text=photo, name=link)
-                txt += "</div>"  
-                i += 1
+        txt += "<div class=\"row\">"
+        i = 1
+        case_photo = round(12/len(photos))
+        for photo in photos:
+            txt += f"<div class=\"col-md-{case_photo}\">"
+            link = self.config['magazine']['title']+"_"+self.config['magazine']['numero']+"_"+self.config['jeux']['id_sc']
+            link += f"/encart-{my_id}_{i}.avif"
+            txt += self.create_photo(i, text=photo, name=link)
             txt += "</div>"
+            i += 1
+        txt += "</div>"
 
         return txt
 
@@ -444,7 +443,6 @@ class Export:
             title_mag = self.config['magazine']['title']
             num_mag = self.config['magazine']['numero']
             preface = self.config['article']['preface']
-
             slug = slugify(f"{title} {support} {title_mag} {num_mag}")
 
         elif my_type == "musique":
