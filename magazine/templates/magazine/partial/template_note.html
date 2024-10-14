@@ -1,3 +1,29 @@
+{% if type == 'plus-moins' %}
+<div class="{{ class }}">
+    <table class="table score_table">
+        <tr class="tr_master">
+            <th class="text-center"> les plus</td>
+            <th class="text-center">les moins</td>
+        </tr>
+        <tr>
+            <td>
+                <ul class="article_plus">
+                    {% for key, value in plus.items %}
+                    <li>{{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                <ul class="article_moins">
+                    {% for key, value in moins.items %}
+                    <li>{{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+{% else %}
 <div class="{{ class }}">
     <table class="table score_table">
         
@@ -6,11 +32,14 @@
             <td>{{ note.field | upper }}</td>
             <td class="text-right">{{ note.score }}</td>
         </tr>
+        {% if note.avis is not None %}
         <tr>
             <td colspan="2">{{ note.avis }}</td>
 
         </tr>
+        {% endif %}
         {% endfor %}
         
     </table>
 </div>
+{% endif %}

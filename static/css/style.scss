@@ -97,6 +97,7 @@ article {
         }
     }
     .article_signature {
+        display: block;
         text-align: right;
         font-size: 1.2rem;
         color: $color_red_2;
@@ -112,6 +113,7 @@ article {
     .article_plus {
         padding-left: 35px;
         color: $vert;
+        list-style: none;
         li {
             &::before {
                 content: "+ ";
@@ -119,6 +121,7 @@ article {
         }
     }
     .article_moins {
+        list-style: none;
         padding-left: 35px;
         color: $color_red;
         li {

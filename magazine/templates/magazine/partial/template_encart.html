@@ -1,6 +1,15 @@
 <div id="{{ id }}" class="{{ class }}">
+
+    {% if type == "2-t-3" %}
+    <div class="row">
+        {% for photo in photos|slice:":2" %}
+            {{ photo }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <h1>{{ title }}</h1>
-    <p>{{ text }}</p>
+    <p>{{ text | safe }}</p>
 
     <div class="row">
     {% for photo in photos %}

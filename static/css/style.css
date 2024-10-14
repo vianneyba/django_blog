@@ -83,6 +83,7 @@ article .article_avis h1 {
   font-size: 1.5rem;
 }
 article .article_signature {
+  display: block;
   text-align: right;
   font-size: 1.2rem;
   color: #530c0a;
@@ -96,6 +97,7 @@ article .article_signature:before {
   content: "écrit par: ";
 }
 article .article_plus {
+  list-style: none;
   padding-left: 35px;
   color: #63B96B;
 }
@@ -103,6 +105,7 @@ article .article_plus li::before {
   content: "+ ";
 }
 article .article_moins {
+  list-style: none;
   padding-left: 35px;
   color: #F2504B;
 }

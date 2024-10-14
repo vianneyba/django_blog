@@ -24,6 +24,8 @@ class My_Article:
         self.link_photo = config['prop']['link_image']
         self.links = config['article']['links']
         self.encarts = config['encarts']
+        self.moins = config['moins']
+        self.plus = config['plus']
 
         if config['info']['type'] == 'game':
             self.title = config['jeux']['title']
@@ -48,8 +50,10 @@ class My_Article:
         return render_to_string("magazine/partial/template_preface.html", context)
 
     def create_paragraphe(self, tab_paragraphe):
+
         num_paragraphe = tab_paragraphe[1]
-        line = self.paragraphes[num_paragraphe].split(":::")
+        text = self.change_text(self.paragraphes[num_paragraphe])
+        line = text.split(":::")
         title = None
         if len(line) > 1:
             title = line[0]
@@ -89,9 +93,15 @@ class My_Article:
         return f'col-md-{case_photo}'
 
     def create_encart(self, encart):
-        context = {}
         num = encart[1]
-        line = self.encarts[num].split(":::")
+        text = self.change_text(self.encarts[num])
+        context = {}
+
+        if "type=" in encart[0]:
+            type_vue = re.findall("type=([a-z0-9-]{1,})", encart[0])[0]
+            context["type"] = type_vue
+
+        line = text.split(":::")
         indice_text = len(line) - 1
         if len(line) > 1:
             context['title'] = line[0]
@@ -105,7 +115,7 @@ class My_Article:
 
         i = 1
         num_photo = len(photos)
-        my_class = self.create_class(num_photo, "case")
+        my_class = self.create_class(num_photo, "photo")
 
         for photo in photos:
             context['photos'].append(self.create_photo([i], mode=["encart", num, {'case': my_class}]))
@@ -128,6 +138,13 @@ class My_Article:
 
         return render_to_string("magazine/partial/template_note.html", context)
 
+    def create_note_pm(self, note):
+        context = {
+            'moins': self.moins, 'plus': self.plus, 'type': 'plus-moins'}
+        context['class'] = self.create_class(note)
+
+        return render_to_string("magazine/partial/template_note.html", context)
+
     def create_link(self):
         context = {}
         if self.type == 'game':
@@ -141,14 +158,17 @@ class My_Article:
     def create_class(self, my_string, mode="auto"):
         result = ''
         x =None
-        if mode == "auto":
-            x = re.findall(r"(case|offset)=([\d]+)", my_string)
-        elif mode in ['encart']:
+
+        if mode in ['encart']:
             result = result + f" article_encart"
 
+        if mode == "photo":
+            mode = "case"
+            if my_string > 0:
+                case_photo = round(12/my_string)
+                x = [[mode, case_photo]]
         else:
-            case_photo = round(12/my_string)
-            x = [[mode, case_photo]]
+            x = re.findall(r"(case|offset)=([\d]+)", my_string)
 
         if x is not None:
             for i in x:
@@ -158,6 +178,28 @@ class My_Article:
                     result = result + f" offset-md-{i[1]}"
         
         return result.strip()
+
+    def change_text(self, text):
+        regex = {
+            'bbcode': "\[([a-z]+)\]([\w\W]+)\[/([a-z]+)\]",
+            'title_markdown': "(\*{2,6})([\w\W][^*]{2,6})+(\*{2,6})"}
+
+        if re.search(regex['bbcode'], text):
+            txts = re.findall(regex['bbcode'], text)
+            for txt in txts:
+                if txt[0] == 'signature':
+                    replace_by = f'<span class="article_signature">{txt[1]}</span>'
+                pattern = f"\[([a-z]+)\]{txt[1]}\[/([a-z]+)\]"
+                text = re.sub(pattern, replace_by, text)
+
+        if re.search(regex['title_markdown'], text):
+            txts = re.findall(regex['title_markdown'], text)
+            for txt in txts:
+                if "*" in txt[0]:
+                    pattern = "(\*{2,6})"+str(txt[1])+"(\*{2,6})"
+                    replace_by = f'<h{len(txt[0])+1}>{txt[1]}</h{len(txt[0])+1}>'
+                    text = re.sub(pattern, replace_by, text)
+        return text
 
     def save(self, class_article):
         if self.type == "game":
@@ -199,14 +241,15 @@ class Template:
         regex = {
             'game.title': r"(@--\s?game.title[\w\s=]+--@)",
             'album.title': r"(@--\s?album.title[\w\s=]+--@)",
-            'game.notes.pm': r"(@--\s?game.notes.pm[\w\s=]+--@)",
+            'game.notes.pm': r"@-- game.notes.pm[\w\s=]+--@",
             'game.note': r"@-- game.notes[\w\s=]+--@",
             'album.tacklist': r"(@--\s?album.tacklist[\w\s=]+--@)",
             'paragraphe': r"(@--\s?paragraphe=(\d+) ([\w\s=]+)?--@)",
-            'encart': r"(@--\s?encart=([0-9]{1,2})([\w\s=]+)?--@)",
+            'encart': r"(@--\s?encart=([0-9]{1,2})([\w\s=]+)?(type=([\w\s=-]+))?\s?--@)",
             'preface': r"@-- preface[\w\s=]+--@",
             'photo': r"@-- photo=(\d+) ([\w\s=]+)?--@",
-            'add_link': r"@-- add_link[\w\s=]+--@"}
+            'add_link': r"@-- add_link[\w\s=]+--@",
+        }
 
         if re.search(regex['game.title'], self.article.template):
             self.article.template = re.sub(regex['game.title'], self.article.create_title(), self.article.template)
@@ -232,12 +275,16 @@ class Template:
         if re.search(regex['encart'], self.article.template):
             encarts = re.findall(regex['encart'], self.article.template)
             for encart in encarts:
-                pattern = f"@-- encart={encart[1]} ([\w\s=]+)?--@"
+                pattern = f"@--\s?encart={encart[1]}([\w\s=]+)?(type=([\w\s=-]+))?\s?--@"
                 self.article.template = re.sub(pattern, self.article.create_encart(encart), self.article.template)
 
         if re.search(regex['game.note'], self.article.template):
             note = re.findall(regex['game.note'], self.article.template)[0]
             self.article.template = re.sub(regex['game.note'], self.article.create_note(note), self.article.template)
+
+        if re.search(regex['game.notes.pm'], self.article.template):
+            note = re.findall(regex['game.notes.pm'], self.article.template)[0]
+            self.article.template = re.sub(regex['game.notes.pm'], self.article.create_note_pm(note), self.article.template)
 
 # class Template:
 #     def __init__(self, name):

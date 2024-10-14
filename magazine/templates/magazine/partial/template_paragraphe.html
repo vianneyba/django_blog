@@ -2,5 +2,5 @@
     {% if title is not None %}
     <h1>{{ title }}</h1>
     {% endif %}
-    <p>{{ text }}</p>
+    <p>{{ text | safe }}</p>
 </div>
