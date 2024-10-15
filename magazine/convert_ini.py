@@ -18,14 +18,24 @@ class My_Article:
         self.mag = config['magazine']['title']
         self.num = config['magazine']['numero']
         self.site = config['magazine']['site']
-        self.paragraphes = config['paragraphes']
-        self.photos = config['photos']
+        if 'paragraphes' in config:
+            self.paragraphes = config['paragraphes']
+        if 'photos' in config:
+            self.photos = config['photos']
+        if 'prop' in config and 'link_image' in config['prop']:
+            self.link_photo = config['prop']['link_image']
+        else:
+            self.link_photo = settings.URL_IMAGE
+        if 'avis' in config:
+            self.avis = config['avis']
         self.notes = config['notes']
-        self.link_photo = config['prop']['link_image']
         self.links = config['article']['links']
-        self.encarts = config['encarts']
-        self.moins = config['moins']
-        self.plus = config['plus']
+        if 'encarts' in config:
+            self.encarts = config['encarts']
+        if 'moins' in config:
+            self.moins = config['moins']
+        if 'plus' in config:
+            self.plus = config['plus']
 
         if config['info']['type'] == 'game':
             self.title = config['jeux']['title']
@@ -111,17 +121,38 @@ class My_Article:
         photos = text[1:]
         context['photos'] = []
         context['id'] = f'encart{num}'
-        context['class'] = self.create_class(encart[0], "encart")
+        context['class'] = self.create_class(encart[0], mode="encart")
 
         i = 1
         num_photo = len(photos)
-        my_class = self.create_class(num_photo, "photo")
+        my_class = self.create_class(num_photo, mode="photo")
 
         for photo in photos:
             context['photos'].append(self.create_photo([i], mode=["encart", num, {'case': my_class}]))
             i = i + 1
 
         return render_to_string("magazine/partial/template_encart.html", context)
+
+    def create_avis(self, avis):
+        context = {}
+
+        num = avis[1]
+        text = self.change_text(self.avis[num])
+        line = text.split(":::")
+
+        context['class'] = self.create_class(avis[0], my_class="article_avis")
+        if len(line) == 3:
+            context['author'] = line[0]
+            context['avis'] = line[1]
+            context['text'] = line[2]
+        elif len(line) == 2:
+            context['author'] = line[0]
+            context['text'] = line[1]
+        else:
+            context['text'] = line[0]
+
+        return render_to_string("magazine/partial/template_avis.html", context)
+
 
     def create_note(self, note):
         context = {'notes': []}
@@ -155,8 +186,8 @@ class My_Article:
 
         return render_to_string("magazine/partial/template_link.html", context)
 
-    def create_class(self, my_string, mode="auto"):
-        result = ''
+    def create_class(self, my_string, my_class='', mode="auto"):
+        result = my_class
         x =None
 
         if mode in ['encart']:
@@ -249,6 +280,7 @@ class Template:
             'preface': r"@-- preface[\w\s=]+--@",
             'photo': r"@-- photo=(\d+) ([\w\s=]+)?--@",
             'add_link': r"@-- add_link[\w\s=]+--@",
+            'avis': r"(@-- avis=(\d+) ([\w\s=]+)?--@)"
         }
 
         if re.search(regex['game.title'], self.article.template):
@@ -285,6 +317,12 @@ class Template:
         if re.search(regex['game.notes.pm'], self.article.template):
             note = re.findall(regex['game.notes.pm'], self.article.template)[0]
             self.article.template = re.sub(regex['game.notes.pm'], self.article.create_note_pm(note), self.article.template)
+
+        if re.search(regex['avis'], self.article.template):
+            avis = re.findall(regex['avis'], self.article.template)
+            for element in avis:
+                pattern = f"@--\s?avis={element[1]}([\w\s=]+)?(type=([\w\s=-]+))?\s?--@"
+                self.article.template = re.sub(pattern, self.article.create_avis(element), self.article.template)
 
 # class Template:
 #     def __init__(self, name):

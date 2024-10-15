@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 import requests
 from bs4 import BeautifulSoup
 import os
@@ -19,12 +20,12 @@ def import_test_from_am(id_mag, mag, num):
             filedata = link.get("href").replace(')', '%29')
             my_text = f'{my_text}\n{filedata};'
 
-    f = open(f"magazine/magazines/{mag}_{num}.txt", "w")
+    f = open(f"{settings.PATH_LOCAL}magazine/magazines/{mag}_{num}.txt", "w")
     f.write(my_text)
     f.close()
 
 def import_page(models, id_mag, title_mag, num_mag):
-    file_txt = f"magazine/magazines/{title_mag}_{num_mag}.txt"
+    file_txt = f"{settings.PATH_LOCAL}magazine/magazines/{title_mag}_{num_mag}.txt"
     if os.path.exists(file_txt) == False:
         import_test_from_am(id_mag, title_mag, num_mag)
 

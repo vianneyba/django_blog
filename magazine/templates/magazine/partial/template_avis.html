@@ -1,0 +1,14 @@
+<div class="{{ class }}">
+
+
+    {% if author %}
+    <h1>
+        <span class="avis_tester">{{ author }}</span>
+        {% if advice %}
+            <span class="avis_advice">{{ avis }}</span>
+        {% endif %}
+    </h1>
+    {% endif %}
+
+    <p>{{ text }}</p>
+</div>
