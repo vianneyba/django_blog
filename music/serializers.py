@@ -1,7 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 from music import models
 
 class BandSerializer(serializers.ModelSerializer):
@@ -12,7 +11,7 @@ class BandSerializer(serializers.ModelSerializer):
 class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model= models.Track
-        fields=  ('order', 'title')
+        fields=  ('order', 'title', 'score')
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -21,7 +20,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model= models.Album
-        fields= ('id', 'release_year', 'code', 'title', 'band', 'tracks')
+        fields= ('id', 'release_year', 'code', 'title', 'band', 'tracks', 'score')
 
     def create(self, validated_data):
         name = validated_data.pop('band').get('name')

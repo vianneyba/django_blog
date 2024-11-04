@@ -16,7 +16,6 @@ from blog.create_blog import Blog_Article
 import random
 import os
 import re
-from magazine.import_from_am import import_page
 from django.templatetags.static import static
 from django.conf import settings
 
@@ -110,11 +109,14 @@ def ini_to_html(request):
         code = request.GET.get('code')
         my_doc = Template(code, models.Article)
         my_doc.return_template()
-        article = "my_doc.article"
+        f = open(f"/home/vianney/Documents/{code}.html", "a")
+        f.write(my_doc.article.template)
+        f.close()
 
     context = {
         'content': my_doc.article.template,
-        'article': my_doc.article}
+        'article': my_doc.article,
+        'banner': my_doc.article.banner}
 
     return render(request, 'magazine/export.html', context)
 
@@ -191,11 +193,19 @@ def write_article(request):
 
     context = {'text': txt, 'button': 'Nouveau'}
     return render(request, 'magazine/write-new-article.html', context)
- 
+
 @staff_member_required
-def import_mag(request, id_mag, title_mag, num_mag):
-    magazine = import_page(models, id_mag, title_mag, num_mag)
-    return render(request, 'magazine/view-magazine.html', {'magazines': [magazine]})
+def list_ini(request):
+    context = {}
+    result = []
+    for x in os.listdir("magazine/articles"):
+        print(f'{x[-4:]} {x[:-4]}')
+        if x[-4:] == ".ini":
+
+            result.append(Template(x[:-4], models.Article))
+
+    context['articles'] = result
+    return render(request, 'magazine/list-ini.html', context)
 
 def search_article(request):
     """

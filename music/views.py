@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import viewsets, permissions
-from rest_framework.response import Response
 from music import models, serializers
 
 def return_paginator(request, queryset):
@@ -96,9 +95,21 @@ class AlbumList(viewsets.ModelViewSet):
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        queryset = models.Album.objects.all()
+        queryset = models.Album.objects.all().order_by('band__name')
         if self.request.query_params.get('band') is not None:
             pk = self.request.query_params.get('band')
             queryset = queryset.filter(band_id=pk)
+        if self.request.query_params.get('search') is not None:
+            word = self.request.query_params.get('search')
+            queryset = queryset.filter(Q(band__name__icontains=word) | Q(title__icontains=word))
+        if self.request.query_params.get('year') is not None:
+            year = self.request.query_params.get('year')
+            queryset = queryset.filter(release_year=year)
+        if self.request.query_params.get('score') is not None:
+            score = self.request.query_params.get('score')
+            queryset = queryset.filter(score__gte=score)
+        if self.request.query_params.get('top_track') is not None:
+            score = self.request.query_params.get('top_track')
+            queryset = queryset.filter(tracks__score=score).distinct()
 
         return queryset

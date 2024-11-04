@@ -15,7 +15,6 @@ $border-radius: 15px;
 
 @mixin border-r($top, $bottom) {
     padding: 10px 15px 10px 15px;
-    margin-top: 20px;
     background-color: $transparent_color;
     border: 2px $color_F2 solid;
     border-radius: $top $top $bottom $bottom;
@@ -56,6 +55,12 @@ header {
 }
 
 article {
+    article {
+        background: $color_F3;
+        padding: 0px 40px 0px 40px;
+        border: 2px $color_F2 solid;
+        border-radius: 15px 15px 15px 15px;
+    }
     margin: 20px 25px;
     .article-contenu {
         padding: 0px 40px 0px 40px;
@@ -94,6 +99,13 @@ article {
         h1 {
             color: $color_F6;
             font-size: 1.5rem;
+        }
+        .avis_avis {
+            color: $color_red;
+        }
+        .avis_author {
+            margin-right: 15px;
+            color: $vert;
         }
     }
     .article_signature {
@@ -352,4 +364,8 @@ form {
         color: red;
         font-size: 2rem;
     }
+}
+
+.with_border {
+    @include border-r($border-radius, $border-radius);
 }

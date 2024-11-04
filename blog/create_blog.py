@@ -1,9 +1,11 @@
 import re
+import os
 import markdown
 from django.urls import reverse
 from django.template.loader import render_to_string
 from django.middleware.csrf import get_token
 from game.models import Game
+from magazine.models import Article
 from polls.models import Title_Suggestion, Liste_Title, Choice_Liste_Title
 from magazine.convert_ini import Template
 
@@ -97,9 +99,20 @@ class Blog_Article:
 
         my_file = f"magazine.article.{slug}"
 
-        file = open(f"magazine/articles/{slug}.html", "r")
-        content = file.read()
-        file.close()
+        file = f"magazine/articles/{slug}.html"
+
+        if os.path.exists(file) :
+            file = open(f"magazine/articles/{slug}.html", "r")
+            content = file.read()
+            file.close()
+        else:
+            template = Template(slug, Article)
+            template.return_template()
+            content = f"""
+            <article>
+            {template.article.template}
+            </article>
+            """
         self.blog.content = re.sub(self.patterns['p_article'], content, self.blog.content)
     
     def choice_type(self):

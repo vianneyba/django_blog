@@ -18,7 +18,11 @@
 	<div class="container content">
 		<header id="banner" class="container-fluid">
 			{% block banner %}
+			{% if banner %}
+				<img class="img-fluid" src="{{ banner }}" alt="ma bannière">
+			{% else %}
 				<img class="img-fluid" src="{% static '/img/banniere.avif' %}" alt="ma bannière">
+			{% endif %}
 			{% endblock %}
 		</header>
 
