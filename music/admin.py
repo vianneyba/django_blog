@@ -11,3 +11,5 @@ class AlbumAdmin(admin.ModelAdmin):
 admin.site.register(models.Track)
 admin.site.register(models.Band, BandAdmin)
 admin.site.register(models.Album, AlbumAdmin)
+admin.site.register(models.Listening_History)
+admin.site.register(models.Links_Review)

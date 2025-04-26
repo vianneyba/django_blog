@@ -12,6 +12,9 @@
 
         <section class="col-md-4">
             <img class="img-fluid img-thumbnail" src="{{ PATH_IMAGE }}/{{ album.code }}.avif" />
+            {% for link in album.reviews.all %}
+                <a href="{{link.link}}">{{link.name}}</a>
+            {% endfor %}
         </section>
         
         <section class="col-md-3">
@@ -47,5 +50,45 @@
                 {% endfor %}
             </ul>
         </section>
+    </div>
+    <div class="row">
+
+        <div class="col-md-5">
+            <form method="post" action="{% url 'music:add-link' album.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="link" class="form-label">Lien Web</label>
+                    <input class="form-control" type="text" id="link" name="link" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="link" class="form-label">Nom</label>
+                    <input class="form-control" type="text" id="name" name="name" />
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+        <div class="col-md-7">
+            <ul>
+                {% for track in album.tracks.all %}
+                {% for history in track.listenings.all %}
+                <li>{{ history.track.title }} {{ history.listening_date }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form method="post" action="{% url 'music:add-history' album.id %}">
+                {% csrf_token %}
+                <textarea class="form-control" id="history" name="history" rows="15"></textarea>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

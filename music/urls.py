@@ -11,8 +11,10 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('viewalbum/code/<pk>', views.view_album_by_code, name='index'),
     path('viewalbum/<pk>', views.view_album, name='view-album'),
+    path('add_link/<pk>', views.add_link, name='add-link'),
+    path('add_history/<pk>', views.add_history, name='add-history'),
     path('musicaddtracknote/', views.music_add_track_note, name='music-add-track-note'),
-    path('musicaddalbumnote/', views.music_add_album_note, name='music-add-album-note'),
+    path('musicaddalbumnote/', views.music_add_album_note, name='music-add-album-note'), 
     path('search/', include(router.urls)),
     path('api/', include(router.urls)),
 ]

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import environ
 from datetime import timedelta
+from django.contrib.messages import constants as messages
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -121,8 +122,14 @@ PATH_LOCAL = env.str("PATH_LOCAL")
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
-    "https://example.com",
-    "https://sub.example.com",
     "http://localhost:8000",
     "http://127.0.0.1:5173",
 ]
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert alert-info',       # Bootstrap: alert-info (bleu)
+    messages.INFO: 'alert alert-info',        # Bootstrap: alert-info (bleu)
+    messages.SUCCESS: 'alert alert-success',  # Bootstrap: alert-success (vert)
+    messages.WARNING: 'alert alert-warning',  # Bootstrap: alert-warning (jaune)
+    messages.ERROR: 'alert alert-danger',     # Bootstrap: alert-danger (rouge)
+}

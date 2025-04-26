@@ -37,3 +37,15 @@ class Track(models.Model):
 	
 	def __str__(self):
 		return f'{self.order} - {self.title}'
+
+class Links_Review(models.Model):
+	album = models.ForeignKey(Album, related_name='reviews', on_delete=models.CASCADE)
+	link= models.URLField(max_length=128, db_index=True, unique=True)
+	name= models.CharField(max_length=50, null=True, blank=True)
+
+	def __str__(self):
+		return f'{self.album.band.name} - {self.album.title} [{self.name}]'
+
+class Listening_History(models.Model):
+	track = models.ForeignKey(Track, related_name='listenings', on_delete=models.CASCADE)
+	listening_date = models.DateTimeField()

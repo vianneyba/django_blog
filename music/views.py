@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework import viewsets, permissions
 from music import models, serializers
+from datetime import datetime
+from django.contrib import messages
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 33*3)
@@ -82,6 +84,37 @@ def music_add_album_note(request):
 
     return redirect('music:view-album', pk=album_id)
 
+def add_link(request, pk):
+    album = models.Album.objects.get(pk=pk)
+    link_str = request.POST.get('link')
+    name_link = request.POST.get('name')
+
+    models.Links_Review.objects.create(album=album, link=link_str, name=name_link)
+
+    return redirect('music:view-album', pk=pk)
+
+def add_history(request, pk):
+    album = models.Album.objects.get(pk=pk)
+    text = request.POST.get('history')
+    lines = text.split('\n')
+    for line in lines:
+        info = line.strip().split(';')
+        band = info[2]
+        title_album = info[0]
+        title_track = info[1]
+        if band == album.band.name and album.title == title_album:
+            track = album.tracks.filter(title=title_track)
+
+            if len(track) == 1:
+                listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
+                models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
+            else:
+                messages.error(request, f"Le titre: {title_track} n'existe pas sur cette album")
+        else:
+            messages.add_message(request, messages.INFO, "Ne correspond pas au bon album")
+
+    return redirect('music:view-album', pk=pk)
+
 @staff_member_required
 def view_album_by_code(request, pk):
     album = models.Album.objects.get(code=pk)
@@ -111,5 +144,7 @@ class AlbumList(viewsets.ModelViewSet):
         if self.request.query_params.get('top_track') is not None:
             score = self.request.query_params.get('top_track')
             queryset = queryset.filter(tracks__score=score).distinct()
-
+        if self.request.query_params.get('code') is not None:
+            code = self.request.query_params.get('code')
+            queryset = queryset.filter(code=code).distinct()
         return queryset
