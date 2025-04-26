@@ -49,3 +49,7 @@ class Links_Review(models.Model):
 class Listening_History(models.Model):
 	track = models.ForeignKey(Track, related_name='listenings', on_delete=models.CASCADE)
 	listening_date = models.DateTimeField()
+
+	def __str__(self):
+		date_str = self.listening_date.strftime("%d %b %Y, %H:%M")
+		return f'{self.track.album.band.name} - {self.track.album.title} - {self.track.title} - {date_str}'

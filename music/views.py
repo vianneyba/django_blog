@@ -99,19 +99,20 @@ def add_history(request, pk):
     lines = text.split('\n')
     for line in lines:
         info = line.strip().split(';')
-        band = info[2]
-        title_album = info[0]
-        title_track = info[1]
-        if band == album.band.name and album.title == title_album:
-            track = album.tracks.filter(title=title_track)
+        if line.strip() != "" and len(info) == 4:
+            band = info[2]
+            title_album = info[0]
+            title_track = info[1]
+            if band == album.band.name and album.title == title_album:
+                track = album.tracks.filter(title=title_track)
 
-            if len(track) == 1:
-                listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
-                models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
+                if len(track) == 1:
+                    listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
+                    models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
+                else:
+                    messages.error(request, f"Le titre: {title_track} n'existe pas sur cette album")
             else:
-                messages.error(request, f"Le titre: {title_track} n'existe pas sur cette album")
-        else:
-            messages.add_message(request, messages.INFO, "Ne correspond pas au bon album")
+                messages.add_message(request, messages.INFO, "Ne correspond pas au bon album")
 
     return redirect('music:view-album', pk=pk)
 
