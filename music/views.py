@@ -107,14 +107,11 @@ def add_history(request):
                 listening_date = info[3]
 
                 album = models.Album.objects.filter(title__iexact=title_album, band__name__iexact=band)
-                print(f"=====> {album}")
                 if len(album) == 1:
                     track = album[0].tracks.filter(title__iexact=title_track)
-                    print(f"=====> {track}")
                     if len(track) == 1:
                         listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
                         entry = models.Listening_History.objects.filter(listening_date=listening_date)
-                        print(f"=====> {entry}")
                         if len(entry) == 0:
                             models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
                             messages.success(request, f"{band} - {title_album} - {title_track} - {listening_date}")
