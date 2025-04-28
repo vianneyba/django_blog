@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post" action="{% url 'music:add-history' %}">
+    {% csrf_token %}
+    <textarea class="form-control" id="history" name="history" rows="15">{{ result }}</textarea>
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+{% endblock content %}

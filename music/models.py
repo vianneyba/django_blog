@@ -38,6 +38,18 @@ class Track(models.Model):
 	def __str__(self):
 		return f'{self.order} - {self.title}'
 
+	def count_history(self):
+		return self.listenings.count()
+
+	def view_score_template(self):
+		if self.score is None:
+			return ""
+
+		result = ""
+		for i in range(self.score):
+			result = result + "&#x2605;"
+		return result
+
 class Links_Review(models.Model):
 	album = models.ForeignKey(Album, related_name='reviews', on_delete=models.CASCADE)
 	link= models.URLField(max_length=128, db_index=True, unique=True)

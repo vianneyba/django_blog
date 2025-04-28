@@ -48,7 +48,7 @@ def index(request):
             band = request.GET.get('band')
             albums = albums.filter(band=band)
         if request.GET.get('search'):
-            q = request.GET.get('search')
+            q = request.GET.get('search').strip()
             albums = albums.filter(Q(band__name__icontains=q) | Q(title__icontains=q))
         context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
     return render(request, 'music/index.html', context)
@@ -93,28 +93,64 @@ def add_link(request, pk):
 
     return redirect('music:view-album', pk=pk)
 
-def add_history(request, pk):
-    album = models.Album.objects.get(pk=pk)
-    text = request.POST.get('history')
-    lines = text.split('\n')
-    for line in lines:
-        info = line.strip().split(';')
-        if line.strip() != "" and len(info) == 4:
-            band = info[2]
-            title_album = info[0]
-            title_track = info[1]
-            if band == album.band.name and album.title == title_album:
-                track = album.tracks.filter(title=title_track)
+def add_history(request):
+    result = ""
+    if request.method == 'POST':
+        text = request.POST.get('history')
+        lines = text.split('\n')
+        for line in lines:
+            info = line.strip().split(';')
+            if len(info) == 4:
+                title_album = info[0]
+                title_track = info[1]
+                band = info[2]
+                listening_date = info[3]
 
-                if len(track) == 1:
-                    listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
-                    models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
+                album = models.Album.objects.filter(title__iexact=title_album, band__name__iexact=band)
+                print(f"=====> {album}")
+                if len(album) == 1:
+                    track = album[0].tracks.filter(title__iexact=title_track)
+                    print(f"=====> {track}")
+                    if len(track) == 1:
+                        listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
+                        entry = models.Listening_History.objects.filter(listening_date=listening_date)
+                        print(f"=====> {entry}")
+                        if len(entry) == 0:
+                            models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
+                            messages.success(request, f"{band} - {title_album} - {title_track} - {listening_date}")
+                        else:
+                            messages.info(request, f"{line} existe deja")
+                    else:
+                        result = result + line + "\n"
+                        messages.error(request, f"{title_track} n'existe pas")
                 else:
-                    messages.error(request, f"Le titre: {title_track} n'existe pas sur cette album")
+                    result = result + line + "\n"
+                    messages.error(request, f"{band} ou {title_album} n'existe pas")
             else:
-                messages.add_message(request, messages.INFO, "Ne correspond pas au bon album")
+                result = result + line + "\n"
+                messages.error(request, f"Mauvais formatage de la ligne: {line}")
 
-    return redirect('music:view-album', pk=pk)
+    return render(request, 'music/form_history.html', {'result': result})
+
+def view_history(request):
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+
+    queryset = models.Listening_History.objects.all().order_by('-listening_date')
+
+    if year:
+        queryset = queryset.filter(listening_date__year=year)
+    if month:
+        queryset = queryset.filter(listening_date__month=month)
+
+    paginator = Paginator(queryset, 50)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'music/view_history.html', {
+        'page_obj': page_obj,
+        'year': year,
+        'month': month
+    })
 
 @staff_member_required
 def view_album_by_code(request, pk):

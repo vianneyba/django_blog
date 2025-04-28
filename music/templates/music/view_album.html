@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ album.group.name | upper }} {{ album.title | title }} [{{ album.release_year }}]{% endblock %}
+{% block title %}{{ album.band.name | upper }} {{ album.title | title }} [{{ album.release_year }}]{% endblock %}
 
 {% block content %}
     <div class="row"> 
@@ -10,23 +10,13 @@
             </div>
         </div>
 
-        <section class="col-md-4">
-            <img class="img-fluid img-thumbnail" src="{{ PATH_IMAGE }}/{{ album.code }}.avif" />
-            {% for link in album.reviews.all %}
-                <a href="{{link.link}}">{{link.name}}</a>
-            {% endfor %}
-        </section>
-        
-        <section class="col-md-3">
+        <section class="col-md-12">
             <h3>
                 <a href="{% url 'music:index' %}?band={{ album.band.id }}">{{ album.band.name | upper }}</a>
+                - {{ album.title | title }}
+                [<a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>]
             </h3>
 
-            <p>{{ album.title | title }}</p>
-
-            <p>
-                <a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>
-            </p>
             <p>
                 <span class="ratingverse">
                     {% for i in '12345'|make_list %}
@@ -36,11 +26,18 @@
             </p>
         </section>
 
-        <section class="col-md-5">
+        <section class="col-md-4">
+            <img class="img-fluid img-thumbnail" src="{{ PATH_IMAGE }}/{{ album.code }}.avif" />
+            {% for link in album.reviews.all %}
+                <a href="{{link.link}}">{{link.name}}</a>
+            {% endfor %}
+        </section>
+
+        <section class="col-md-8">
             <ul class="ratingverse">
                 {% for track in album.tracks.all %}
                 <li>
-                    {{ track.order }} - {{ track.title }}
+                    {{ track.order }} - {{ track.title }} ({{ track.count_history }})
                     <span>
                         {% for i in '12345'|make_list %}
                             <a {% if track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{album.id}}&track={{track.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
@@ -83,12 +80,6 @@
                 {% endfor %}
             </ul>
             {% endif %}
-
-            <form method="post" action="{% url 'music:add-history' album.id %}">
-                {% csrf_token %}
-                <textarea class="form-control" id="history" name="history" rows="15"></textarea>
-                <button type="submit" class="btn btn-primary">Ajouter</button>
-            </form>
         </div>
     </div>
 {% endblock %}
