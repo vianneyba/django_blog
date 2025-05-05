@@ -28,7 +28,7 @@ class AddTrackSerializer(serializers.ModelSerializer):
         track = models.Track.objects.filter(album=album, order=order)
 
         if len(track) == 0:
-            track = models.Track.objects.create(album=album, order=num, **validated_data)
+            track = models.Track.objects.create(album=album, order=order, **validated_data)
         else:
             num = len(album.tracks.all()) + 1
             track = models.Track.objects.create(album=album, order=num, **validated_data)
