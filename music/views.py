@@ -2,10 +2,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
 from music import models, serializers
 from datetime import datetime
 from django.contrib import messages
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.viewsets import ViewSet
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 33*3)
@@ -107,11 +110,14 @@ def add_history(request):
                 listening_date = info[3]
 
                 album = models.Album.objects.filter(title__iexact=title_album, band__name__iexact=band)
+                print(f"=====> {album}")
                 if len(album) == 1:
                     track = album[0].tracks.filter(title__iexact=title_track)
+                    print(f"=====> {track}")
                     if len(track) == 1:
                         listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
                         entry = models.Listening_History.objects.filter(listening_date=listening_date)
+                        print(f"=====> {entry}")
                         if len(entry) == 0:
                             models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
                             messages.success(request, f"{band} - {title_album} - {title_track} - {listening_date}")
@@ -182,3 +188,21 @@ class AlbumList(viewsets.ModelViewSet):
             code = self.request.query_params.get('code')
             queryset = queryset.filter(code=code).distinct()
         return queryset
+    
+class AlbumTrack(viewsets.ModelViewSet):
+    queryset= models.Track.objects.all()
+    serializer_class= serializers.AddTrackSerializer
+    permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
+    def get_queryset(self):
+        queryset = models.Track.objects.all()
+        return queryset
+    
+class TrackListeningView(ViewSet):  # <– Hérite de ViewSet
+    permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
+
+    def create(self, request):
+        serializer = serializers.ListeningHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            listening = serializer.save()
+            return Response({"status": "success", "listening_id": listening.id})
+        return Response(serializer.errors, status=400)

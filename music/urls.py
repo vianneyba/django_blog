@@ -6,6 +6,8 @@ app_name = "music"
 
 router = DefaultRouter()
 router.register(r'albums', views.AlbumList, basename='albums')
+router.register(r'tracks', views.AlbumTrack, basename='tracks')
+router.register(r'history', views.TrackListeningView, basename='history')
 
 urlpatterns = [
     path('', views.index, name='index'),
