@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block menu %}
+<ul class="list-group">
+    <li class="list-group-item"><a href="{% url 'music:view-history' %}">Historique</a></li>
+    <li class="list-group-item"><a href="{% url 'music:index' %}?type=albums">Voir Tous</a></li>
+    <li class="list-group-item"><a href="{% url 'music:index' %}?type=tracks&note=4">Top Titres</a></li>
+    <li class="list-group-item"><a href="{% url 'music:index' %}?type=albums&note=4">Top Albums</a></li>
+</ul>
+{% endblock %}
+
 {% block content %}
 
 <div class="row">
@@ -57,11 +66,8 @@
 {% endif %}
     <div class="col-md-12">
         <div class="col-md-4 offset-md-4">
-            <h1>[{{ note }}]</h1>
             {% include 'paginator.html' with my_type=my_type note=note %}
         </div>
     </div>
 </div>
-
-
 {% endblock %}

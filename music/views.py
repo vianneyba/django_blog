@@ -21,6 +21,7 @@ def return_paginator(request, queryset):
 
 @staff_member_required
 def index(request):
+    context = {}
 
     if 'type' in request.GET:
         if request.GET.get('type') == 'tracks':
@@ -36,7 +37,9 @@ def index(request):
             elif request.GET.get('code'):
                 code = request.GET.get('code')
                 album = models.Album.objects.get(code=code)
-                return render(request, 'music/view_album.html', {'album': album})
+                return render(request, 'music/view_album.html', {'album': album, "view_menu": True})
+            context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+  
         else:
             albums = models.Album.objects.all().order_by('-pk')
             context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
@@ -54,6 +57,8 @@ def index(request):
             q = request.GET.get('search').strip()
             albums = albums.filter(Q(band__name__icontains=q) | Q(title__icontains=q))
         context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+
+    context['view_menu'] = True
     return render(request, 'music/index.html', context)
 
 @staff_member_required
