@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url 'music:add-lyric'  %}?album={{ album.id }}&track={{ track.id }}" method="post">
+        {% csrf_token %}
+        <textarea class="form-control" id="lyric" name="lyric" rows="15">{{ result }}</textarea>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    </form>
+{% endblock %}

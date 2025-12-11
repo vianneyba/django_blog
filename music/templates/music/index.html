@@ -24,6 +24,10 @@
                 <p class="text-center">
                     <a href="{% url 'music:view-album' album.id %}">{{ album.title | title }}</a>
                     [<a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>]
+                    {% if album.get_count_review %}
+                        <i class="fa fa-industry" aria-hidden="true"></i>
+                    {% endif %}
+
                 </p>
             </div>
         </div>
@@ -53,6 +57,7 @@
 {% endif %}
     <div class="col-md-12">
         <div class="col-md-4 offset-md-4">
+            <h1>[{{ note }}]</h1>
             {% include 'paginator.html' with my_type=my_type note=note %}
         </div>
     </div>

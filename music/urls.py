@@ -17,7 +17,10 @@ urlpatterns = [
     path('add_link/<pk>', views.add_link, name='add-link'),
     path('add_history/', views.add_history, name='add-history'),
     path('musicaddtracknote/', views.music_add_track_note, name='music-add-track-note'),
-    path('musicaddalbumnote/', views.music_add_album_note, name='music-add-album-note'), 
+    path('musicaddalbumnote/', views.music_add_album_note, name='music-add-album-note'),
+    path('add_lyric/', views.music_add_lyrics, name='add-lyric'),
+    path('view_lyric/', views.music_view_lyrics, name='view-lyric'),
+    path('view_review/', views.view_review, name='view-review'),
     path('search/', include(router.urls)),
     path('api/', include(router.urls)),
 ]

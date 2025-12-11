@@ -2,6 +2,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.conf import settings
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from music import models, serializers
@@ -9,6 +10,7 @@ from datetime import datetime
 from django.contrib import messages
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ViewSet
+import os
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 33*3)
@@ -30,16 +32,14 @@ def index(request):
             if request.GET.get('note'):
                 note = request.GET.get('note')
                 albums = albums.filter(score__gte=note).order_by('-score')
-                context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+                context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums','note': note}
             elif request.GET.get('code'):
                 code = request.GET.get('code')
                 album = models.Album.objects.get(code=code)
                 return render(request, 'music/view_album.html', {'album': album})
-
-            context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
         else:
-                albums = models.Album.objects.all().order_by('-pk')
-                context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+            albums = models.Album.objects.all().order_by('-pk')
+            context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
         
     else:
         albums = models.Album.objects.all().order_by('-pk')
@@ -58,9 +58,20 @@ def index(request):
 
 @staff_member_required
 def view_album(request, pk):
+    repertoire = os.path.join(settings.BASE_DIR, 'static/lyrics')
     album = models.Album.objects.get(pk=pk)
 
-    return render(request, 'music/view_album.html', {'album': album})
+    tracks = []
+    for track in album.tracks.all():
+        try:
+            with open(f'{repertoire}/{album.id}-{track.id}.txt', "r") as f:
+                track.withlyrics = True
+        except FileNotFoundError:
+            pass
+
+        tracks.append(track)
+
+    return render(request, 'music/view_album.html', {'album': album, 'tracks': tracks})
 
 @staff_member_required
 def music_add_track_note(request):
@@ -110,14 +121,11 @@ def add_history(request):
                 listening_date = info[3]
 
                 album = models.Album.objects.filter(title__iexact=title_album, band__name__iexact=band)
-                print(f"=====> {album}")
                 if len(album) == 1:
                     track = album[0].tracks.filter(title__iexact=title_track)
-                    print(f"=====> {track}")
                     if len(track) == 1:
                         listening_date = datetime.strptime(info[3], "%d %b %Y, %I:%M%p")
                         entry = models.Listening_History.objects.filter(listening_date=listening_date)
-                        print(f"=====> {entry}")
                         if len(entry) == 0:
                             models.Listening_History.objects.create(track=track[0], listening_date=listening_date)
                             messages.success(request, f"{band} - {title_album} - {title_track} - {listening_date}")
@@ -154,6 +162,40 @@ def view_history(request):
         'year': year,
         'month': month
     })
+
+def music_add_lyrics(request):
+    repertoire = os.path.join(settings.BASE_DIR, 'static/lyrics')
+    album = request.GET.get('album')
+    track = request.GET.get('track')
+
+    if request.method == 'POST':
+        with open(f'{repertoire}/{album}-{track}.txt', "w") as f:
+            f.write(request.POST.get('lyric'))
+
+        return redirect('music:view-album', pk=album)
+
+    context = {
+        'album': models.Album.objects.get(pk=album),
+        'track': models.Track.objects.get(pk=track)}
+
+    return render(request, 'music/add_lyric.html', context)
+
+def music_view_lyrics(request):
+    repertoire = os.path.join(settings.BASE_DIR, 'static/lyrics')
+    album = request.GET.get('album')
+    track = request.GET.get('track')
+
+    lyric = None
+
+    with open(f'{repertoire}/{album}-{track}.txt', "r") as f:
+       lyric = f.read()
+    return render(request, 'music/view_lyric.html', {'lyric': lyric})
+
+def view_review(request):
+    repertoire = os.path.join(settings.BASE_DIR, 'static/review')
+    album = request.GET.get('album')
+    review = request.GET.get('review')
+    return redirect('music:view-album', pk=album)
 
 @staff_member_required
 def view_album_by_code(request, pk):
@@ -197,7 +239,7 @@ class AlbumTrack(viewsets.ModelViewSet):
         queryset = models.Track.objects.all()
         return queryset
     
-class TrackListeningView(ViewSet):  # <– Hérite de ViewSet
+class TrackListeningView(ViewSet):
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
 
     def create(self, request):

@@ -23,6 +23,15 @@
                         <a {% if album.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-album-note' %}?album={{album.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
                     {% endfor %}
                 </span>
+                {% if album.get_count_review %}
+                    {% with counter=album.get_count_review %}
+                    {% for i in ""|ljust:counter %}
+                    <a href="{% url 'music:view-review' %}?album={{ album.id }}&review={{ forloop.counter }}">
+                        <i class="fa fa-industry" aria-hidden="true"></i>
+                    </a>
+                    {% endfor %}
+                    {% endwith %}
+                {% endif %}
             </p>
         </section>
 
@@ -35,10 +44,19 @@
 
         <section class="col-md-8">
             <ul class="ratingverse">
-                {% for track in album.tracks.all %}
+                {% for track in tracks %}
                 <li>
-                    {{ track.order }} - {{ track.title }} ({{ track.count_history }})
-                    <span>
+                    {% if track.withlyrics %}
+                    <a href="{% url 'music:view-lyric'  %}?album={{ album.id }}&track={{ track.id }}">
+                        {{ track.order }} - {{ track.title }} ({{ track.count_history }})
+                    </a>
+                    {% else %}
+                        {{ track.order }} - {{ track.title }} ({{ track.count_history }})
+                    {% endif %}
+                    <a href="{% url 'music:add-lyric'  %}?album={{ album.id }}&track={{ track.id }}">
+                        <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                    </a>
+                        <span>
                         {% for i in '12345'|make_list %}
                             <a {% if track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{album.id}}&track={{track.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
                         {% endfor %}
@@ -66,10 +84,15 @@
         </div>
         <div class="col-md-7">
             <ul>
-                {% for track in album.tracks.all %}
-                {% for history in track.listenings.all %}
-                <li>{{ history.track.title }} {{ history.listening_date }}</li>
-                {% endfor %}
+                {% for track in album.get_tracks_with_listenings %}
+                <li>
+                    {{ track.title }}
+                    <ul>
+                    {% for listening in track.listenings.all %}
+                        <li>{{ listening.listening_date }}</li>
+                    {% endfor %}
+                    </ul>
+                </li>
                 {% endfor %}
             </ul>
 
