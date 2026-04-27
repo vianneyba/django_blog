@@ -17,27 +17,35 @@
 
 	<div class="container content">
 		<header id="banner" class="container-fluid">
-			{% block banner %}
-			{% if banner %}
-				<img class="img-fluid" src="{{ banner }}" alt="ma bannière">
-			{% else %}
-				<img class="img-fluid" src="{% static '/img/banniere.avif' %}" alt="ma bannière">
-			{% endif %}
-			{% endblock %}
+			<div class="row">
+				{% block banner %}
+				{% if view_menu == True %}
+				<div class="col-md-2">
+					{% block menu_banner %}{% endblock %}
+				</div>
+				{% endif %}
+				<div class="{% if view_menu == True %}col-md-10{% else %}col-md-12{% endif %}">
+					{% if banner %}
+					<img class="img-fluid" src="{{ banner }}" alt="ma bannière">
+					{% else %}
+					<img class="img-fluid" src="{% static '/img/banniere.avif' %}" alt="ma bannière">
+					{% endif %}
+				</div>
+				{% endblock %}
+			</div>
+			<div>
+				{% if view_search_bar == True %}
+				<div class="col-md-8 offset-md-2">
+					{% block search_bar %}{% endblock %}
+				</div>
+				{% endif %}
+			</div>
 		</header>
 
 		<div class="row">
-			{% if view_menu == True %}
-				<div class="col-md-3">
-					{% block menu %}{% endblock %}
-				</div>
-				<div class="col-md-9">
-			{% else %}
-				<div class="col-md-12">
-			{% endif %}
+			<div class="col-md-12">
 				{% block content %}{% endblock %}
-				</div>
-
+			</div>
 		</div>
 	</div>
 

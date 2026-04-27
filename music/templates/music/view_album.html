@@ -2,14 +2,16 @@
 
 {% block title %}{{ album.band.name | upper }} {{ album.title | title }} [{{ album.release_year }}]{% endblock %}
 
+{% block menu_banner%}
+    {% include 'music/menu.html' %}
+{% endblock %}
+
+{% block search_bar %}
+    {% include 'music/search_bar.html' %}
+{% endblock %}
+
 {% block content %}
     <div class="row"> 
-        <div class="col-md-12">
-            <div class="col-md-8 offset-md-3">
-                {% include 'music/search_bar.html' %}
-            </div>
-        </div>
-
         <section class="col-md-12">
             <h3>
                 <a href="{% url 'music:index' %}?band={{ album.band.id }}">{{ album.band.name | upper }}</a>

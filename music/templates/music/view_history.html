@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
+{% block menu_banner %}
+    {% include 'music/menu.html' %}
+{% endblock %}
+
+{% block search_bar %}
+    {% include 'music/search_bar.html' %}
+{% endblock %}
+
 {% block content %}
 
 <table class="table">
-    <div class="col-md-12">
-        <div class="col-md-8 offset-md-3">
-            {% include 'music/search_bar.html' %}
-        </div>
-    </div>
     {% for line in page_obj %}
         <tr>
             <td>

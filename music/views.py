@@ -76,7 +76,12 @@ def view_album(request, pk):
 
         tracks.append(track)
 
-    return render(request, 'music/view_album.html', {'album': album, 'tracks': tracks})
+    return render(request, 'music/view_album.html', {
+        'album': album,
+        'tracks': tracks,
+        'view_menu': True,
+        'view_search_bar': True
+        })
 
 @staff_member_required
 def music_add_track_note(request):
@@ -174,7 +179,9 @@ def view_history(request):
     return render(request, 'music/view_history.html', {
         'page_obj': page_obj,
         'year': year,
-        'month': month
+        'month': month,
+        'view_menu': True,
+        'view_search_bar': True
     })
 
 @staff_member_required

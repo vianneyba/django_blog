@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from django.db.models import Q
 from rest_framework import serializers
 from music import models
@@ -97,7 +98,9 @@ class ListeningHistorySerializer(serializers.Serializer):
         for en, fr in month_map.items():
             date_str = date_str.replace(fr, en)
 
-        listening_date = datetime.strptime(date_str, "%d %b %Y, %H:%M")
+        listening_date = timezone.make_aware(
+            datetime.strptime(date_str, "%d %b %Y, %H:%M"),
+        )
 
         listening = models.Listening_History.objects.create(
             track=track,
