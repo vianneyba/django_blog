@@ -3,7 +3,11 @@
 <div class="comments">
 	<div class="comments-header">
 		<h2 class="comment-reply-title">
+			{% if article.count_comments > 1 %}
 			{{ article.count_comments }} commentaire{% if article.count_comments > 1 %}s{% endif%} sur cette article.
+			{% else %}
+			il n'y pas de commentaires :-(
+			{% endif %}
 		</h2>
 	</div>
 	

@@ -40,8 +40,6 @@ def return_article(request, slug=None, pk=None):
         elif pk is not None:
             context['article'] = Article.objects.get(pk=pk)
 
-        Blog_Article(context['article'], request)
-
         comments = Comment.objects.filter(article__id=context['article'].id)
         context['comments'] = return_paginator(request, comments)
     except ObjectDoesNotExist:
@@ -66,7 +64,9 @@ def index(request):
     """
     articles = Article.objects.all().filter(published=True)
 
-    context = {'page_obj': return_paginator(request, articles)}
+    context = {
+        'page_obj': return_paginator(request, articles),
+        'articles': articles}
     return render(request, 'blog/index.html', context)
 
 def by_slug(request, slug):
@@ -91,7 +91,9 @@ def by_category(request, category):
     """
     articles = Article.objects.filter(category__slug=category, published=True)
 
-    context = {'page_obj': return_paginator(request, articles)}
+    context = {
+        'page_obj': return_paginator(request, articles),
+        'articles': articles }
     return render(request, 'blog/index.html', context)
 
 def update_article(request, pk):
@@ -141,7 +143,7 @@ def by_author(request, author):
     if len(articles) == 0:
         raise Http404
 
-    context = {'page_obj': return_paginator(request, articles)}
+    context = {'page_obj': return_paginator(request, articles), "articles": articles}
     return render(request, 'blog/index.html', context)
 
 def by_tag(request, tag):
@@ -152,7 +154,7 @@ def by_tag(request, tag):
     """
     articles = Article.objects.filter(tags__slug=tag, published=True)
 
-    context = {'page_obj': return_paginator(request, articles)}
+    context = {'page_obj': return_paginator(request, articles), "articles": articles}
     return render(request, 'blog/index.html', context)
 
 @permission_required("blog.add_article")

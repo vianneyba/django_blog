@@ -10,7 +10,7 @@ router.register(r'articles', views.ArticleViewset, basename='articles')
 urlpatterns = [
     path('', views.index, name='index'),                                                    # liste les articles publiés
     path('api/', include(router.urls)),
-    path('blog/<slug>/', views.by_slug, name='by-slug'),                                    # vue d'un article par son slug
+    path('article/<slug>/', views.by_slug, name='by-slug'),                                    # vue d'un article par son slug
     path('category/<category>/', views.by_category, name='by-category'),                    # liste par la categorie
     path('article/publish/<pk>/<value>', views.publish_article, name='publish-article'),    # pour publier ou pas un article
     path('article/add/', views.add_article, name='add-article'),                            # pour écrire un article

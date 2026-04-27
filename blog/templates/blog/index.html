@@ -6,8 +6,8 @@
 
 {% block content %}
 	
-	{% if page_obj %}
-		{% for article in page_obj %}
+	{% if articles %}
+		{% for article in articles %}
 			{% include 'blog/view-article-in-list.html' %}
 
 			{% if not forloop.last %}

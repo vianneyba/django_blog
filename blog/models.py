@@ -24,7 +24,6 @@ class Tag(models.Model):
 
 class Article(models.Model):
 	title = models.CharField('Titre:', max_length=100)
-	content = models.TextField('Contenu:', default='')
 	slug = models.SlugField(unique=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	published = models.BooleanField(default=False)
@@ -61,9 +60,16 @@ class Article(models.Model):
 			else:
 				self.tags.append(tag)
 
-	def view_content(self):
-		pattern = r"{{ [a-zA-Z0-9 -_]{1,} }}"
-		return re.sub(pattern, "", self.content)
+	def get_content(self):
+		_file = f'/home/vianney/Documents/programme/django_blog/blog/articles/{self.slug}.html'
+
+		try:
+			with open(_file, 'r') as out_file:
+				self.content = out_file.read()
+		except FileNotFoundError:
+			self.content= "<p>pas pe contenu pour cette article</p>"
+
+		return self.content
 
 	class Meta:
 		ordering = ['-created_at']

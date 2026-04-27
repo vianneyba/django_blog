@@ -57,6 +57,12 @@
 			<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a>
 			{% endif %}
 		</button>
+		{% else %}
+			{% if user.username %}
+			<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">
+				<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a>
+			</button>
+			{% endif %}
 		{% endif %}
 	</div>
 </nav>
