@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Prefetch
 import glob
 import os
 
@@ -29,7 +30,7 @@ class Album(models.Model):
 	def get_tracks_with_listenings(self):
 		"""Retourne les tracks avec leurs listening dates préchargées"""
 		return self.tracks.prefetch_related(
-			'listenings'
+			Prefetch('listenings', queryset=Listening_History.objects.order_by("-listening_date"))
 		).filter(
 			listenings__isnull=False
 		).distinct()

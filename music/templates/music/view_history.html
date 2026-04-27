@@ -3,6 +3,11 @@
 {% block content %}
 
 <table class="table">
+    <div class="col-md-12">
+        <div class="col-md-8 offset-md-3">
+            {% include 'music/search_bar.html' %}
+        </div>
+    </div>
     {% for line in page_obj %}
         <tr>
             <td>
@@ -17,9 +22,22 @@
             </td>
             <td>
                 <a href="{% url 'music:view-album' line.track.album.id %}">
-                    {{ line.track.album.title }}</td>
-                </a>
-            <td>{{ line.track.title }}<br>{{ line.track.view_score_template | safe }}</td>
+                    {{ line.track.album.title }}
+                </a><br />
+                <span class="ratingverse">
+                    {% for i in '12345'|make_list %}
+                        <a {% if line.track.album.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-album-note' %}?album={{line.track.album.id}}&note={{i}}&url={{request.get_full_path}}" title="Donner {{i}} étoile">  {% if line.track.album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
+                    {% endfor %}
+                </span>
+            </td>
+            <td>
+                {{ line.track.title }}<br>
+                <span>
+                {% for i in '12345'|make_list %}
+                    <a {% if line.track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{line.track.album.id}}&track={{line.track.id}}&note={{i}}&url={{request.get_full_path}}" title="Donner {{i}} étoile">  {% if line.track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
+                {% endfor %}
+                </span>
+            </td>
             <td>{{ line.listening_date }}</td>
         </tr>
     {% endfor %}

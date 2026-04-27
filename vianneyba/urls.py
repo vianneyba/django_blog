@@ -7,14 +7,14 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('accounts/', include('authenticate.urls')),
+    path('blog/', include('blog.urls')),
     path('launch-game/', include('game.urls')),
     path('music/', include('music.urls')),
-    path('accounts/', include('authenticate.urls')),
     path('comments/', include('comment.urls')),
     path('i-like/', include('like_dislike.urls')),
     path('article/', include('magazine.urls')),
     path('polls/', include('polls.urls')),
-    path('blog/', include('blog.urls')),
 ]
 
 handler404 = "vianneyba.views.handler404"

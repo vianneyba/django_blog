@@ -89,7 +89,10 @@ def music_add_track_note(request):
         track.score = note
         track.save()
 
-    return redirect('music:view-album', pk=album_id)
+    if "url" in request.GET:
+        return redirect(request.GET.get('url'))
+    else:
+        return redirect('music:view-album', pk=album_id)
 
 @staff_member_required
 def music_add_album_note(request):
@@ -101,8 +104,12 @@ def music_add_album_note(request):
         album.score = note
         album.save()
 
-    return redirect('music:view-album', pk=album_id)
+    if "url" in request.GET:
+        return redirect(request.GET.get('url'))
+    else:
+        return redirect('music:view-album', pk=album_id)
 
+@staff_member_required
 def add_link(request, pk):
     album = models.Album.objects.get(pk=pk)
     link_str = request.POST.get('link')
@@ -112,6 +119,7 @@ def add_link(request, pk):
 
     return redirect('music:view-album', pk=pk)
 
+@staff_member_required
 def add_history(request):
     result = ""
     if request.method == 'POST':
@@ -148,6 +156,7 @@ def add_history(request):
 
     return render(request, 'music/form_history.html', {'result': result})
 
+@staff_member_required
 def view_history(request):
     year = request.GET.get('year')
     month = request.GET.get('month')
@@ -168,6 +177,7 @@ def view_history(request):
         'month': month
     })
 
+@staff_member_required
 def music_add_lyrics(request):
     repertoire = os.path.join(settings.BASE_DIR, 'static/lyrics')
     album = request.GET.get('album')
@@ -185,6 +195,7 @@ def music_add_lyrics(request):
 
     return render(request, 'music/add_lyric.html', context)
 
+@staff_member_required
 def music_view_lyrics(request):
     repertoire = os.path.join(settings.BASE_DIR, 'static/lyrics')
     album = request.GET.get('album')
@@ -196,6 +207,7 @@ def music_view_lyrics(request):
        lyric = f.read()
     return render(request, 'music/view_lyric.html', {'lyric': lyric})
 
+@staff_member_required
 def view_review(request):
     repertoire = os.path.join(settings.BASE_DIR, 'static/review')
     album = request.GET.get('album')

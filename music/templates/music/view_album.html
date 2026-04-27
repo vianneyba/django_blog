@@ -56,10 +56,10 @@
                     <a href="{% url 'music:add-lyric'  %}?album={{ album.id }}&track={{ track.id }}">
                         <i class="fa fa-plus-square-o" aria-hidden="true"></i>
                     </a>
-                        <span>
-                        {% for i in '12345'|make_list %}
-                            <a {% if track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{album.id}}&track={{track.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
-                        {% endfor %}
+                    <span>
+                    {% for i in '12345'|make_list %}
+                        <a {% if track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{album.id}}&track={{track.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
+                    {% endfor %}
                     </span>
                 </li>
                 {% endfor %}
@@ -83,13 +83,13 @@
             </form>
         </div>
         <div class="col-md-7">
-            <ul>
+            <ul class="list-group">
                 {% for track in album.get_tracks_with_listenings %}
-                <li>
+                <li class="list-group-item list-group-item-primary">
                     {{ track.title }}
                     <ul>
                     {% for listening in track.listenings.all %}
-                        <li>{{ listening.listening_date }}</li>
+                        <li class="list-group-item list-group-item-danger">{{ listening.listening_date }} - {{ listening.id }}</li>
                     {% endfor %}
                     </ul>
                 </li>
