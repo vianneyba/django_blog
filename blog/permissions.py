@@ -1,8 +1,19 @@
 from rest_framework.permissions import BasePermission
+from rest_framework import permissions
 
-class ArticlePermissions(BasePermission):
+class ArticlePermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        if view.action in ['create', 'destroy']:
-            return request.user.is_staff
+        print(f"Method: {request.method}")
+        print(f"Action: {view.action if hasattr(view, 'action') else 'No action'}")
 
-        return True
+        # Permissions basées sur la méthode HTTP (plus fiable)
+        if request.method == 'GET':
+            return True
+
+        if request.method == 'POST':
+            return request.user.is_authenticated
+
+        if request.method in ['PUT', 'PATCH', 'DELETE']:
+            return request.user.is_authenticated and request.user.is_staff
+
+        return False

@@ -182,20 +182,22 @@ def search_category(category):
     category = Category.objects.get(slug=slug)
     return category.id
 
-def search_tag(tags, article):
+def search_tag(tags):
     """
     Fonction pour la création des tags et les ajoutes a un article
     tags        - string ex:'action;platform'
     """
-    t = tags.split(';')
-    for name in t:
+    result= []
+    for name in tags:
         slug = slugify(name)
         try:
             tag = Tag.objects.get(slug=slug)
+            result.append(tag.pk)
         except ObjectDoesNotExist:
             tag = Tag(name=name, slug=slug)
             tag.save()
-        article.tags.add(tag)
+            result.append(tag.pk)
+        return result
 
 
 class ArticleViewset(ModelViewSet):
@@ -207,15 +209,16 @@ class ArticleViewset(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         tempdict = request.data.copy()
+
         tempdict['author'] = self.request.user.id
 
         tempdict['category'] = search_category(tempdict['category'])
-        tempdict.pop('tags')
+        tempdict['tags'] = search_tag(tempdict['tags'])
 
         serializer = serializers.ArticleSaveSerializer(data=tempdict)
         if serializer.is_valid():
             article = serializer.save()
-            search_tag(request.data['tags'], article)
+            article.save_content(tempdict['content'])
             article.save()
             return Response(self.serializer_class(article).data, status=status.HTTP_201_CREATED)
         else:

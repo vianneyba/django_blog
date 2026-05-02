@@ -1,10 +1,9 @@
-import re
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils import timezone
-from magazine.models import Article
-
+from django.conf import settings
+import os
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -61,7 +60,9 @@ class Article(models.Model):
 				self.tags.append(tag)
 
 	def get_content(self):
-		_file = f'/home/vianney/Documents/programme/django_blog/blog/articles/{self.slug}.html'
+		_file = f'{settings.BASE_DIR}/blog/articles/{self.slug}.html'
+		print(settings.BASE_DIR)
+
 
 		try:
 			with open(_file, 'r') as out_file:
@@ -71,7 +72,16 @@ class Article(models.Model):
 
 		return self.content
 
+	def save_content(self, content):
+		try:
+			_file = f'{settings.BASE_DIR}/blog/articles/{self.slug}.html'
+			with open(_file, 'x') as f:
+				f.write(content)
+		except Exception as e:
+			print(f"Erreur lors de la sauvegarde du contenu : {e}")
+			raise
+
 	class Meta:
 		ordering = ['-created_at']
 		verbose_name = 'Gestion de l\'article'
-		verbose_name_plural = 'Gestion des articles'
+		verbose_name_plural = 'Gestion des articles'	
