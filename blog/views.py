@@ -207,6 +207,11 @@ class ArticleViewset(ModelViewSet):
     def get_queryset(self):
         return Article.objects.all().filter(published=True)
 
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return serializers.ArticleSaveSerializer
+        return serializers.ArticleSerializer
+
     def create(self, request, *args, **kwargs):
         tempdict = request.data.copy()
 
@@ -223,3 +228,26 @@ class ArticleViewset(ModelViewSet):
             return Response(self.serializer_class(article).data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def update(self, request, *args, **kwargs):
+        # Traitement spécial pour category et tags
+        mutable_data = request.data.copy()
+        mutable_data['author'] = self.request.user.id
+
+        if 'category' in mutable_data:
+            mutable_data['category'] = search_category(mutable_data['category'])
+
+        if 'tags' in mutable_data:
+            mutable_data['tags'] = search_tag(mutable_data['tags'])
+
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=mutable_data, partial=partial)
+        if serializer.is_valid():
+            article = serializer.save()
+            content = self.request.data.get('content')
+            if content:
+                article.save_content(content)
+            read_serializer = serializers.ArticleSerializer(article)
+            return Response(read_serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

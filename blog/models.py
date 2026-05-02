@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.conf import settings
-import os
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -23,7 +22,7 @@ class Tag(models.Model):
 
 class Article(models.Model):
 	title = models.CharField('Titre:', max_length=100)
-	slug = models.SlugField(unique=True)
+	slug = models.SlugField( max_length=100, unique=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	published = models.BooleanField(default=False)
 	update_date = models.DateTimeField(default=timezone.now)
@@ -61,21 +60,32 @@ class Article(models.Model):
 
 	def get_content(self):
 		_file = f'{settings.BASE_DIR}/blog/articles/{self.slug}.html'
-		print(settings.BASE_DIR)
-
 
 		try:
 			with open(_file, 'r') as out_file:
-				self.content = out_file.read()
+				return out_file.read()
 		except FileNotFoundError:
 			self.content= "<p>pas pe contenu pour cette article</p>"
 
-		return self.content
+		return None
+
+	@property
+	def content(self):
+		"""Propriété qui lit le contenu du fichier"""
+		return self.get_content()
+
+	@content.setter
+	def content(self, value):
+		"""Setter optionnel pour sauvegarder le contenu"""
+		self.save_content(value)
 
 	def save_content(self, content):
 		try:
 			_file = f'{settings.BASE_DIR}/blog/articles/{self.slug}.html'
 			with open(_file, 'x') as f:
+				f.write(content)
+		except FileExistsError:
+			with open(_file, 'w') as f:
 				f.write(content)
 		except Exception as e:
 			print(f"Erreur lors de la sauvegarde du contenu : {e}")

@@ -31,7 +31,7 @@
 		</div>
 
 		<div class="entry-article">
-			{{ article.get_content | markdown | safe | truncatewords_html:120 }}
+			{{ article.content | markdown | safe | truncatewords_html:120 }}
 			<button class="btn btn-secondary entry-next">
 				<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
 			</button>

@@ -3,9 +3,6 @@ from rest_framework import permissions
 
 class ArticlePermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        print(f"Method: {request.method}")
-        print(f"Action: {view.action if hasattr(view, 'action') else 'No action'}")
-
         # Permissions basées sur la méthode HTTP (plus fiable)
         if request.method == 'GET':
             return True

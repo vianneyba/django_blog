@@ -1,0 +1,17 @@
+{% macro render_notes(notes, _class) %}
+<div{% if _class.bootstrap %} class="{{_class.bootstrap}}"{% endif %}>
+    <table class="table notes">
+        {% for note in notes.notes %}
+        <tr>
+            <td class="entete"><span>{{ note.titre | upper }}</span></td>
+            <td class="note"><span>{{ note.note }}</span></td>
+        </tr>
+        {% if note.texte %}
+        <tr>
+            <td class="texte" colspan="2">{{ note.texte }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
+{% endmacro %}

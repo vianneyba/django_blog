@@ -1,0 +1,14 @@
+{% macro render_avis(avis, _class) %}
+<div{% if _class.bootstrap %} class="{{_class.bootstrap}}"{% endif %}>
+    <div class="avis{% if _class.class %} {{_class.class}}{% endif %}">
+        <h4 class="row">
+            <span class="text-start col-6">
+                {% if avis.titre %}{{avis.titre |upper}} {% endif %}
+                {% if avis.utilisateur%}<span class="avis-utilisateur">{{avis.utilisateur}}</span>{% endif %}
+            </span>
+            {% if avis.avis %}<span class="col-6 text-end">{{avis.avis}}</span>{% endif %}
+        </h4>
+        <p>{{avis.texte}}</p>
+    </div>
+</div>
+{% endmacro %}
