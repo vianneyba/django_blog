@@ -15,7 +15,9 @@
         <section class="col-md-12">
             <h3>
                 <a href="{% url 'music:index' %}?band={{ album.band.id }}">{{ album.band.name | upper }}</a>
+                <a href="{% url 'music:view-history' %}?band={{ album.band.id }}"><i class="fa fa-timeline"></i></a>
                 - {{ album.title | title }}
+                <a href="{% url 'music:view-history' %}?album={{ album.id }}"><i class="fa fa-timeline"></i></a>
                 [<a href="{% url 'music:index'  %}?date={{ album.release_year }}">{{ album.release_year }}</a>]
             </h3>
 
@@ -48,6 +50,7 @@
             <ul class="ratingverse">
                 {% for track in tracks %}
                 <li>
+                    <a href="{% url 'music:view-history' %}?title={{ track.id }}"><i class="fa fa-timeline"></i></a>
                     {% if track.withlyrics %}
                     <a href="{% url 'music:view-lyric'  %}?album={{ album.id }}&track={{ track.id }}">
                         {{ track.order }} - {{ track.title }} ({{ track.count_history }})

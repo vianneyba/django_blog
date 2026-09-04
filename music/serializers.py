@@ -22,6 +22,11 @@ class AddTrackSerializer(serializers.ModelSerializer):
         model= models.Track
         fields= ('album', 'order', 'title', 'score')
 
+    def validate_score(self, value):
+        if value is not None and (value < 0 or value > 5):
+            raise serializers.ValidationError("Le score doit être entre 0 et 5.")
+        return value
+
     def create(self, validated_data):
         album = validated_data.pop('album')
         order = validated_data.pop('order')

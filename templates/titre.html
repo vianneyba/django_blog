@@ -1,9 +1,0 @@
-{% macro render_titre(texte, _class, type) %}
-<div{% if  _class.bootstrap %} class="{{ _class.bootstrap}}"{% endif %}>
-    {% if type %}
-    <h{{type}} {% if _class.class %}class="{{_class.class}}"{% endif %}>{{ texte }}</h{{type}}>
-    {% else %}
-    <h1{% if _class.class %} class="{{_class.class}}"{% endif %}>{{ texte }}</h1>
-    {% endif %}
-</div>  
-{% endmacro %}

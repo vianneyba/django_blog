@@ -165,21 +165,35 @@ def add_history(request):
 def view_history(request):
     year = request.GET.get('year')
     month = request.GET.get('month')
+    band = request.GET.get('band')
+    album = request.GET.get('album')
+    title = request.GET.get('title')
 
     queryset = models.Listening_History.objects.all().order_by('-listening_date')
+    url = f"?"
 
     if year:
         queryset = queryset.filter(listening_date__year=year)
+        url = f"{url}year={year}&"
     if month:
         queryset = queryset.filter(listening_date__month=month)
+        url = f"{url}year={year}&"
+    if band:
+        queryset = queryset.filter(track__album__band=band)
+        url = f"{url}band={band}&"
+    if album:
+        queryset = queryset.filter(track__album=album)
+        url = f"{url}album={album}&"
+    if title:
+        queryset = queryset.filter(track_id=title)
+        url = f"{url}title={title}&"
 
     paginator = Paginator(queryset, 50)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     return render(request, 'music/view_history.html', {
         'page_obj': page_obj,
-        'year': year,
-        'month': month,
+        'url': url,
         'view_menu': True,
         'view_search_bar': True
     })
@@ -234,7 +248,7 @@ class AlbumList(viewsets.ModelViewSet):
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        queryset = models.Album.objects.all().order_by('band__name')
+        queryset = models.Album.objects.all().order_by('band__name', 'release_year')
         if self.request.query_params.get('band') is not None:
             pk = self.request.query_params.get('band')
             queryset = queryset.filter(band_id=pk)
@@ -259,10 +273,26 @@ class AlbumTrack(viewsets.ModelViewSet):
     queryset= models.Track.objects.all()
     serializer_class= serializers.AddTrackSerializer
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
+    def get_serializer_class(self):
+        if self.action in ['update', 'partial_update']:
+            return self.serializer_class  # version plus restrictive
+        return self.serializer_class
+
     def get_queryset(self):
         queryset = models.Track.objects.all()
         return queryset
     
+    # def update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     partial = kwargs.pop('partial', False)
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     if serializer.is_valid():
+    #         track = serializer.save()
+    #         print(track)
+    #         return Response(track, status=status.HTTP_200_OK)
+
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class TrackListeningView(ViewSet):
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)
 
