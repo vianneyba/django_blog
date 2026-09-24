@@ -23,7 +23,8 @@ class ArticleSerializer(serializers.ModelSerializer):
             'dislike_count', 'tags']
 
 class ArticleSaveSerializer(serializers.ModelSerializer):
+    content = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Article
-        fields = [
-            'title', 'content', 'author', 'category', 'tags']
+        fields = ['title', 'content', 'author', 'category', 'tags']

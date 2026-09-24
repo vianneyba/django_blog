@@ -18,6 +18,7 @@ from comment.forms import CommentForm
 from django.http import Http404
 from blog.create_blog import Blog_Article
 from django.contrib.auth.decorators import permission_required
+from django.db import IntegrityError, transaction
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -96,39 +97,16 @@ def by_category(request, category):
         'articles': articles }
     return render(request, 'blog/index.html', context)
 
-def update_article(request, pk):
-    article = Article.objects.get(pk=pk)
-    form_add_article = ArticleForm(instance=article)
-
-    if request.method == 'POST':
-        form_add_article = ArticleForm(request.POST, instance=article)
-        if form_add_article.is_valid():
-            form_add_article.save()
-            return redirect('blog:by-slug', slug=article.slug)
-        
-    context = {
-        'article': article,
-        'form_add_article': form_add_article,
-        'type': 'update'}
-    return render(request, 'blog/add-article.html', context)
-
-def publish_article(request, pk, value):
+def by_tag(request, tag):
     """
-    fonction qui publie ou pas un article et qui renvoie a l'acceuil
-    pk      -id de l'article
-    value   -booleen
+    page qui liste les articles grace a ses tags
+    return une liste d'article par rapport au tag qui sont publié
+    tag         -string
     """
-    if value == 'True':
-        published = True
-    else:
-        published = False
+    articles = Article.objects.filter(tags__slug=tag, published=True)
 
-    article = Article.objects.get(pk=pk)
-    if article.author == request.user:
-        article.published = published
-        article.save()
-
-    return redirect('blog:index')
+    context = {'page_obj': return_paginator(request, articles), "articles": articles}
+    return render(request, 'blog/index.html', context)
 
 def by_author(request, author):
     """
@@ -146,16 +124,40 @@ def by_author(request, author):
     context = {'page_obj': return_paginator(request, articles), "articles": articles}
     return render(request, 'blog/index.html', context)
 
-def by_tag(request, tag):
-    """
-    page qui liste les articles grace a ses tags
-    return une liste d'article par rapport au tag qui sont publié
-    tag         -string
-    """
-    articles = Article.objects.filter(tags__slug=tag, published=True)
+def update_article(request, pk):
+    article = Article.objects.get(pk=pk)
+    form_add_article = ArticleForm(instance=article)
 
-    context = {'page_obj': return_paginator(request, articles), "articles": articles}
-    return render(request, 'blog/index.html', context)
+    if request.method == 'POST':
+        form_add_article = ArticleForm(request.POST, instance=article)
+        if form_add_article.is_valid():
+            form_add_article.save()
+            return redirect('blog:by-slug', slug=article.slug)
+        
+    context = {
+        'article': article,
+        'form_add_article': form_add_article,
+        'type': 'update'}
+    return render(request, 'blog/add-article.html', context)
+
+@permission_required("blog.add_article")
+def publish_article(request, pk, value):
+    """
+    fonction qui publie ou pas un article et qui renvoie a l'acceuil
+    pk      -id de l'article
+    value   -booleen
+    """
+    if value == 'True':
+        published = True
+    else:
+        published = False
+
+    article = Article.objects.get(pk=pk)
+    if article.author == request.user:
+        article.published = published
+        article.save()
+
+    return redirect('blog:index')
 
 @permission_required("blog.add_article")
 def add_article(request):
@@ -213,22 +215,40 @@ class ArticleViewset(ModelViewSet):
         return serializers.ArticleSerializer
 
     def create(self, request, *args, **kwargs):
-        tempdict = request.data.copy()
+        data = request.data.copy()
+        data['author'] = request.user.id
 
-        tempdict['author'] = self.request.user.id
+        # Résolution category / tags avec gestion d'erreur
+        try:
+            data['category'] = search_category(data.get('category'))
+            if 'tags' in data:
+                data['tags'] = search_tag(data['tags'])
+        except ValueError as exc:
+            return Response(
+                {'category': [str(exc)]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        tempdict['category'] = search_category(tempdict['category'])
-        tempdict['tags'] = search_tag(tempdict['tags'])
-
-        serializer = serializers.ArticleSaveSerializer(data=tempdict)
-        if serializer.is_valid():
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        try:
             article = serializer.save()
-            article.save_content(tempdict['content'])
-            article.save()
-            return Response(self.serializer_class(article).data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+        except IntegrityError as e:
+            return Response(
+                {f"Contrainte violée : {e}"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        # Gestion du contenu APRÈS validation
+        content = request.data.get('content')
+        if content:
+            article.save_content(content)
+
+        return Response(
+            serializers.ArticleSerializer(article).data,
+            status=status.HTTP_201_CREATED,
+        )
+
     def update(self, request, *args, **kwargs):
         # Traitement spécial pour category et tags
         mutable_data = request.data.copy()

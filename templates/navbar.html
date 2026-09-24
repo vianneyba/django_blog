@@ -1,68 +1,45 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-	<a class="navbar-brand" href="{% url 'blog:index' %}">{{ TITLE_SITE }}</a>
-		
-	<div class="collapse navbar-collapse">
-		<ul class="navbar-nav mr-auto">
-			{% if user.is_active and user.is_staff %}
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Mon Compte
-				</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="{% url 'blog:add-article' %}">Rédiger</a>
-						<a class="dropdown-item" href="{% url 'game:list-game'%}">launch</a>
-					{% if user.is_superuser %}
-						<a class="dropdown-item" href="{% url 'magazine:add-article' %}">Ajout Article Mag</a>
-						<a class="dropdown-item" href="{% url 'music:index' %}">Musique</a>
-						<a class="dropdown-item" href="{% url 'magazine:ini-to-html' %}">Export Article</a>
-						<a class="dropdown-item" href="{% url 'magazine:list-articles' %}">Liste Test</a>
-					{% endif %}
-					{# <a class="dropdown-item" href="{ path_for('profil') }">Profil</a> #}
-					<a class="dropdown-item" href="{% url 'blog:by-author' user.username %}?view=all">Mes Articles</a>
-					{# <a class="dropdown-item" href="{ path_for('userComment') }">Mes Commentaires</a> #}
-				</div>
-			</li>
-			{% endif %}
-			{# { endif %} #}
+<nav class="bg-gray-800 text-white p-4">
+  <div class="flex items-center justify-between">
+    <a class="text-xl font-bold" href="{% url 'blog:index' %}">{{ TITLE_SITE }}</a>
 
-			{# { if session.auth.id == 1 or session.auth.id == 3 %} #}
-				{# <li class="nav-item"><a class="nav-link" href="{ path_for('quizz') }">Quizz</a></li> #}
-      		{# { endif %} #}
-      
-      {# { if session.auth.isAdmin %} #}
-        {# <li class="nav-item"><a class="nav-link" href="{ path_for('adminChmod') }">Admin</a></li> #}
-      {# { endif %} #}
-		</ul>  
+    {% if user.is_active and user.is_staff %}
+    <div class="relative group">
+      <button class="px-3 py-2 rounded hover:bg-gray-700">Mon Compte ▾</button>
+      <div class="absolute right-0 hidden group-hover:block bg-white text-gray-800 rounded shadow-lg py-2 w-56 z-10">
+        <a href="{% url 'blog:add-article' %}" class="block px-4 py-2 hover:bg-gray-100">Rédiger</a>
+        <a href="{% url 'game:list-game' %}" class="block px-4 py-2 hover:bg-gray-100">Launch</a>
+        {% if user.is_superuser %}
+        <a href="{% url 'magazine:add-article' %}" class="block px-4 py-2 hover:bg-gray-100">Ajout Article Mag</a>
+        <a href="{% url 'music:index' %}" class="block px-4 py-2 hover:bg-gray-100">Musique</a>
+        <a href="{% url 'magazine:ini-to-html' %}" class="block px-4 py-2 hover:bg-gray-100">Export Article</a>
+        <a href="{% url 'magazine:list-articles' %}" class="block px-4 py-2 hover:bg-gray-100">Liste Test</a>
+        {% endif %}
+        <a href="{% url 'blog:by-author' user.username %}?view=all" class="block px-4 py-2 hover:bg-gray-100">Mes Articles</a>
+      </div>
+    </div>
+    {% endif %}
 
-		<ul class="navbar-nav mr-auto">
-			{% for category in CATEGORIES %}
-			<li class="nav-item"><a class="nav-link" href="{% url 'blog:by-category' category.0 %}">{{ category.1 | upper }}</a></li>
-			{% endfor %}
-		</ul> 	      
-		
-		{# <form class="form-inline my-2 my-lg-0" method="get" action=" path_for('articleSearch') }"> #}
-			{# <div class="input-group"> #}
-				{# <input class="form-control mr-sm-2" type="text" class="form-control" placeholder="Recherche" name="search"> #}
-				{# <div class="input-group-btn"> #}
-					{# <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Recherche</button> #}
-				{# </div> #}
-			{# </div> #}
-		{# </form> #}
+    <div class="flex gap-1">
+      {% for category in CATEGORIES %}
+      <a href="{% url 'blog:by-category' category.0 %}"
+         class="px-3 py-2 rounded hover:bg-gray-700 uppercase text-sm">
+        {{ category.1 }}
+      </a>
+      {% endfor %}
+    </div>
 
-		{% if WITH_REGISTRATION %}
-		<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">
-			{% if user.username %}
-			<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a>
-			{% else %}
-			<a class="link-unstyled" href="{% url 'authenticate:login' %}">Connexion</a>
-			{% endif %}
-		</button>
-		{% else %}
-			{% if user.username %}
-			<button class="btn btn-outline-success ml-2 my-2 my-sm-0 btn-connect">
-				<a class="link-unstyled" href="{% url 'authenticate:logout' %}">Déconnexion</a>
-			</button>
-			{% endif %}
-		{% endif %}
-	</div>
+    <div>
+      {% if user.username %}
+      <a href="{% url 'authenticate:logout' %}"
+         class="px-4 py-2 rounded border border-green-500 text-green-500 hover:bg-green-500 hover:text-white">
+        Déconnexion
+      </a>
+      {% elif WITH_REGISTRATION %}
+      <a href="{% url 'authenticate:login' %}"
+         class="px-4 py-2 rounded border border-green-500 text-green-500 hover:bg-green-500 hover:text-white">
+        Connexion
+      </a>
+      {% endif %}
+    </div>
+  </div>
 </nav>

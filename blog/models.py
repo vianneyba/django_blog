@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.conf import settings
+import logging
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -44,30 +48,30 @@ class Article(models.Model):
 		return None
 
 	def save(self, *args, **kwargs):
-		slug = f'{self.title}'
-		self.slug = slugify(slug)
-		super(Article, self).save(*args, **kwargs)
+		if not self.slug:
+			self.slug = slugify(self.title)
+		super().save(*args, **kwargs)
+
+	def rename_content_file(self, old_slug):
+		old_file = Path(settings.BASE_DIR) / "blog" / "articles" / f"{old_slug}.html"
+		new_file = Path(settings.BASE_DIR) / "blog" / "articles" / f"{self.slug}.html"
+		if old_file.exists():
+			old_file.rename(new_file)
 
 	def count_comments(self):
 		return len(self.comment_set.all())
 
 	def add_tag(self, tag):
-		if isinstance(tag, list):
-			for t in tag:
-				self.tags.append(t)
-			else:
-				self.tags.append(tag)
+		"""Ajoute un tag ou une liste de tags."""
+		tags = tag if isinstance(tag, list) else [tag]
+		self.tags.add(*tags)
 
 	def get_content(self):
-		_file = f'{settings.BASE_DIR}/blog/articles/{self.slug}.html'
-
-		try:
-			with open(_file, 'r') as out_file:
-				return out_file.read()
-		except FileNotFoundError:
-			self.content= "<p>pas pe contenu pour cette article</p>"
-
-		return None
+		"""Lit le contenu depuis le fichier HTML."""
+		_file = Path(settings.BASE_DIR) / "blog" / "articles" / f"{self.slug}.html"
+		if not _file.exists():
+			return "<p>Pas de contenu pour cet article.</p>"
+		return _file.read_text(encoding="utf-8")
 
 	@property
 	def content(self):
@@ -80,15 +84,12 @@ class Article(models.Model):
 		self.save_content(value)
 
 	def save_content(self, content):
+		_file = Path(settings.BASE_DIR) / "blog" / "articles" / f"{self.slug}.html"
+		_file.parent.mkdir(parents=True, exist_ok=True)
 		try:
-			_file = f'{settings.BASE_DIR}/blog/articles/{self.slug}.html'
-			with open(_file, 'x') as f:
-				f.write(content)
-		except FileExistsError:
-			with open(_file, 'w') as f:
-				f.write(content)
-		except Exception as e:
-			print(f"Erreur lors de la sauvegarde du contenu : {e}")
+			_file.write_text(content, encoding="utf-8")
+		except OSError as exc:
+			logger.error("Impossible d'écrire %s : %s", _file, exc)
 			raise
 
 	class Meta:
