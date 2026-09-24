@@ -1,6 +1,7 @@
 import re
 import os
 import markdown
+from django.conf import settings
 from django.urls import reverse
 from django.template.loader import render_to_string
 from django.middleware.csrf import get_token
@@ -97,12 +98,11 @@ class Blog_Article:
         x = re.search(self.patterns['p_article'], self.blog.content)
         slug = x.groups()[0]
 
-        my_file = f"magazine.article.{slug}"
+        my_file = os.path.join(settings.BASE_DIR, f"magazine/articles/{slug}.html")
+        print(my_file)
 
-        file = f"magazine/articles/{slug}.html"
-
-        if os.path.exists(file) :
-            file = open(f"magazine/articles/{slug}.html", "r")
+        if os.path.exists(my_file) :
+            file = open(my_file, "r")
             content = file.read()
             file.close()
         else:

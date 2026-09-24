@@ -6,11 +6,12 @@ from django.conf import settings
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from music import models, serializers
-from datetime import datetime
+from datetime import datetime, date
 from django.contrib import messages
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.viewsets import ViewSet
 import os
+import math
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 33*3)
@@ -24,39 +25,56 @@ def index(request):
     context = {}
 
     if 'type' in request.GET:
+        print(f"==> type existe {request.GET['type']}")
         if request.GET.get('type') == 'tracks':
             track_score = request.GET.get('note')
             tracks = models.Track.objects.filter(score__gte=track_score).order_by('-score')
-            context = {'page_obj': return_paginator(request, tracks), 'my_type': 'tracks', 'note': track_score}
+            context = {
+                'page_obj': return_paginator(request, tracks),
+                'my_type': 'tracks',
+                'note': track_score,
+                'url': "?type=tracks&note=4"}
         elif request.GET.get('type') == 'albums':
             albums = models.Album.objects.all().order_by('-pk')
+            context = dict()
+            context['url'] = "?type=albums"
             if request.GET.get('note'):
                 note = request.GET.get('note')
                 albums = albums.filter(score__gte=note).order_by('-score')
-                context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums','note': note}
+                context['url'] = "?type=albums&note=4"
             elif request.GET.get('code'):
                 code = request.GET.get('code')
                 album = models.Album.objects.get(code=code)
                 return render(request, 'music/view_album.html', {'album': album, "view_menu": True})
-            context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+
+            context['page_obj'] = return_paginator(request, albums)
+            context['my_type'] = 'albums'
   
         else:
             albums = models.Album.objects.all().order_by('-pk')
-            context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+            context = {
+                'page_obj': return_paginator(request, albums),
+                'my_type': 'albums',}
         
     else:
         albums = models.Album.objects.all().order_by('-pk')
-        context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+        url = "?type=albums"
         if request.GET.get('date'):
             release_year = request.GET.get('date')
             albums = albums.filter(release_year=release_year)
+            url = f"{url}&date={release_year}"
         if request.GET.get('band'):
             band = request.GET.get('band')
             albums = albums.filter(band=band)
+            url = f"{url}&band={band}"
         if request.GET.get('search'):
             q = request.GET.get('search').strip()
             albums = albums.filter(Q(band__name__icontains=q) | Q(title__icontains=q))
-        context = {'page_obj': return_paginator(request, albums), 'my_type': 'albums'}
+            url = f"{url}&search={q}"
+        context = {
+            'page_obj': return_paginator(request, albums),
+            'my_type': 'albums',
+            'url': url}
 
     context['view_menu'] = True
     return render(request, 'music/index.html', context)
@@ -163,38 +181,60 @@ def add_history(request):
 
 @staff_member_required
 def view_history(request):
-    year = request.GET.get('year')
-    month = request.GET.get('month')
-    band = request.GET.get('band')
-    album = request.GET.get('album')
-    title = request.GET.get('title')
 
     queryset = models.Listening_History.objects.all().order_by('-listening_date')
     url = f"?"
+    choice = {
+        'year': "listening_date__year",
+        'month': 'listening_date__month',
+        'day': "listening_date__day",
+        'band': 'track__album__band',
+        'album': 'track__album',
+        'title': 'track_id',
+        'note': 'track__score__gte',
+        'score': 'track__album__score__gte',
+        'from': 'listening_date__gte'
+        }
 
-    if year:
-        queryset = queryset.filter(listening_date__year=year)
-        url = f"{url}year={year}&"
-    if month:
-        queryset = queryset.filter(listening_date__month=month)
-        url = f"{url}year={year}&"
-    if band:
-        queryset = queryset.filter(track__album__band=band)
-        url = f"{url}band={band}&"
-    if album:
-        queryset = queryset.filter(track__album=album)
-        url = f"{url}album={album}&"
-    if title:
-        queryset = queryset.filter(track_id=title)
-        url = f"{url}title={title}&"
+    nombre_jours = (date.today() - date(2006, 7, 6)).days
+    for key, value in request.GET.items():
+        if key in choice:
+            if key == 'day':
+               nombre_jours = 1
+            elif key == 'month':
+                nombre_jours = 31
+            elif key == 'year':
+                nombre_jours = 365
+            elif key == 'from':
+                date_cible_str = value
+                date_cible = datetime.strptime(date_cible_str, "%Y-%m-%d").date()
+
+                aujourdhui = date.today()
+
+                difference = date_cible - aujourdhui
+                nombre_jours = difference.days*-1
+
+            if key == 'from':
+                # my_date = value.split("-")
+                filters = {choice[key]: date_cible}
+                queryset = queryset.filter(**filters)
+            else:
+                filters = {choice[key]: value}
+                queryset = queryset.filter(**filters)
+
+            url = f"{url}{key}={value}&"
 
     paginator = Paginator(queryset, 50)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    Scrobbles = len(queryset)
+
     return render(request, 'music/view_history.html', {
         'page_obj': page_obj,
         'url': url,
         'view_menu': True,
+        'Scrobbles': Scrobbles,
+        'average': math.ceil(int(Scrobbles)/nombre_jours),
         'view_search_bar': True
     })
 

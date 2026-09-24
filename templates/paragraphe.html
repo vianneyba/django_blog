@@ -1,8 +1,0 @@
-{% macro paragraphe_photo(paragraphe, _class) %}
-<div{% if _class.bootstrap %} class="{{_class.bootstrap}}"{% endif %}>
-    <div class="paragraphe{% if _class.class %} {{_class.class}}{% endif %}">
-        {% if paragraphe.titre %}<h4>{{paragraphe.titre}}</h4>{% endif %}
-        <p>{{paragraphe.texte}}</p>
-    </div>
-</div>
-{% endmacro %}

@@ -5,7 +5,16 @@
 {% endblock %}
 
 {% block search_bar %}
-    {% include 'music/search_bar.html' %}
+<div class="row">
+    <div class="col-md-6">
+        {% include 'music/search_bar.html' %}
+    </div>
+    <div class="col-md-6 mt-2">
+        Scrobbles: {{ Scrobbles }}<br>
+        Scrobbles par jour: {{ average }}
+    </div>
+
+</div>
 {% endblock %}
 
 {% block content %}

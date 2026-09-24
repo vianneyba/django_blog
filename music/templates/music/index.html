@@ -31,7 +31,12 @@
                     {% if album.get_count_review %}
                         <i class="fa fa-industry" aria-hidden="true"></i>
                     {% endif %}
-
+                    <br>
+                    <span class="ratingverse">
+                        {% for i in '12345'|make_list %}
+                            <a {% if album.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-album-note' %}?album={{album.id}}&note={{i}}" title="Donner {{i}} étoile">  {% if album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
+                        {% endfor %}
+                    </span>
                 </p>
             </div>
         </div>
