@@ -12,6 +12,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.viewsets import ViewSet
 import os
 import math
+from dal import autocomplete
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 33*3)
@@ -25,7 +26,6 @@ def index(request):
     context = {}
 
     if 'type' in request.GET:
-        print(f"==> type existe {request.GET['type']}")
         if request.GET.get('type') == 'tracks':
             track_score = request.GET.get('note')
             tracks = models.Track.objects.filter(score__gte=track_score).order_by('-score')
@@ -321,17 +321,34 @@ class AlbumTrack(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = models.Track.objects.all()
         return queryset
-    
-    # def update(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     partial = kwargs.pop('partial', False)
-    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    #     if serializer.is_valid():
-    #         track = serializer.save()
-    #         print(track)
-    #         return Response(track, status=status.HTTP_200_OK)
 
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class BandAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Sécurité : on vérifie que l'utilisateur est connecté
+        if not self.request.user.is_authenticated:
+            return models.Band.objects.none()
+
+        qs = models.Band.objects.all()
+
+        # Si l'utilisateur tape quelque chose, on filtre
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+class AlbumAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Sécurité : on vérifie que l'utilisateur est connecté
+        if not self.request.user.is_authenticated:
+            return models.Album.objects.none()
+
+        qs = models.Album.objects.all()
+
+        # Si l'utilisateur tape quelque chose, on filtre
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 class TrackListeningView(ViewSet):
     permission_classes= (permissions.IsAuthenticatedOrReadOnly,)

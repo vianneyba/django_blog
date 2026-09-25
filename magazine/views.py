@@ -12,7 +12,6 @@ from game.models import Game, System
 from magazine import forms
 from magazine import serializers
 from magazine.convert_ini import Template, Export
-from blog.create_blog import Blog_Article
 import random
 import os
 import re

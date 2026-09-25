@@ -78,12 +78,6 @@ function addSuggestion() {
 </div>
 
 <div class="article-form">
-	{% if type == 'update' %}
-		<form method="post" action="{% url 'blog:update-article' article.id %}">
-	{% else %}
-		<form method="post" action="{% url 'blog:add-article' %}">
-	{% endif %}
-
 		{% csrf_token %}
 
 		<div class="form-group">		

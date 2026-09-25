@@ -20,6 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'dal',
+    'dal_select2',
     'blog.apps.BlogConfig',
     'authenticate.apps.AuthenticateConfig',
     'comment.apps.CommentConfig',
@@ -39,6 +41,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'blog.middleware.RequestThreadLocalMiddleware',
 ]
 
 ROOT_URLCONF = 'vianneyba.urls'

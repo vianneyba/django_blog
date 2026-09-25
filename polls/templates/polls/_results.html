@@ -1,0 +1,15 @@
+<div class="poll-results mt-4">
+  {% with results=poll.results %}
+  {% for row in results %}
+  <div class="mb-2">
+    <div class="flex justify-between text-sm mb-1">
+      <span>{{ row.choice.label }}</span>
+      <span>{{ row.count }} ({{ row.percent }}%)</span>
+    </div>
+    <div class="bg-gray-200 rounded h-3">
+      <div class="bg-blue-500 rounded h-3" style="width: {{ row.percent }}%"></div>
+    </div>
+  </div>
+  {% endfor %}
+  {% endwith %}
+</div>

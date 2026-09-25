@@ -8,7 +8,7 @@
 	
 	{% if articles %}
 		{% for article in articles %}
-			{% include 'blog/view-article-in-list.html' %}
+			{% include 'blog/view-article-in-list.html' with loop="loop" %}
 
 			{% if not forloop.last %}
 				<hr class="separator">

@@ -7,7 +7,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAdminUser
 from slugify import slugify
 from blog.models import Article, Category, Tag
 from blog.permissions import ArticlePermissions
@@ -16,9 +15,8 @@ from blog.forms import ArticleForm
 from comment.models import Comment
 from comment.forms import CommentForm
 from django.http import Http404
-from blog.create_blog import Blog_Article
 from django.contrib.auth.decorators import permission_required
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 
 def return_paginator(request, queryset):
     paginator = Paginator(queryset, 25)
@@ -124,41 +122,6 @@ def by_author(request, author):
     context = {'page_obj': return_paginator(request, articles), "articles": articles}
     return render(request, 'blog/index.html', context)
 
-def update_article(request, pk):
-    article = Article.objects.get(pk=pk)
-    form_add_article = ArticleForm(instance=article)
-
-    if request.method == 'POST':
-        form_add_article = ArticleForm(request.POST, instance=article)
-        if form_add_article.is_valid():
-            form_add_article.save()
-            return redirect('blog:by-slug', slug=article.slug)
-        
-    context = {
-        'article': article,
-        'form_add_article': form_add_article,
-        'type': 'update'}
-    return render(request, 'blog/add-article.html', context)
-
-@permission_required("blog.add_article")
-def publish_article(request, pk, value):
-    """
-    fonction qui publie ou pas un article et qui renvoie a l'acceuil
-    pk      -id de l'article
-    value   -booleen
-    """
-    if value == 'True':
-        published = True
-    else:
-        published = False
-
-    article = Article.objects.get(pk=pk)
-    if article.author == request.user:
-        article.published = published
-        article.save()
-
-    return redirect('blog:index')
-
 @permission_required("blog.add_article")
 def add_article(request):
     """
@@ -199,7 +162,7 @@ def search_tag(tags):
             tag = Tag(name=name, slug=slug)
             tag.save()
             result.append(tag.pk)
-        return result
+    return result
 
 
 class ArticleViewset(ModelViewSet):

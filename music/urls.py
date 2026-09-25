@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.urls import path
+from .views import BandAutocomplete, AlbumAutocomplete
 from music import views
-
 app_name = "music"
 
 router = DefaultRouter()
@@ -10,6 +11,8 @@ router.register(r'tracks', views.AlbumTrack, basename='tracks')
 router.register(r'history', views.TrackListeningView, basename='history')
 
 urlpatterns = [
+    path("band-autocomplete/", BandAutocomplete.as_view(), name="band-autocomplete",),
+    path("album-autocomplete/", AlbumAutocomplete.as_view(), name="album-autocomplete",),
     path('', views.index, name='index'),
     path('viewalbum/code/<pk>', views.view_album_by_code, name='index'),
     path('viewalbum/<pk>', views.view_album, name='view-album'),

@@ -1,47 +1,75 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+# polls/views.py
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from polls.forms import SuggestionForm
-from polls.models import Liste_Title, Choice_Liste_Title
+from django.views.decorators.http import require_POST
+from django.utils import timezone
 
-def add_title_suggestion(request):
-    form = SuggestionForm()
-    if request.method == 'POST':
-        form = SuggestionForm(request.POST)
-        if form.is_valid():
-            suggestion = form.save(commit=False)
-            suggestion.user = request.user
-            suggestion.save()
-
-            url = reverse("blog:by-slug", args=(request.POST.get("article_blog"),))
-            link = f'{url}?suggestion={suggestion.id}'
-            return redirect(link)
-
-    context = {'form': form}
-    return render(request, 'polls/form_title_suggestion.html', context)
+from .models import Poll, PollChoice, PollResponse
 
 
-def valid_liste_title(request):
-    if request.method == 'POST':
-        top = Liste_Title.objects.get(id=request.POST.get('id_top'))
-        d = request.POST.dict()
+@require_POST
+def vote(request, slug):
+    poll = get_object_or_404(Poll, slug=slug)
 
-        for key, value in d.items():
-            if key[0:7] == 'choice_':
-                num_id = key[7:]
-                try:
-                    my_list = Choice_Liste_Title.objects.get(num_id=num_id, user=request.user)
-                    my_list.suggestion = value
-                except:
-                    my_list = Choice_Liste_Title(liste=top, num_id=num_id, user=request.user, suggestion=value)
-                my_list.save()
+    if not poll.is_open:
+        messages.error(request, "Ce sondage est fermé.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))
 
-        url = reverse("blog:by-slug", args=(request.POST.get("article_blog"),))
-        return redirect(url)
-        
-    return render(request, 'polls/form_title_suggestion.html')
-        
+    if poll.require_login and not request.user.is_authenticated:
+        messages.error(request, "Vous devez être connecté pour voter.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    if poll.one_vote_per_user and poll.user_has_voted(request.user):
+        messages.warning(request, "Vous avez déjà voté.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    # Identifiant du votant
+    user = request.user if request.user.is_authenticated else None
+    session_key = request.session.session_key or ""
+    ip = _get_client_ip(request)
+
+    # Traitement selon le type
+    if poll.poll_type == "free":
+        text = request.POST.get("free_text", "").strip()
+        if not text:
+            messages.error(request, "Réponse vide.")
+            return redirect(request.META.get("HTTP_REFERER", "/"))
+
+        PollResponse.objects.create(
+            poll=poll, free_text=text,
+            user=user, session_key=session_key, ip_address=ip,
+            one_vote_per_user=poll.one_vote_per_user,
+        )
+
+    elif poll.poll_type == "single":
+        choice_id = request.POST.get("choice")
+        choice = get_object_or_404(PollChoice, id=choice_id, poll=poll)
+        PollResponse.objects.create(
+            poll=poll, choice=choice,
+            user=user, session_key=session_key, ip_address=ip,
+            one_vote_per_user=poll.one_vote_per_user,
+        )
+
+    elif poll.poll_type == "multiple":
+        choice_ids = request.POST.getlist("choice")
+        if not choice_ids:
+            messages.error(request, "Sélectionnez au moins un choix.")
+            return redirect(request.META.get("HTTP_REFERER", "/"))
+        choices = PollChoice.objects.filter(id__in=choice_ids, poll=poll)
+        for choice in choices:
+            PollResponse.objects.create(
+                poll=poll, choice=choice,
+                user=user, session_key=session_key, ip_address=ip,
+                one_vote_per_user=poll.one_vote_per_user,
+            )
+
+    messages.success(request, "Merci pour votre vote !")
+    return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
-        
-        
+def _get_client_ip(request):
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")

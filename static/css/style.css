@@ -1,15 +1,17 @@
-@charset "UTF-8";
 html {
   height: 100%; }
 
 body {
-  background: #ABBCDA;
+  background: #ABBCDA url("../img/background.avif") fixed;
   color: #030407;
-  background-image: url(../img/background.avif);
-  background-attachment: fixed;
-  margin: 0;
+  font-size: 87.5%;
+  font-family: "Trebuchet MS", Trebuchet, "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+  line-height: 1.429;
+  margin: auto;
   padding: 0;
-  text-align: left; }
+  text-align: left;
+  max-width: 1440px;
+  min-width: 1000px; }
 
 a {
   text-decoration: none;
@@ -19,9 +21,17 @@ a {
 
 header {
   margin: 0 auto;
-  padding: 10px 0px 10px 0px; }
+  padding: 10px 0; }
   header img {
     border-radius: 15px; }
+
+.separator {
+  margin: 25px auto;
+  height: 3px;
+  width: 50%;
+  border: none;
+  box-shadow: none;
+  background-color: #c7c8ca; }
 
 .content {
   background: #030407;
@@ -29,40 +39,61 @@ header {
   min-height: 100vh;
   padding: 10px; }
 
+#banner img {
+  display: block;
+  margin: auto; }
+
+.paginator {
+  margin: auto;
+  width: 25%; }
+  .paginator ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0; }
+  .paginator li {
+    display: inline-block; }
+  .paginator a {
+    display: block;
+    text-decoration: none; }
+
 article {
   margin: 20px 25px; }
   article article {
     background: #30343C;
-    padding: 0px 40px 0px 40px;
-    border: 2px #5A6477 solid;
-    border-radius: 15px 15px 15px 15px; }
-  article .article-contenu {
-    padding: 0px 40px 0px 40px; }
-  article .read_more {
-    border: none;
-    padding: 0px;
-    display: inline-block;
-    background: transparent;
-    margin: 10px 0px 20px 10px; }
-  article .article-footer {
-    margin: 15px auto; }
+    padding: 0 40px;
+    border: 2px solid #5A6477;
+    border-radius: 15px; }
   article .entry-title {
+    text-align: center; }
+  article .entry-meta {
     text-align: center; }
   article .entry-category {
     text-align: center; }
     article .entry-category .badge {
       font-size: 0.9rem; }
-  article .entry-meta {
-    text-align: center; }
   article .entry-next {
     font-size: 0.9rem;
     float: right; }
+  article .entry-articl button {
+    margin: 10px; }
+  article .article-contenu {
+    padding: 0 40px; }
+  article .read_more {
+    border: none;
+    padding: 0;
+    display: inline-block;
+    background: transparent;
+    margin: 10px 0 20px 10px; }
+  article .article-footer {
+    margin: 15px auto; }
+  article .footer-article {
+    margin-top: 20px;
+    margin-left: 40px; }
   article .article_avis {
-    padding: 10px 15px 10px 15px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 2px #5A6477 solid;
-    border-radius: 15px 15px 15px 15px;
+    padding: 10px 15px;
     background-color: #30343C;
+    border: 2px solid #5A6477;
+    border-radius: 15px 15px 15px 15px;
     padding: 10px;
     margin-bottom: 10px; }
     article .article_avis h1 {
@@ -73,66 +104,62 @@ article {
     article .article_avis .avis_author {
       margin-right: 15px;
       color: #63B96B; }
-  article .article_signature {
+  article .signature {
     display: block;
     text-align: right;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: #530c0a;
     font-weight: bold; }
-    article .article_signature span {
-      font-size: 0.8rem;
-      font-weight: lighter; }
-    article .article_signature:before {
-      content: "écrit par: "; }
-  article .article_plus {
+  article .article_plus, article .article_moins {
     padding-left: 35px;
     color: #63B96B;
     list-style: none; }
-    article .article_plus li::before {
+    article .article_plus li::before, article .article_moins li::before {
       content: "+ "; }
   article .article_moins {
-    list-style: none;
-    padding-left: 35px;
     color: #F2504B; }
     article .article_moins li::before {
       content: "- "; }
   article .article_note ul {
     list-style: none; }
-  article .article_encart {
-    padding: 10px 15px 10px 15px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 2px #5A6477 solid;
-    border-radius: 15px 15px 15px 15px;
-    background-color: #0F1218;
-    padding: 10px;
-    margin-bottom: 10px; }
-    article .article_encart h1 {
-      color: #524347;
-      text-align: center;
-      font-size: 1.3rem; }
+  article .encart {
+    border: 8px double #1d5d79;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 5px; }
+    article .encart h3, article .encart p {
+      text-align: center; }
+    article .encart img {
+      padding: 2px; }
+  article .paragraphe {
+    margin: 25px 0; }
+    article .paragraphe h4 {
+      font-size: 1.5rem;
+      text-transform: capitalize;
+      text-align: left;
+      margin: 25px 0 5px 10px; }
+  article .intro {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-style: italic;
+    color: #F2504B;
+    padding: 0 50px; }
   article .insert {
-    padding: 10px 15px 10px 15px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 2px #5A6477 solid;
-    border-radius: 15px 15px 15px 15px;
+    padding: 10px 15px;
     background-color: #30343C;
+    border: 2px solid #5A6477;
+    border-radius: 15px 15px 15px 15px;
     padding: 10px;
     margin: 10px; }
-  article .entry-articl button {
-    margin: 10px; }
-  article .footer-article {
-    margin-top: 20px;
-    margin-left: 40px; }
   article a {
     color: #524347; }
 
 .score_table {
-  padding: 10px 15px 10px 15px;
+  padding: 10px 15px;
   background-color: rgba(0, 0, 0, 0.5);
-  border: 2px #5A6477 solid;
+  border: 2px solid #F2504B;
   border-radius: 15px 15px 15px 15px;
-  border: 2px solid;
-  border-color: #F2504B; }
+  border: 2px solid #F2504B; }
   .score_table .tr_master {
     color: #F2504B;
     background-color: #530c0a; }
@@ -162,7 +189,7 @@ article {
       height: 5px;
       background: #F2504B; }
       .vote .vote_bar .vote_red .vote_progress {
-        width: 0%;
+        width: 0;
         height: 5px;
         background: #63B96B; }
 
@@ -182,41 +209,27 @@ article {
   margin: 0 0 0 10px;
   cursor: pointer;
   background: transparent;
-  transition: 0.3s; }
+  transition: color 0.3s; }
 
-.vote_like:hover, .is-liked .vote_like {
+.vote_like:hover,
+.is-liked .vote_like {
   color: #63B96B; }
 
-.vote_dislike:hover, .is-disliked .vote_dislike {
+.vote_dislike:hover,
+.is-disliked .vote_dislike {
   color: #F2504B; }
 
 form {
-  margin: 15px 0px; }
+  margin: 15px 0; }
   form input {
-    margin: 6px 0px; }
+    margin: 6px 0; }
   form .btn-primary {
     margin: 10px; }
 
-.separator {
-  margin: 25px auto;
-  height: 3px;
-  width: 50%;
-  border: none;
-  box-shadow: none;
-  background-color: white; }
-
-.paginator {
-  margin: auto;
-  width: 25%; }
-  .paginator ul {
-    margin: 0;
-    padding: 0;
-    list-style: none; }
-  .paginator li {
-    display: inline-block; }
-  .paginator a {
-    display: block;
-    text-decoration: none; }
+.form_title_suggestion {
+  display: block; }
+  .form_title_suggestion button {
+    width: auto; }
 
 .comments {
   margin-top: 25px; }
@@ -224,9 +237,9 @@ form {
     font-size: 1.5rem;
     text-align: center; }
   .comments .comment {
-    padding: 10px 15px 10px 15px;
+    padding: 10px 15px;
     background-color: rgba(0, 0, 0, 0.5);
-    border: 2px #5A6477 solid;
+    border: 2px solid #5A6477;
     border-radius: 15px 15px 15px 15px; }
     .comments .comment .comment-content {
       margin: 10px 20px; }
@@ -243,10 +256,6 @@ form {
   width: 70%;
   margin: auto; }
 
-#banner img {
-  display: block;
-  margin: auto; }
-
 .error_page {
   margin: 50px auto;
   width: 60%;
@@ -258,15 +267,10 @@ form {
     width: 30%; }
 
 .insert-article {
-  padding: 10px 15px 10px 15px;
+  padding: 10px 15px;
   background-color: rgba(0, 0, 0, 0.5);
-  border: 2px #5A6477 solid;
+  border: 2px solid #5A6477;
   border-radius: 15px 15px 15px 15px; }
-
-.form_title_suggestion {
-  display: block; }
-  .form_title_suggestion button {
-    width: auto; }
 
 .ratingverse {
   text-indent: -9%; }
@@ -279,9 +283,17 @@ form {
     font-size: 2rem; }
 
 .with_border {
-  padding: 10px 15px 10px 15px;
+  padding: 10px 15px;
   background-color: rgba(0, 0, 0, 0.5);
-  border: 2px #5A6477 solid;
+  border: 2px solid #5A6477;
   border-radius: 15px 15px 15px 15px; }
+
+.poll {
+  color: black;
+  background: #ABBCDA;
+  margin: 32px 0;
+  padding: 10px;
+  border: 10px solid #c7c8ca;
+  border-radius: 15px; }
 
 /*# sourceMappingURL=style.css.map */

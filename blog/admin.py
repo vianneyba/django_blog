@@ -12,6 +12,7 @@ class BlogAdmin(admin.ModelAdmin):
     list_filter = ('published',)
     prepopulated_fields = {"slug": ("title",)}
     actions = [make_published]
+    filter_horizontal = ('tags',)
 
 
 admin.site.register(Article, BlogAdmin)

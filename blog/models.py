@@ -66,31 +66,38 @@ class Article(models.Model):
 		tags = tag if isinstance(tag, list) else [tag]
 		self.tags.add(*tags)
 
-	def get_content(self):
-		"""Lit le contenu depuis le fichier HTML."""
+	@property
+	def raw_content(self) -> str:
+		"""Contenu brut du fichier, sans traitement."""
 		_file = Path(settings.BASE_DIR) / "blog" / "articles" / f"{self.slug}.html"
 		if not _file.exists():
 			return "<p>Pas de contenu pour cet article.</p>"
 		return _file.read_text(encoding="utf-8")
 
 	@property
-	def content(self):
-		"""Propriété qui lit le contenu du fichier"""
-		return self.get_content()
+	def content(self) -> str:
+		"""Contenu final, avec les blocs dynamiques résolus."""
+		from blog.article_blocks import ArticleRenderer
+		from blog.middleware import get_current_request
+
+		request = get_current_request()
+		renderer = ArticleRenderer(self, request=request)
+		return renderer.render()
 
 	@content.setter
 	def content(self, value):
-		"""Setter optionnel pour sauvegarder le contenu"""
 		self.save_content(value)
 
-	def save_content(self, content):
+	def save_content(self, content: str) -> None:
 		_file = Path(settings.BASE_DIR) / "blog" / "articles" / f"{self.slug}.html"
 		_file.parent.mkdir(parents=True, exist_ok=True)
-		try:
-			_file.write_text(content, encoding="utf-8")
-		except OSError as exc:
-			logger.error("Impossible d'écrire %s : %s", _file, exc)
-			raise
+		_file.write_text(content, encoding="utf-8")
+
+	def get_content(self) -> str:
+		"""Alias pour compatibilité. Préférer `raw_content` (brut) ou
+		`content` (rendu) selon le besoin."""
+		return self.raw_content
+
 
 	class Meta:
 		ordering = ['-created_at']

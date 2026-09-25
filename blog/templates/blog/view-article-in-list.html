@@ -5,14 +5,6 @@
     <div class="col-sm-12 col-md-12">
     	<div class="entry-category">
 			<a class="badge badge-secondary" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
-			{% if article.author.id == user.id %}
-				<a href="{% url 'blog:update-article' article.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
-				{% if article.published is not True %}
-					<a href="{% url 'blog:publish-article' article.id True %}"><i class="fa fa-eye" aria-hidden="true"></i></a>
-				{% else %}
-					<a href="{% url 'blog:publish-article' article.id False %}"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
-				{% endif %}
-			{% endif %}
 		</div>
 
 		<h1 class="entry-title">
@@ -31,7 +23,11 @@
 		</div>
 
 		<div class="entry-article">
-			{{ article.content | markdown | safe | truncatewords_html:120 }}
+			{% if forloop.counter == 1 %}
+			{{ article.content | safe }}
+			{% else %}
+			{{ article.content | safe | truncatewords_html:120 }}
+			{% endif %}
 			<button class="btn btn-secondary entry-next">
 				<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
 			</button>
