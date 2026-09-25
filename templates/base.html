@@ -34,17 +34,18 @@
 				</div>
 				{% endblock %}
 			</div>
-			<div>
-				{% if view_search_bar == True %}
-				<div class="col-md-8 offset-md-2">
-					{% block search_bar %}{% endblock %}
-				</div>
-				{% endif %}
+			{% if view_search_bar == True %}
+			<div class="col-md-8 offset-md-2">
+				{% block search_bar %}{% endblock %}
 			</div>
+			{% endif %}
 		</header>
 
-		<div class="row">
-			<div class="col-md-12">
+		<div class="grid grid-cols-10">
+			<div  class="col-span-1">
+
+			</div>
+			<div class="col-span-9">
 				{% block content %}{% endblock %}
 			</div>
 		</div>

@@ -1,43 +1,45 @@
 {# vue d'un article dans une liste d'article comme l'accueil par exemple #}
 {% load markdown_extras %}
+<article>
 
-<article class="row">
-    <div class="col-sm-12 col-md-12">
-    	<div class="entry-category">
+	<div class="entry-cat-tag">
+		<span class="entry-category">
 			<a class="badge badge-secondary" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
-		</div>
-
-		<h1 class="entry-title">
-			<a class="img-fluid" href="{% url 'blog:by-slug' article.slug %}">{{ article.title }}</a>
-      	</h1>
-
-		<div class="entry-meta">
-			<h5>
-            	<i class="fa fa-calendar-o" aria-hidden="true"></i>
-				<span>{{ article.created_at | date:'d/m/Y' }}</span>
-				<i class="fa fa-user" aria-hidden="true"></i>
-				<a href="{% url 'blog:by-author' article.author.username %}">
-					<span>{{ article.author.username }}</span>
-				</a>
-			</h5>
-		</div>
-
-		<div class="entry-article">
-			{% if forloop.counter == 1 %}
-			{{ article.content | safe }}
-			{% else %}
-			{{ article.content | safe | truncatewords_html:120 }}
-			{% endif %}
-			<button class="btn btn-secondary entry-next">
-				<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
-			</button>
-		</div>
-      
-		<div class="entry-tags">
+		</span>
+		<span class="entry-tags">
 			<i class="fa fa-tag" aria-hidden="true"></i>
 			{% for tag in article.tags.all %}
-				<a class="badge badge-secondary" href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name | title }}</a>
+			<a class="badge badge-secondary" href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name | title }}</a>
 			{% endfor %}
-		</div>
+		</span>
+	</div>
+
+
+	<h1 class="entry-title">
+		<a class="img-fluid" href="{% url 'blog:by-slug' article.slug %}">{{ article.title }}</a>
+	</h1>
+
+	<div class="entry-meta">
+		<h5>
+			<i class="fa fa-calendar-o" aria-hidden="true"></i>
+			<span>{{ article.created_at | date:'d/m/Y' }}</span>
+			<i class="fa fa-user" aria-hidden="true"></i>
+			<a href="{% url 'blog:by-author' article.author.username %}">
+				<span>{{ article.author.username }}</span>
+			</a>
+		</h5>
+	</div>
+
+	<div class="entry-content">
+		{% if forloop.counter == 1 %}
+		{{ article.content | safe }}
+		{% else %}
+		{{ article.content | safe | truncatewords_html:120 }}
+		{% endif %}
+	</div>
+	<div class="entry-next">
+		<button class="btn btn-secondary">
+			<a href="{% url 'blog:by-slug' article.slug %}">Lire la suite</a>
+		</button>
 	</div>
 </article>

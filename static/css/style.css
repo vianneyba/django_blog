@@ -36,7 +36,7 @@ header {
 .content {
   background: #030407;
   color: #ABBCDA;
-  min-height: 100vh;
+  min-height: 80vh;
   padding: 10px; }
 
 #banner img {
@@ -58,7 +58,9 @@ header {
 
 article {
   margin: 20px 25px; }
-  article article {
+  article ul {
+    list-style-type: disc; }
+  article .entry-content {
     background: #30343C;
     padding: 0 40px;
     border: 2px solid #5A6477;
@@ -67,13 +69,16 @@ article {
     text-align: center; }
   article .entry-meta {
     text-align: center; }
+  article .entry-cat-tag {
+    text-align: center; }
   article .entry-category {
     text-align: center; }
     article .entry-category .badge {
       font-size: 0.9rem; }
   article .entry-next {
-    font-size: 0.9rem;
-    float: right; }
+    margin-top: 5px;
+    display: flex;
+    justify-content: flex-end; }
   article .entry-articl button {
     margin: 10px; }
   article .article-contenu {
@@ -127,7 +132,8 @@ article {
     border-radius: 10px;
     padding: 10px 15px;
     margin: 5px; }
-    article .encart h3, article .encart p {
+    article .encart h3,
+    article .encart p {
       text-align: center; }
     article .encart img {
       padding: 2px; }
@@ -139,8 +145,8 @@ article {
       text-align: left;
       margin: 25px 0 5px 10px; }
   article .intro {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 500;
     font-style: italic;
     color: #F2504B;
     padding: 0 50px; }
