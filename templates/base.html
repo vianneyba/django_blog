@@ -16,13 +16,11 @@
 <body>
   {% include "navbar.html" %}
 
-  <div class="reading-bar" aria-hidden="true"></div>
-
   <header id="banner" class="container-fluid">
     <div class="row">
       {% block banner %}
         {% if view_menu == True %}
-          <div class="col-md-2">{% block menu_banner %}{% endblock %}</div>
+          <div class="col-md-2 top-menu">{% block menu_banner %}{% endblock %}</div>
         {% endif %}
         <div class="{% if view_menu == True %}col-md-10{% else %}col-md-12{% endif %}">
           {% if banner %}

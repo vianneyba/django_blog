@@ -1,6 +1,8 @@
-<ul class="list-group">
-    <li class="list-group-item"><a href="{% url 'music:view-history' %}">Historique</a></li>
-    <li class="list-group-item"><a href="{% url 'music:index' %}?type=albums">Voir Tous</a></li>
-    <li class="list-group-item"><a href="{% url 'music:index' %}?type=tracks&note=4">Top Titres</a></li>
-    <li class="list-group-item"><a href="{% url 'music:index' %}?type=albums&note=4">Top Albums</a></li>
-</ul>
+<nav class="music-side" aria-label="Menu musique">
+  <ul>
+    <li><a href="{% url 'music:view-history' %}">Historique</a></li>
+    <li><a href="{% url 'music:index' %}?type=albums">Voir tous</a></li>
+    <li><a href="{% url 'music:index' %}?type=tracks&note=4">Top titres</a></li>
+    <li><a href="{% url 'music:index' %}?type=albums&note=4">Top albums</a></li>
+  </ul>
+</nav>

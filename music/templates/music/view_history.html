@@ -1,78 +1,91 @@
 {% extends "base.html" %}
 
 {% block menu_banner %}
-    {% include 'music/menu.html' %}
+  {% include 'music/menu.html' %}
 {% endblock %}
 
 {% block search_bar %}
-<div class="row">
-    <div class="col-md-6">
-        {% include 'music/search_bar.html' %}
+  <div class="music-history-toolbar">
+    <div class="music-search">
+      {% include 'music/search_bar.html' %}
     </div>
-    <div class="col-md-6 mt-2">
-        Scrobbles: {{ Scrobbles }}<br>
-        Scrobbles par jour: {{ average }}
+    <div class="music-stats">
+      <span>Scrobbles : {{ Scrobbles }}</span>
+      <span>Par jour : {{ average }}</span>
     </div>
-
-</div>
+  </div>
 {% endblock %}
 
 {% block content %}
-
-<table class="table">
-    {% for line in page_obj %}
+<section class="music-page">
+  <div class="music-history-wrap">
+    <table class="music-history">
+      <thead>
         <tr>
-            <td>
-                <a href="{% url 'music:view-album' line.track.album.id %}">
-                    <img width="75" src="{{ PATH_IMAGE }}/{{ line.track.album.code }}.avif" />
-                </a>
-            </td>
-            <td>
-                <a href="{% url 'music:index' %}?band={{ line.track.album.band.id }}">
-                {{ line.track.album.band.name }}
-                </a>
-            </td>
-            <td>
-                <a href="{% url 'music:view-album' line.track.album.id %}">
-                    {{ line.track.album.title }}
-                </a><br />
-                <span class="ratingverse">
-                    {% for i in '12345'|make_list %}
-                        <a {% if line.track.album.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-album-note' %}?album={{line.track.album.id}}&note={{i}}&url={{request.get_full_path}}" title="Donner {{i}} étoile">  {% if line.track.album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
-                    {% endfor %}
-                </span>
-            </td>
-            <td>
-                {{ line.track.title }}<br>
-                <span>
-                {% for i in '12345'|make_list %}
-                    <a {% if line.track.score > i|add:"-1" %}class="track_ok"{% endif %} href="{% url 'music:music-add-track-note' %}?album={{line.track.album.id}}&track={{line.track.id}}&note={{i}}&url={{request.get_full_path}}" title="Donner {{i}} étoile">  {% if line.track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}</a>
-                {% endfor %}
-                </span>
-            </td>
-            <td>{{ line.listening_date }}</td>
+          <th></th>
+          <th>Groupe</th>
+          <th>Album</th>
+          <th>Titre</th>
+          <th>Date</th>
         </tr>
-    {% endfor %}
-</table>
+      </thead>
+      <tbody>
+        {% for line in page_obj %}
+          <tr>
+            <td class="cover">
+              <a href="{% url 'music:view-album' line.track.album.id %}">
+                <img src="{{ PATH_IMAGE }}/{{ line.track.album.code }}.avif"
+                     alt="{{ line.track.album.band.name }} - {{ line.track.album.title }}">
+              </a>
+            </td>
 
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-        {% if page_obj.has_previous %}
-        <li class="page-item"><a class="page-link" href="{{url}}page=1">&laquo; first</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="{{url}}page={{ page_obj.previous_page_number }}">previous</a></li>
-        {% endif %}
+            <td class="band">
+              <a href="{% url 'music:index' %}?band={{ line.track.album.band.id }}">
+                {{ line.track.album.band.name }}
+              </a>
+            </td>
 
-        <span class="current">
-        <li class="page-item"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span></li>
-        </span>
+            <td class="album">
+              <a href="{% url 'music:view-album' line.track.album.id %}">
+                {{ line.track.album.title }}
+              </a>
+              <span class="ratingverse">
+                {% for i in '12345'|make_list %}
+                  <a {% if line.track.album.score > i|add:"-1" %}class="track_ok"{% endif %}
+                     href="{% url 'music:music-add-album-note' %}?album={{ line.track.album.id }}&note={{ i }}&url={{ request.get_full_path }}"
+                     title="Donner {{ i }} étoile">
+                    {% if line.track.album.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}
+                  </a>
+                {% endfor %}
+              </span>
+            </td>
 
-        {% if page_obj.has_next %}
-        <li class="page-item"><a class="page-link" href="{{url}}page={{ page_obj.next_page_number }}">next</a>
-        </li>
-            <li class="page-item"><a class="page-link" href="{{url}}page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
-        {% endif %}
-    </ul>
-</nav>
+            <td class="title">
+              {{ line.track.title }}
+              <span class="ratingverse">
+                {% for i in '12345'|make_list %}
+                  <a {% if line.track.score > i|add:"-1" %}class="track_ok"{% endif %}
+                     href="{% url 'music:music-add-track-note' %}?album={{ line.track.album.id }}&track={{ line.track.id }}&note={{ i }}&url={{ request.get_full_path }}"
+                     title="Donner {{ i }} étoile">
+                    {% if line.track.score > i|add:"-1" %}&#x2605;{% else %}&#9734;{% endif %}
+                  </a>
+                {% endfor %}
+              </span>
+            </td>
 
+            <td class="date">{{ line.listening_date }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="empty-state">Aucun scrobble à afficher.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="pagination-wrap">
+    {% include 'paginator.html' %}
+  </nav>
+</section>
 {% endblock %}

@@ -4,8 +4,8 @@
 
     <div class="nav-actions">
       <a class="nav-btn" href="{% url 'blog:by-category' 'jeux-video' %}">Jeux</a>
-      <button class="nav-btn" type="button">Musique</button>
-      <button class="nav-btn" type="button">À propos</button>
+      <a class="nav-btn" href="{% url 'blog:by-category' 'musique' %}">Musique</a>
+      <!-- <button class="nav-btn" type="button">À propos</button> -->
       <button class="nav-btn" type="button" id="theme-toggle">Clair</button>
       {% if user.username %}
         <a class="nav-btn nav-btn-accent" href="{% url 'authenticate:logout' %}">Déconnexion</a>

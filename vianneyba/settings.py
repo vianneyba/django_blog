@@ -10,6 +10,9 @@ environ.Env.read_env(env_file=str(BASE_DIR / "vianneyba" / ".env"))
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
+PROD_API_URL = os.environ.get("PROD_API_URL", "")
+PROD_API_USER = os.environ.get("PROD_API_USER", "")
+PROD_API_PASSWORD = os.environ.get("PROD_API_PASSWORD", "")
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -15,7 +15,7 @@ import math
 from dal import autocomplete
 
 def return_paginator(request, queryset):
-    paginator = Paginator(queryset, 33*3)
+    paginator = Paginator(queryset, 20*5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

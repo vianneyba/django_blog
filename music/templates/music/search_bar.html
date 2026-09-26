@@ -1,6 +1,5 @@
-<form action="{% url 'music:index' %}" method="get">
-    <div class="form-group row">
-        <input class="col-md-8 col-form-label" type="text" name="search" required>
-        <button type="submit" class="btn btn-primary">Recherche</button>
-    </div>
+<form class="music-search-form" action="{% url 'music:index' %}" method="get" role="search">
+  <label class="sr-only" for="music-search">Rechercher</label>
+  <input id="music-search" type="search" name="search" placeholder="Album, groupe, titre…" required>
+  <button type="submit">Recherche</button>
 </form>
