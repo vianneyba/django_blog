@@ -1,57 +1,59 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="{{ DEFAULT_LANG }}">
-	<head>
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-		<link rel="stylesheet" href="{% static '/css/style.css' %}">
-		<meta property="article:author" content="{% block author %}{% endblock %}">
-		<title>{% block title %}{{ TITLE_SITE }}{% endblock %}</title>
-		<script>
-			{% block js %}{% endblock %}
-		</script>
-	</head>
-
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ TITLE_SITE }}{% endblock %}</title>
+  <meta property="article:author" content="{% block author %}{% endblock %}">
+    
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
 <body>
-	{% include "navbar.html" %}
+  {% include "navbar.html" %}
 
-	<div class="content">
-		<header id="banner" class="container-fluid">
-			<div class="row">
-				{% block banner %}
-				{% if view_menu == True %}
-				<div class="col-md-2">
-					{% block menu_banner %}{% endblock %}
-				</div>
-				{% endif %}
-				<div class="{% if view_menu == True %}col-md-10{% else %}col-md-12{% endif %}">
-					{% if banner %}
-					<img class="img-fluid" src="{{ banner }}" alt="ma bannière">
-					{% else %}
-					<img class="img-fluid" src="{% static '/img/banniere.avif' %}" alt="ma bannière">
-					{% endif %}
-				</div>
-				{% endblock %}
-			</div>
-			{% if view_search_bar == True %}
-			<div class="col-md-8 offset-md-2">
-				{% block search_bar %}{% endblock %}
-			</div>
-			{% endif %}
-		</header>
+  <div class="reading-bar" aria-hidden="true"></div>
 
-		<div class="grid grid-cols-10">
-			<div  class="col-span-1">
+  <header id="banner" class="container-fluid">
+    <div class="row">
+      {% block banner %}
+        {% if view_menu == True %}
+          <div class="col-md-2">{% block menu_banner %}{% endblock %}</div>
+        {% endif %}
+        <div class="{% if view_menu == True %}col-md-10{% else %}col-md-12{% endif %}">
+          {% if banner %}
+            <img class="img-fluid banner-img" src="{{ banner }}" alt="ma bannière">
+          {% else %}
+            <img class="img-fluid banner-img" src="{% static 'img/banniere.avif' %}" alt="ma bannière">
+          {% endif %}
+        </div>
+      {% endblock %}
+    </div>
+    {% if view_search_bar == True %}
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          {% block search_bar %}{% endblock %}
+        </div>
+      </div>
+    {% endif %}
+  </header>
 
-			</div>
-			<div class="col-span-9">
-				{% block content %}{% endblock %}
-			</div>
-		</div>
-	</div>
+  <main class="site-main container-fluid">
+    <div class="row">
+      <div class="col-lg-10 offset-lg-1">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </main>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="{% static 'js/theme.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  {% block extra_js %}{% endblock %}
 </body>
+</html>

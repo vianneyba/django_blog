@@ -1,31 +1,23 @@
 {# Vue qui liste les articles #}
-{# utilisé par l'index #}
-
 {% extends "base.html" %}
 {% load markdown_extras %}
 
+{% block title %}{{ TITLE_SITE }} — Blog{% endblock %}
+
 {% block content %}
-	
-	{% if articles %}
-		{% for article in articles %}
-			{% include 'blog/view-article-in-list.html' with loop="loop" %}
+<section class="article-list">
+  {% if articles %}
+  {% for article in articles %}
+    {% include 'blog/view-article-in-list.html' %}
+  {% endfor %}
 
-			{% if not forloop.last %}
-				<hr class="separator">
-			{% endif %}
-
-		{% endfor  %}
-
-		<div class="col-md-12">
-			<div class="col-md-4 offset-md-4">
-				{% include 'paginator.html' %}
-			</div>
-		</div>
-
-	{% else %}
-		<article>
-			<p> aucun article a afficher</p>
-		</article>
-	{% endif %}
-
+  <nav class="pagination-wrap" aria-label="Pagination">
+    {% include 'paginator.html' %}
+  </nav>
+  {% else %}
+  <article class="article-card empty-state">
+    <p>Aucun article à afficher.</p>
+  </article>
+  {% endif %}
+</section>
 {% endblock %}

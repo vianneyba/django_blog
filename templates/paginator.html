@@ -1,29 +1,35 @@
-{% if page_obj.number > 0 %}
-    <nav>
-        <ul class="pagination pagination-lg">
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
-        </li>
-        {% else %}
-        <li class="page-item">
-            <span class="page-link">&laquo;</span>
-        </li>
-        {% endif %}
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav class="blog-pagination" aria-label="Pagination des articles">
+  <ul class="pagination">
+    <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+      {% if page_obj.has_previous %}
+        <a class="page-link" href="{{ url }}{% if '?' in url %}&{% else %}?{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Page précédente">
+          <i class="fa-solid fa-chevron-left"></i>
+        </a>
+      {% else %}
+        <span class="page-link" aria-hidden="true">
+          <i class="fa-solid fa-chevron-left"></i>
+        </span>
+      {% endif %}
+    </li>
 
-        <li class="page-item">
-            <span class="page-link">Page {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
-        </li>
+    <li class="page-item disabled">
+      <span class="page-link page-status">
+        Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+    </li>
 
-        {% if page_obj.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="{{ url }}&page={{ page_obj.next_page_number }}">&raquo;</a>
-        </li>
-        {% else %}
-        <li class="page-item">
-            <span class="page-link">&raquo;</span>
-        </li>
-        {% endif %}
-        </ul>
-    </nav>
+    <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+      {% if page_obj.has_next %}
+        <a class="page-link" href="{{ url }}{% if '?' in url %}&{% else %}?{% endif %}page={{ page_obj.next_page_number }}" aria-label="Page suivante">
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      {% else %}
+        <span class="page-link" aria-hidden="true">
+          <i class="fa-solid fa-chevron-right"></i>
+        </span>
+      {% endif %}
+    </li>
+  </ul>
+</nav>
 {% endif %}

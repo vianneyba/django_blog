@@ -1,44 +1,16 @@
-<nav class="bg-gray-800 text-white p-4">
-  <div class="flex items-center justify-between">
-    <a class="text-xl font-bold" href="{% url 'blog:index' %}">{{ TITLE_SITE }}</a>
+<nav class="site-nav" aria-label="Navigation principale">
+  <div class="nav-inner">
+    <a class="nav-brand" href="{% url 'blog:index' %}">{{ TITLE_SITE }}</a>
 
-    {% if user.is_active and user.is_staff %}
-    <div class="relative group">
-      <button class="px-3 py-2 rounded hover:bg-gray-700">Mon Compte ▾</button>
-      <div class="absolute right-0 hidden group-hover:block bg-white text-gray-800 rounded shadow-lg py-2 w-56 z-10">
-        <a href="{% url 'blog:add-article' %}" class="block px-4 py-2 hover:bg-gray-100">Rédiger</a>
-        <a href="{% url 'game:list-game' %}" class="block px-4 py-2 hover:bg-gray-100">Launch</a>
-        {% if user.is_superuser %}
-        <a href="{% url 'magazine:add-article' %}" class="block px-4 py-2 hover:bg-gray-100">Ajout Article Mag</a>
-        <a href="{% url 'music:index' %}" class="block px-4 py-2 hover:bg-gray-100">Musique</a>
-        <a href="{% url 'magazine:ini-to-html' %}" class="block px-4 py-2 hover:bg-gray-100">Export Article</a>
-        <a href="{% url 'magazine:list-articles' %}" class="block px-4 py-2 hover:bg-gray-100">Liste Test</a>
-        {% endif %}
-        <a href="{% url 'blog:by-author' user.username %}?view=all" class="block px-4 py-2 hover:bg-gray-100">Mes Articles</a>
-      </div>
-    </div>
-    {% endif %}
-
-    <div class="flex gap-1">
-      {% for category in CATEGORIES %}
-      <a href="{% url 'blog:by-category' category.0 %}"
-         class="px-3 py-2 rounded hover:bg-gray-700 uppercase text-sm">
-        {{ category.1 }}
-      </a>
-      {% endfor %}
-    </div>
-
-    <div>
+    <div class="nav-actions">
+      <a class="nav-btn" href="{% url 'blog:by-category' 'jeux-video' %}">Jeux</a>
+      <button class="nav-btn" type="button">Musique</button>
+      <button class="nav-btn" type="button">À propos</button>
+      <button class="nav-btn" type="button" id="theme-toggle">Clair</button>
       {% if user.username %}
-      <a href="{% url 'authenticate:logout' %}"
-         class="px-4 py-2 rounded border border-green-500 text-green-500 hover:bg-green-500 hover:text-white">
-        Déconnexion
-      </a>
+        <a class="nav-btn nav-btn-accent" href="{% url 'authenticate:logout' %}">Déconnexion</a>
       {% elif WITH_REGISTRATION %}
-      <a href="{% url 'authenticate:login' %}"
-         class="px-4 py-2 rounded border border-green-500 text-green-500 hover:bg-green-500 hover:text-white">
-        Connexion
-      </a>
+        <a class="nav-btn nav-btn-accent" href="{% url 'authenticate:login' %}">Connexion</a>
       {% endif %}
     </div>
   </div>

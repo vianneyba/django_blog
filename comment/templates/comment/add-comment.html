@@ -1,19 +1,26 @@
 <div class="comments-form">
-	{% if type == 'update' %}
-	<form method="post" action="{% url 'comment:update' article.id form_comment.fields.comment_id.initial %}">
-	{% else %}
-	<form method="post" action="{% url 'comment:add' article.id %}">
-	{% endif %}
+  {% if type == 'update' %}
+    <form method="post" action="{% url 'comment:update' article.id form_comment.fields.comment_id.initial %}" class="comment-form">
+  {% else %}
+    <form method="post" action="{% url 'comment:add' article.id %}" class="comment-form">
+  {% endif %}
+      {% csrf_token %}
 
-		{% csrf_token %}
-		<div class="form-group">		
-			{{ form_comment.as_p }}
-		</div>
-		{% if type == 'update' %}
-		<button type="submit" class="btn btn-primary">Modifier votre commentaire</button>
-		{% else %}
-		<button type="submit" class="btn btn-primary">Laisser un commentaire</button>
-		{% endif %}
-		<a class="btn btn-primary" href="{% url 'blog:by-slug' article.slug %}">Annuler</a>
-	</form>
+      <h2 class="comment-form-title">
+        {% if type == 'update' %}Modifier le commentaire{% else %}Laisser un commentaire{% endif %}
+      </h2>
+
+      <div class="comment-fields">
+        {{ form_comment.as_p }}
+      </div>
+
+      <div class="comment-actions">
+        {% if type == 'update' %}
+          <button type="submit" class="auth-submit">Enregistrer</button>
+        {% else %}
+          <button type="submit" class="auth-submit">Publier</button>
+        {% endif %}
+        <a class="nav-btn" href="{% url 'blog:by-slug' article.slug %}">Annuler</a>
+      </div>
+    </form>
 </div>

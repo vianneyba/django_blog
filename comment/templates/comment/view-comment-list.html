@@ -1,53 +1,51 @@
 {% load markdown_extras %}
 
-<div class="comments">
-	<div class="comments-header">
-		<h2 class="comment-reply-title">
-			{% if article.count_comments > 1 %}
-			{{ article.count_comments }} commentaire{% if article.count_comments > 1 %}s{% endif%} sur cette article.
-			{% else %}
-			il n'y pas de commentaires :-(
-			{% endif %}
-		</h2>
-	</div>
-	
-	{% if WITH_COMMENT or perms.comment.add %}
-		<div class="row">
-			<div class="col-md-2 offset-md-5">
-				<button class="btn btn-primary btn-sm" id="togg1">Ajouter un commentaire</button>
-			</div>
-		</div>
-		<div id="d1" style="display:none;">
-			{% include 'comment/add-comment.html' %}
-		</div>
-	{% endif %}
+<section class="comments">
+  <header class="comments-header">
+    <h2 class="comment-reply-title">
+      {% if article.count_comments == 0 %}
+        Pas encore de commentaire
+      {% elif article.count_comments == 1 %}
+        1 commentaire
+      {% else %}
+        {{ article.count_comments }} commentaires
+      {% endif %}
+    </h2>
 
-	{% for comment in comments %}
-		<div class="comment">
-			<div>
-				<span class="comment-author">{{ comment.author.username }}</span>, il y à {{ comment.created_at | timesince }}
-				{% if user == comment.author %}
-				<a href="{% url 'comment:update' article.id comment.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
-				{% endif %}
-			</div>
+    {% if WITH_COMMENT or perms.comment.add %}
+      <button class="nav-btn" type="button" id="togg1" aria-expanded="false" aria-controls="d1">
+        Ajouter un commentaire
+      </button>
+    {% endif %}
+  </header>
 
-			{% include 'like_dislike/view-like.html' with type='comment' id_likable=comment.id comment=comment %}
+  {% if WITH_COMMENT or perms.comment.add %}
+    <div id="d1" class="comment-form-wrap" hidden>
+      {% include 'comment/add-comment.html' %}
+    </div>
+  {% endif %}
 
-			<div class="comment-content">
-				{{ comment.content | markdown | safe }}
-			</div>
-		</div>
-	{% endfor %}
-</div>
+  <div class="comment-list">
+    {% for comment in comments %}
+      <article class="comment">
+        <div class="comment-meta">
+          <span class="comment-author">{{ comment.author.username }}</span>
+          <span class="comment-date">il y a {{ comment.created_at|timesince }}</span>
+          {% if user == comment.author %}
+            <a class="comment-edit" href="{% url 'comment:update' article.id comment.id %}" title="Modifier">
+              <i class="fa fa-pencil-square" aria-hidden="true"></i>
+            </a>
+          {% endif %}
+        </div>
 
-<script>
-	let togg1 = document.getElementById("togg1");
-	let d1 = document.getElementById("d1");
-	togg1.addEventListener("click", () => {
-	if(getComputedStyle(d1).display != "none"){
-		d1.style.display = "none";
-	} else {
-		d1.style.display = "block";
-	}
-	})
-</script> 
+        {% include 'like_dislike/view-like.html' with type='comment' id_likable=comment.id comment=comment %}
+
+        <div class="comment-content">
+          {{ comment.content|markdown|safe }}
+        </div>
+      </article>
+    {% empty %}
+      <p class="comment-empty">Sois le premier à réagir.</p>
+    {% endfor %}
+  </div>
+</section>

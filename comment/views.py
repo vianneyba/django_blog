@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from comment.forms import CommentForm
 from comment.models import Comment
@@ -8,22 +8,22 @@ from markdown import markdown
 
 @login_required
 def add(request, article_id):
-	if request.method == 'POST':
-		form = CommentForm(request.POST)
-		if form.is_valid():
-			content = form.cleaned_data['comment_content']
-			article_id = form.cleaned_data['article_id']
-			user = request.user
-			article = Article.objects.get(pk=article_id)
-			comment = Comment(user= user, content=content, article_id=article_id)
-			comment.save()
-			return redirect('blog:by-slug', slug=article.slug)
-		else:
-			context = return_article(request, pk=request.POST['article_id'])
-			form_comment = CommentForm()
-		
-			context['form_comment'] = form_comment
-			return render(request, 'blog/view-article.html', context)
+    article = get_object_or_404(Article, pk=article_id)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.article = article
+            comment.save()
+            return redirect("blog:by-slug", slug=article.slug)
+
+        context = return_article(request, pk=article_id)
+        context["form_comment"] = form
+        return render(request, "blog/view-article.html", context)
+
+    return redirect("blog:by-slug", slug=article.slug)
 
 @login_required
 def update(request, article_id, comment_id):

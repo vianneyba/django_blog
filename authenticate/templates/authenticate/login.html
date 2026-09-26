@@ -1,35 +1,32 @@
 {% extends "base.html" %}
 
+{% block title %}Connexion — {{ TITLE_SITE }}{% endblock %}
+
 {% block content %}
-	<div class="row">	
-		{% if errors %}
-			<div class="col-lg-8 offset-lg-2">
-				<p class="alert alert-danger">{{ errors }}</p>
-			</div> 
-		{% endif %}
+<section class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-title">Connexion</h1>
+    <p class="auth-subtitle">Retrouve tes articles, tes brouillons et tes réglages.</p>
 
-		<div class="block-login">
-			<form method="post" action="{% url 'authenticate:login' %}">
-				{% csrf_token %}
+    {% if errors %}
+      <p class="auth-alert" role="alert">{{ errors }}</p>
+    {% endif %}
 
-				<div class="form-group row">
-				<label class="col-2 col-form-label" for="username">Username: </label>
-					<div class="col-10">
-						<input type="text" class="form-control" id="username" name="username">
-					</div>
-					<label class="col-2 col-form-label" for="password">Password: </label>
-					<div class="col-10">
-						<input type="password" class="form-control" id="password" name="password">
-					</div>
-					<div class="col-10">
-						<button type="submit" class="btn btn-primary">Connexion</button>
-					</div>
-				</div>
-			</form>
+    <form method="post" action="{% url 'authenticate:login' %}" class="auth-form">
+      {% csrf_token %}
 
-			<p>
-				<a href="{% url 'authenticate:login' %}">Mot de passe perdu?</a>
-			</p>
-		</div>
-	</div>
+      <label class="auth-label" for="username">Nom d’utilisateur</label>
+      <input class="auth-input" type="text" id="username" name="username" autocomplete="username" required>
+
+      <label class="auth-label" for="password">Mot de passe</label>
+      <input class="auth-input" type="password" id="password" name="password" autocomplete="current-password" required>
+
+      <button class="auth-submit" type="submit">Connexion</button>
+    </form>
+
+    <p class="auth-help">
+      <a href="{% url 'authenticate:login' %}">Mot de passe perdu ?</a>
+    </p>
+  </div>
+</section>
 {% endblock %}

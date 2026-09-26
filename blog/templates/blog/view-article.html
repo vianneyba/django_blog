@@ -1,53 +1,47 @@
-{# template de vue d'un article #}
 {% extends "base.html" %}
 {% load static %}
 {% load markdown_extras %}
 
-{% block title %}{{ article.title }}{% endblock title %}
+{% block title %}{{ article.title }} — {{ TITLE_SITE }}{% endblock %}
 
 {% block banner %}
-    {% if  article.banner != "" %}
-        <img class="img-fluid" src="{{ article.banner }}" alt="{{ article.title }}_banner" width="1300" height="300">
-    {% else %}
-        <img class="img-fluid" src="{% static '/img/banniere.avif' %}" alt="ma bannière">
-    {% endif %}
+  {% if article.banner %}
+    <img class="img-fluid banner-img" src="{{ article.banner }}" alt="{{ article.title }}">
+  {% else %}
+    <img class="img-fluid banner-img" src="{% static 'img/banniere.avif' %}" alt="Bannière">
+  {% endif %}
 {% endblock %}
 
 {% block content %}
 <article class="content-article">
-    <header class="header-article">
-        <div class="read-more">
-            Posté par
-            <a href="{% url 'blog:by-author' article.author.username %}">{{ article.author.username }}</a>
-            il y à {{ article.created_at | timesince }}
-        </div>
+  <header class="header-article">
+    <p class="read-more">
+      Posté par
+      <a href="{% url 'blog:by-author' article.author.username %}">{{ article.author.username }}</a>
+      il y a {{ article.created_at|timesince }}
+    </p>
+    {% include 'like_dislike/view-like.html' with type='article' id_likable=article.id %}
+  </header>
 
-        {% include 'like_dislike/view-like.html' with type='article' id_likable=article.id %}
-    </header>
-    
-    <section class='article'>
-        <h1 class="entry-title">{{ article.title }}</h1>
-        <div class="entry-content">
-            {{ article.content | safe }}
-        </div>
-    </section>
-    
-    <footer class="footer-article">
-        <div class="tags-and-categories">
-            Catégorie: 
-            <a href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
-            | Dans: 
-            {% if article.tags %}
-                {% for tag in article.tags.all %}
-                    <a href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
-                {% endfor %}
-            {% endif %}
-        </div>
-    </footer>
+  <section class="article">
+    <h1 class="entry-title">{{ article.title }}</h1>
+    <div class="entry-content">
+      {{ article.content|safe }}
+    </div>
+  </section>
 
-    {%  if WITH_COMMENT %}
-        {% include 'comment/view-comment-list.html' %}
-    {% endif %}
+  <footer class="footer-article">
+    <div class="tags-and-categories">
+      Catégorie :
+      <a class="chip chip-cat" href="{% url 'blog:by-category' article.category.slug %}">{{ article.category.name }}</a>
+      {% for tag in article.tags.all %}
+        <a class="chip" href="{% url 'blog:by-tag' tag.slug %}">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+  </footer>
 
+  {% if WITH_COMMENT %}
+    {% include 'comment/view-comment-list.html' %}
+  {% endif %}
 </article>
 {% endblock %}
