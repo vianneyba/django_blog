@@ -1,17 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>Page de connexion</h1>
-	<form method="post" action="{% url 'authenticate:register' %}">
-		{% csrf_token %}
+<section class="auth-page">
+  <div class="auth-card">
+    <p class="auth-kicker">Compte</p>
+    <h1>Créer un compte</h1>
+    <p class="auth-lead">Inscris-toi pour voter aux sondages et suivre les tests.</p>
 
-		{% if form.errors %}
-			<p>Il y a des errors dans le formulaire</p>
-		{% endif %}
-		
-		{{ form }}
+    <form method="post" action="{% url 'authenticate:register' %}" class="auth-form" novalidate>
+      {% csrf_token %}
 
+      {% if form.errors %}
+        <div class="auth-alert" role="alert">
+          Le formulaire contient des erreurs. Vérifie les champs ci-dessous.
+        </div>
+      {% endif %}
 
-		<input type="submit" value="login">
-	</form>
-{% endblock content %}
+      {% for field in form %}
+        <div class="auth-field{% if field.errors %} is-invalid{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <small class="auth-help">{{ field.help_text }}</small>
+          {% endif %}
+          {% for error in field.errors %}
+            <small class="auth-error">{{ error }}</small>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="auth-submit">S’inscrire</button>
+    </form>
+
+    <p class="auth-switch">
+      Déjà un compte ?
+      <a href="{% url 'authenticate:login' %}">Se connecter</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

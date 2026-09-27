@@ -1,11 +1,10 @@
 
-<div class="poll"
-     data-poll="{{ poll.slug }}">
+<div class="poll" data-poll="{{ poll.slug }}">
 
-  <h3 class="text-xl font-bold mb-2">{{ poll.question }}</h3>
+  <h3>{{ poll.question }}</h3>
 
   {% if poll.description %}
-  <p class="text-gray-600 mb-4">{{ poll.description }}</p>
+  <p class="text-gray-600 mb-4">{{ poll.description | safe }}</p>
   {% endif %}
 
   {# Cas 1 : sondage fermé #}
@@ -25,14 +24,6 @@
     {% if poll.show_results_after_vote %}
       {% include "polls/_results.html" %}
     {% endif %}
-
-  {# Cas 3 : résultats visibles avant vote #}
-  {% elif poll.show_results_before_vote %}
-    {% include "polls/_results.html" %}
-    <p class="text-sm text-gray-500 mt-2">
-      Vote ouvert — vous pouvez encore participer.
-    </p>
-    {# On peut afficher le formulaire quand même, plus bas #}
   
   {# Cas 4 : si on doit être connecté #}
   {% elif require_login and not user.is_authenticated  %}
@@ -46,12 +37,16 @@
     
     {# Cas 4 : formulaire normal #}
   {% else %}
-    <form method="post" action="{% url 'polls:vote' poll.slug %}">
+      {% if poll.show_results_before_vote %}
+        {% include "polls/_results.html" %}
+      {% endif %}
+
+    <form  class="poll-form" method="post" action="{% url 'polls:vote' poll.slug %}">
       {% csrf_token %}
 
       {% if poll.poll_type == 'single' %}
         {% for choice in poll.choices.all %}
-        <label class="block mb-2">
+        <label class="poll-choice">
           <input type="radio" name="choice" value="{{ choice.id }}" required>
           {{ choice.label }}
         </label>
@@ -73,8 +68,7 @@
                   required></textarea>
       {% endif %}
 
-      <button type="submit"
-              class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      <button type="submit" class="poll-submit">
         Voter
       </button>
     </form>

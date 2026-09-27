@@ -1,0 +1,24 @@
+{% load static %}
+<header id="banner" class="container-fluid">
+  <div class="row">
+    {% block banner %}
+    {% if view_menu == True %}
+    <div class="col-md-2 top-menu">{% block menu_banner %}{% endblock %}</div>
+    {% endif %}
+    <div class="{% if view_menu == True %}col-md-10{% else %}col-md-12{% endif %}">
+      {% if banner %}
+      <img class="img-fluid banner-img" src="{{ banner }}" alt="ma bannière">
+      {% else %}
+      <img class="img-fluid banner-img" src="{% static 'img/banniere.avif' %}" alt="ma bannière">
+      {% endif %}
+    </div>
+    {% endblock %}
+  </div>
+  {% if view_search_bar == True %}
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      {% block search_bar %}{% endblock %}
+    </div>
+  </div>
+  {% endif %}
+</header>

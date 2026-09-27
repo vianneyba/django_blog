@@ -6,10 +6,9 @@
 <section class="auth-page">
   <div class="auth-card">
     <h1 class="auth-title">Connexion</h1>
-    <p class="auth-subtitle">Retrouve tes articles, tes brouillons et tes réglages.</p>
 
     {% if errors %}
-      <p class="auth-alert" role="alert">{{ errors }}</p>
+    <p class="auth-alert" role="alert">{{ errors }}</p>
     {% endif %}
 
     <form method="post" action="{% url 'authenticate:login' %}" class="auth-form">
@@ -24,9 +23,11 @@
       <button class="auth-submit" type="submit">Connexion</button>
     </form>
 
-    <p class="auth-help">
-      <a href="{% url 'authenticate:login' %}">Mot de passe perdu ?</a>
-    </p>
+    <ul class="auth-help">
+      <li><a href="{% url 'authenticate:register' %}">Inscripton ?</a></li>
+      <li><a href="{% url 'authenticate:login' %}">Mot de passe perdu ?</a></li>
+    </ul>
+
   </div>
 </section>
 {% endblock %}
