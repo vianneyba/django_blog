@@ -15,6 +15,7 @@ urlpatterns = [
     path('i-like/', include('like_dislike.urls')),
     path('article/', include('magazine.urls')),
     path('polls/', include('polls.urls')),
+    path("communication/", include("requests_box.urls")),
 ]
 
 handler404 = "vianneyba.views.handler404"

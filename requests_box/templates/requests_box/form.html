@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-page">
+  <div class="auth-card">
+    <p class="auth-kicker">Contact</p>
+    <h1>Envoyer une demande</h1>
+    <p class="auth-lead">
+      Compte bloqué, email perdu, correction… décris le souci.
+      Pour un mot de passe oublié, commence par
+      <!-- <a href="{# url 'password_reset' #}">la procédure automatique</a>. -->
+    </p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="auth-alert">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="auth-alert">Le formulaire contient des erreurs.</div>
+      {% endif %}
+
+      {% for field in form %}
+        <div class="auth-field{% if field.errors %} is-invalid{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}
+            <small class="auth-error">{{ error }}</small>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="auth-submit">Envoyer</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

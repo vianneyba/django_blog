@@ -736,7 +736,7 @@ hr.separator {
     font-size: 0.88rem; }
 
 .ratingverse {
-  display: inline-flex;
+  list-style: none;
   gap: 0.15rem;
   margin-top: 0.35rem; }
   .ratingverse a {
@@ -798,7 +798,6 @@ hr.separator {
     color: var(--muted);
     font-size: 0.88rem; }
   .music-history .ratingverse {
-    display: flex;
     gap: 0.1rem;
     margin-top: 0.25rem; }
     .music-history .ratingverse a {

@@ -953,7 +953,7 @@ hr.separator { display: none; }
 }
 
 .ratingverse {
-  display: inline-flex;
+  list-style: none;
   gap: 0.15rem;
   margin-top: 0.35rem;
 
@@ -1030,7 +1030,6 @@ hr.separator { display: none; }
   }
 
   .ratingverse {
-    display: flex;
     gap: 0.1rem;
     margin-top: 0.25rem;
 

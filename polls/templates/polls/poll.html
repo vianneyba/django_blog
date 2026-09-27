@@ -27,13 +27,11 @@
   
   {# Cas 4 : si on doit être connecté #}
   {% elif require_login and not user.is_authenticated  %}
-    <p>
-      vous devez soit vous 
-      <button type="button" class="btn btn-primary"><a href="{% url 'authenticate:login' %}">connecter</a></button>
-      ou vous
-      <button type="button" class="btn btn-primary"><a href="{% url 'authenticate:register' %}">inscrire</a></button>
-      pour pouvoir repondre au sondage.
-    </p>
+    <div>
+      <p>vous devez être connecté pour répondre au sondage</p>
+      <a  class="poll-submit" href="{% url 'authenticate:login' %}">vous connecter</a>
+      <a class="poll-submit" href="{% url 'authenticate:register' %}">vous inscrire</a>
+    </div>
     
     {# Cas 4 : formulaire normal #}
   {% else %}

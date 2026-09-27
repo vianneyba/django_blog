@@ -5,7 +5,7 @@
   <div class="auth-card">
     <p class="auth-kicker">Compte</p>
     <h1>Créer un compte</h1>
-    <p class="auth-lead">Inscris-toi pour voter aux sondages et suivre les tests.</p>
+    <p class="auth-lead">Inscris-toi pour voter aux sondages.</p>
 
     <form method="post" action="{% url 'authenticate:register' %}" class="auth-form" novalidate>
       {% csrf_token %}

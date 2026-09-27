@@ -13,7 +13,14 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 PROD_API_URL = os.environ.get("PROD_API_URL", "")
 PROD_API_USER = os.environ.get("PROD_API_USER", "")
 PROD_API_PASSWORD = os.environ.get("PROD_API_PASSWORD", "")
-
+ADMIN_NAME=os.environ.get("ADMIN_NAME", "")
+ADMIN_SURNAME=os.environ.get("ADMIN_SURNAME")
+ADMIN_EMAIL=os.environ.get("ADMIN_EMAIL")
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+print(ADMIN_EMAIL)
+ADMINS = [
+    ADMIN_EMAIL,
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -32,7 +39,8 @@ INSTALLED_APPS = [
     'game.apps.GameConfig',
     'music.apps.MusicConfig',
     'magazine.apps.MagazineConfig',
-    'polls.apps.PollsConfig'
+    'polls.apps.PollsConfig',
+    'requests_box'
 ]
 
 MIDDLEWARE = [
